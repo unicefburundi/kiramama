@@ -1,0 +1,16 @@
+*.~
+*.py~
+*.htmlc
+*.html~
+*.sqlite3
+*.py[co]
+localsettings.py
+*.sublime-*
+local_settings.py
+local_settings.py~
+*1.js
+static/
+*ipynb*
+fixtures/
+staticfiles/img/
+*.mo
