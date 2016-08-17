@@ -1,3 +1,7 @@
 from django.contrib import admin
+from health_administration_structure_app.models import *
 
-# Register your models here.
+
+admin.site.register(BPS)
+admin.site.register(District)
+admin.site.register(CDS)

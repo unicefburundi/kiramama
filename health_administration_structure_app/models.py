@@ -4,7 +4,7 @@ from django.db import models
 
 class BPS(models.Model):
     '''In this model, we will store Burundi BPSs(Bureau provincial de la sante)'''
-    name = models.CharField(_('name'),unique=True, max_length=20)
+    name = models.CharField(('name'),unique=True, max_length=20)
     code = models.IntegerField(unique=True, blank=True, null=True)
 
     def __unicode__(self):
@@ -20,7 +20,7 @@ class BPS(models.Model):
 class District(models.Model):
     '''In this model, we will store districts'''
     bps = models.ForeignKey(BPS, verbose_name='BPS')
-    name = models.CharField(_('nom'), unique=True, max_length=40)
+    name = models.CharField(('nom'), unique=True, max_length=40)
     code = models.IntegerField(unique=True)
 
     def __unicode__(self):
@@ -42,7 +42,7 @@ class CDS(models.Model):
     district = models.ForeignKey(District)
     name = models.CharField( max_length=40)
     code = models.CharField(unique=True, max_length=6)
-    status = models.CharField(max_length=4, choices=STATUS_CHOICES, blank=True, null=True, help_text=_('Either Public, Conf, Ass, Prive  or Hospital status.'))
+    status = models.CharField(max_length=4, choices=STATUS_CHOICES, blank=True, null=True, help_text=('Either Public, Conf, Ass, Prive  or Hospital status.'))
 
     def __unicode__(self):
         return self.name
