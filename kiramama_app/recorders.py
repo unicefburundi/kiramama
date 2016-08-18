@@ -1,0 +1,299 @@
+
+def check_if_is_reporter(args):
+	''' This function checks if the contact who sent the current message is a reporter. Reporter is CHW '''
+	concerned_reporter = CHW.objects.filter(phone_number = args['phone'])
+	if len(concerned_reporter) < 1:
+		#This person is not in the list of reporters
+		args['valide'] = False
+		args['info_to_contact'] = "Erreur. Vous ne vous etes pas enregistre pour pouvoir donner des rapports. Veuillez vous enregistrer en envoyant le message d enregistrement commencant par REG"
+		return 
+
+	one_concerned_reporter = concerned_reporter[0]
+
+	if not one_concerned_reporter.facility:
+		#The CDS of this reporter is not known
+		args['valide'] = False
+		args['info_to_contact'] = "Exception. Votre site n est pas enregistre dans le systeme. Veuillez contacter l administrateur du systeme"
+		return
+
+	args['the_sender'] =  one_concerned_reporter
+	args['facility'] = one_concerned_reporter.facility
+	args['supervisor_phone_number'] = one_concerned_reporter.supervisor_phone_number
+	args['valide'] = True
+	args['info_to_contact'] = " Le bureau d affectation de ce rapporteur est connu "
+
+
+
+
+def check_number_of_values(args):
+	#This function checks if the message sent is composed by an expected number of values
+	print("==len(args['text'].split(' '))==")
+	print(len(args['text'].split(' ')))
+	print(args['text'].split(' '))
+
+
+	if(args['message_type']=='SELF_REGISTRATION' or args['message_type']=='SELF_REGISTRATION_M'):
+		if len(args['text'].split(' ')) < 5:
+			args['valide'] = False
+			args['info_to_contact'] = "Erreur. Vous avez envoye peu de valeurs. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		if len(args['text'].split(' ')) > 5:
+			args['valide'] = False
+			args['info_to_contact'] = "Erreur. Vous avez envoye beaucoup de valeurs. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		if len(args['text'].split(' ')) == 5:
+			args['valide'] = True
+			args['info_to_contact'] = "Le nombre de valeurs envoye est correct."
+		return
+
+
+#======================reporters self registration==================================
+
+
+def check_facility(args):
+	''' This function checks if the facility code sent by the reporter exists '''
+	the_facility_code = args['text'].split(' ')[1]
+	concerned_facility = CDS.objects.filter(code = the_facility_code)
+	if (len(concerned_facility) > 0):
+		args['valide'] = True
+		args['info_to_contact'] = "Le code CDS envoye est reconnu."
+	else:
+		args['valide'] = False
+		args['info_to_contact'] = "Erreur. Le code envoye n est pas associe a un CDS. Pour corriger, reenvoyez un message corrige et commencant par le mot cle "+args['mot_cle']
+
+def check_supervisor_phone_number(args):
+	''' This function checks if the phone number of the supervisor is well written '''
+	the_supervisor_phone_number = args['text'].split(' ')[4]
+	the_supervisor_phone_number_no_space = the_supervisor_phone_number.replace(" ", "")
+	#expression = r'^(\+?(257)?)((62)|(79)|(71)|(76))([0-9]{6})$'
+	expression = r'^(\+?(257)?)((61)|(62)|(68)|(69)|(71)|(72)|(75)|(76)|(79))([0-9]{6})$'
+	print(the_supervisor_phone_number_no_space)
+	if re.search(expression, the_supervisor_phone_number_no_space) is None:
+		#The phone number is not well written
+		args['valide'] = False
+		args['info_to_contact'] = "Erreur. Le numero de telephone du superviseur n est pas bien ecrit. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle REG"
+	else:
+		args['valide'] = True
+		args['info_to_contact'] = "Le numero de telephone du superviseur est bien ecrit."
+
+
+
+def save_temporary_the_reporter(args):
+	same_existing_temp = Temporary.objects.filter(phone_number = args['phone'])
+	if len(same_existing_temp) > 0:
+		same_existing_temp = same_existing_temp[0]
+		same_existing_temp.delete()
+		args['valide'] = False
+		args['info_to_contact'] = "Erreur. Vous devriez envoyer le numero de telephone de votre superviseur seulement. Pour corriger, reenvoyer le message commencant par REG"
+	else:
+		the_phone_number = args['phone']
+
+		the_facility_code = args['text'].split(' ')[1]
+
+		facility = CDS.objects.filter(code = the_facility_code)
+		if len(facility) > 0:
+			#Let's determine the concerned facility
+			the_concerned_facility = facility[0]
+
+			the_supervisor_phone_number = args['text'].split(' ')[4]
+			the_supervisor_phone_number_no_space = the_supervisor_phone_number.replace(" ", "")
+
+			if len(the_supervisor_phone_number_no_space) == 8:
+				the_supervisor_phone_number_no_space = "+257"+the_supervisor_phone_number_no_space
+			if len(the_supervisor_phone_number_no_space) == 11:
+				the_supervisor_phone_number_no_space = "+"+the_supervisor_phone_number_no_space
+
+
+			#Let's determine the concerned sub hill
+			
+			the_hill_name = args['text'].split(' ')[2].title()
+
+			the_sub_hill_name = the_hill_name = args['text'].split(' ')[3].title()
+
+
+			the_hill = Colline.objects.filter(name__iecact = the_hill_name)
+			
+			if len(the_hill) < 1:
+				args['valide'] = False
+				args['info_to_contact'] = "Erreur. Le nom de la colline envoye n est pas valide."
+				return
+			
+			the_concerned_hill = the_hill[0]
+
+			#Let's check first if the sub hill name sent exist in the system
+			the_sub_hill0 = SousColline.objects.filter(name__iexact = the_sub_hill_name)
+			if len(the_sub_hill0) < 1:
+				args['valide'] = False
+				args['info_to_contact'] = "Erreur. Le nom de la sous colline envoye n est pas valide."
+				return
+			
+			
+			#If the sub hill name sent by the reporter exist in the system, let's check if it's linked to the specified hill
+			the_sub_hill1 = SousColline.objects.filter(name__iexact = the_sub_hill_name, colline = the_concerned_hill)
+			if len(the_sub_hill1) < 1:
+				args['valide'] = False
+				args['info_to_contact'] = "Erreur. Il n y a pas de sous colline '"+args['text'].split(' ')[3].title()+"' dans la colline '"+args['text'].split(' ')[2].title()+"'."
+				return
+
+
+			the_concerned_sub_hill = the_sub_hill1[0]
+
+
+			Temporary.objects.create(phone_number = the_phone_number, facility = the_concerned_facility, supervisor_phone_number = the_supervisor_phone_number_no_space, sub_hill = the_concerned_sub_hill)
+			args['valide'] = True
+			args['info_to_contact'] = "Veuillez reenvoyer seulement le numero de telephone de votre superviseur s il vous plait."
+
+
+def check_has_already_session(args):
+	'''This function checks if this contact has a session'''
+	same_existing_temp = Temporary.objects.filter(phone_number = args['phone'])
+	if len(same_existing_temp) > 0:
+		same_existing_temp = same_existing_temp[0]
+		same_existing_temp.delete()
+		args['valide'] = False
+		args['info_to_contact'] = "Erreur. Vous devriez envoyer le numero de telephone de votre superviseur seulement. Pour corriger, reenvoyer le message commencant par REG"
+	else:
+		args['valide'] = True
+		args['info_to_contact'] = "Ok."
+
+def temporary_record_reporter(args):
+	'''This function is used to record temporary a reporter'''
+	
+	if(args['text'].split(' ')[0].upper() == 'REG'):
+		args['mot_cle'] = 'REG'
+		
+		#Because REG is used to do the self registration and not the update, if the phone user sends a message starting with REG and 			#he/she is already a reporter, we don't allow him/her to continue
+		check_if_is_reporter(args)
+		if(args['valide'] == True):
+			#This contact is already a reporter and can't do the registration the second time
+			args['valide'] = False
+			args['info_to_contact'] = "Erreur. Vous vous etes deja enregistre. Si vous voulez modifier votre site d affectation ou le numero de telephone de votre superviseur, envoyer le message commencant par le mot cle 'REGM'"
+			return
+	
+	if(args['text'].split(' ')[0].upper() == 'REGM'):
+		args['mot_cle'] = 'REGM'
+
+	#Let's check if this contact has an existing session
+	check_has_already_session(args)
+	if not args['valide']:
+		return
+
+
+
+	#Let's check if the message sent is composed by an expected number of values
+	check_number_of_values(args)
+	if not args['valide']:
+		return
+
+
+
+	#Let's check if the code of CDS is valid
+	check_facility(args)
+	if not args['valide']:
+		return
+
+
+
+	#Let's check is the supervisor phone number is valid
+	check_supervisor_phone_number(args)
+	if not args['valide']:
+		return
+
+	#La ligne ci dessous ne peut pas fonctionner sur les instance Anonimise de RapidPro
+	#Let's check if the contact didn't send his/her number in the place of the supervisor number
+	check_supervisor_phone_number_not_for_this_contact(args)
+	if not args['valide']:
+		return
+
+	#Let's temporary save the reporter
+	save_temporary_the_reporter(args)
+
+
+def complete_registration(args):
+	the_sup_phone_number = args['text']
+	the_sup_phone_number_without_spaces = the_sup_phone_number.replace(" ", "")
+
+	the_existing_temp = Temporary.objects.filter(phone_number = args['phone'])
+
+	if len(the_existing_temp) < 1:
+		args['valide'] = False
+		args['info_to_contact'] = "Votre message n est pas considere."
+	else:
+		the_one_existing_temp = the_existing_temp[0]
+
+
+		#if (the_one_existing_temp.supervisor_phone_number == the_sup_phone_number_without_spaces):
+		if (the_sup_phone_number_without_spaces in the_one_existing_temp.supervisor_phone_number) and (len(the_sup_phone_number_without_spaces) >= 8):
+			#The confirmation of the phone number of the supervisor pass
+
+
+			#Let's check if this contact is not registered with this CDS and this supervisor Phone number
+			#If it is the case, this contact is doing an unnecessary registration
+			check_duplication = Reporter.objects.filter(phone_number = the_one_existing_temp.phone_number, facility = the_one_existing_temp.facility, supervisor_phone_number = the_one_existing_temp.supervisor_phone_number)
+			if len(check_duplication) > 0:
+				#Already registered and nothing to update
+				args['valide'] = False
+				args['info_to_contact'] = "Erreur. Vous vous etes deja enregistre sur ce site et avec ce numero de telephone du superviseur. Envoyer un message bien ecrit et commencant par un mot cle valide ou X pour fermer la session"
+				the_one_existing_temp.delete()
+				return
+
+			check_duplication = ''
+
+
+			#Let's check if the contact wants to update his facility
+			check_duplication = Reporter.objects.filter(~Q(facility = the_one_existing_temp.facility), phone_number = the_one_existing_temp.phone_number, supervisor_phone_number = the_one_existing_temp.supervisor_phone_number)
+			if len(check_duplication) > 0:
+				#this contact wants to update his facility
+				check_duplication = check_duplication[0]
+				check_duplication.facility = the_one_existing_temp.facility
+				check_duplication.save()
+				args['valide'] = True
+				args['info_to_contact'] = "Modification reussie. Votre nouveau site d affectation est : "+the_one_existing_temp.facility.name
+				the_one_existing_temp.delete()
+				return
+
+			check_duplication = ''
+
+
+
+			#Let's check if the contact wants to update the phone number of his supervisor
+			check_duplication = Reporter.objects.filter(~Q(supervisor_phone_number = the_one_existing_temp.supervisor_phone_number), phone_number = the_one_existing_temp.phone_number, facility = the_one_existing_temp.facility)
+			if len(check_duplication) > 0:
+				#this contact wants to update the phone number of his supervisor
+				check_duplication = check_duplication[0]
+				check_duplication.supervisor_phone_number = the_one_existing_temp.supervisor_phone_number
+				check_duplication.save()
+				args['valide'] = True
+				args['info_to_contact'] = "Modification reussie. Le nouveau numero de telephone de votre superviseur est : "+the_one_existing_temp.supervisor_phone_number+""
+				the_one_existing_temp.delete()
+				return
+
+			check_duplication = ''
+
+
+
+			#Let's check if the contact wants to update both the CDS and the phone number of his supervisor
+			check_duplication = Reporter.objects.filter(~Q(facility = the_one_existing_temp.facility), ~Q(supervisor_phone_number = the_one_existing_temp.supervisor_phone_number), phone_number = the_one_existing_temp.phone_number)
+			if len(check_duplication) > 0:
+				#this contact wants to update the phone number of his supervisor
+				check_duplication = check_duplication[0]
+				check_duplication.facility = the_one_existing_temp.facility
+				check_duplication.supervisor_phone_number = the_one_existing_temp.supervisor_phone_number
+				check_duplication.save()
+				args['valide'] = True
+				args['info_to_contact'] = "Modification reussie. Le nouveau numero de telephone de votre superviseur est '"+the_one_existing_temp.supervisor_phone_number+"' et votre nouveau site d affectation est '"+the_one_existing_temp.facility.name+"'"
+				the_one_existing_temp.delete()
+				return
+
+
+			#This contact is doing a first registration. Let's record him/her
+			Reporter.objects.create(phone_number = the_one_existing_temp.phone_number,facility = the_one_existing_temp.facility, supervisor_phone_number = the_one_existing_temp.supervisor_phone_number)
+			the_one_existing_temp.delete()
+			args['valide'] = True
+			args['info_to_contact'] = "Enregistrement reussi. Si vous voulez modifier le code de votre site d affectation ou le numero de telephone de votre superviseur, veuillez utiliser le mot cle REGM"
+		else:
+			the_one_existing_temp.delete()
+			args['valide'] = False
+			args['info_to_contact'] = "Erreur. Vous avez envoye le numero de telephone de votre superviseur de differentes manieres. Pour corriger, veuillez reenvoyer le message commencant par le mot cle REG"
+
+
+#-----------------------------------------------------------------
+

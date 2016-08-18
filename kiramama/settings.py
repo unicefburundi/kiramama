@@ -118,6 +118,12 @@ USE_L10N = True
 USE_TZ = True
 
 
+KNOWN_PREFIXES = {
+    'REG':'SELF_REGISTRATION',
+}
+
+
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 
