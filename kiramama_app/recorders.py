@@ -1,3 +1,24 @@
+from kiramama_app.models import *
+from health_administration_structure_app.models import *
+from public_administration_structure_app.models import *
+
+from django.db.models import Q
+import re
+import datetime
+import requests
+import json
+from django.conf import settings
+
+
+def check_supervisor_phone_number_not_for_this_contact(args):
+	'''This function checks if the contact didn't send his/her phone number in the place of the supervisor phone number'''
+
+	if args['text'].split(' ')[4] in args['phone']:
+		args['valide'] = False
+		args['info_to_contact'] = "Erreur. Vous avez envoye votre numero de telephone a la place de celui de votre superviseur. Pour corriger, veuillez reenvoyer le message commencant par '"+args['mot_cle']+"' et contenant le vrai numero de ton superviseur"
+	else:
+		args['valide'] = True
+		args['info_to_contact'] = "Le numero de telephone du superviseur est bien note."
 
 def check_if_is_reporter(args):
 	''' This function checks if the contact who sent the current message is a reporter. Reporter is CHW '''
@@ -106,14 +127,16 @@ def save_temporary_the_reporter(args):
 			
 			the_hill_name = args['text'].split(' ')[2].title()
 
-			the_sub_hill_name = the_hill_name = args['text'].split(' ')[3].title()
+			the_sub_hill_name = args['text'].split(' ')[3].title()
 
 
-			the_hill = Colline.objects.filter(name__iecact = the_hill_name)
+			the_hill = Colline.objects.filter(name__iexact = the_hill_name)
 			
 			if len(the_hill) < 1:
+				print("The hill name ==>"+the_hill_name)
+				print("The sub hill name ==>"+the_sub_hill_name)
 				args['valide'] = False
-				args['info_to_contact'] = "Erreur. Le nom de la colline envoye n est pas valide."
+				args['info_to_contact'] = "Erreur. Le nom de la colline envoye n est pas valide. Pour corriger, reenvoyer le message bien ecrit commencant par REG"
 				return
 			
 			the_concerned_hill = the_hill[0]
@@ -122,7 +145,7 @@ def save_temporary_the_reporter(args):
 			the_sub_hill0 = SousColline.objects.filter(name__iexact = the_sub_hill_name)
 			if len(the_sub_hill0) < 1:
 				args['valide'] = False
-				args['info_to_contact'] = "Erreur. Le nom de la sous colline envoye n est pas valide."
+				args['info_to_contact'] = "Erreur. Le nom de la sous colline envoye n est pas valide. Pour corriger, reenvoyer le message bien ecrit commencant par REG"
 				return
 			
 			
@@ -225,17 +248,24 @@ def complete_registration(args):
 			#The confirmation of the phone number of the supervisor pass
 
 
-			#Let's check if this contact is not registered with this CDS and this supervisor Phone number
+			#Let's check if this contact is not registered with the same data as he/she is registered
 			#If it is the case, this contact is doing an unnecessary registration
-			check_duplication = Reporter.objects.filter(phone_number = the_one_existing_temp.phone_number, facility = the_one_existing_temp.facility, supervisor_phone_number = the_one_existing_temp.supervisor_phone_number)
+			#check_duplication = CHW.objects.filter(phone_number = the_one_existing_temp.phone_number, cds = the_one_existing_temp.facility, sub_colline = the_one_existing_temp.sub_hill, sub_colline.colline = the_one_existing_temp.sub_hill.colline, supervisor_phone_number = the_one_existing_temp.supervisor_phone_number)
+			check_duplication = CHW.objects.filter(phone_number = the_one_existing_temp.phone_number, cds = the_one_existing_temp.facility, sub_colline = the_one_existing_temp.sub_hill, supervisor_phone_number = the_one_existing_temp.supervisor_phone_number)
 			if len(check_duplication) > 0:
-				#Already registered and nothing to update
-				args['valide'] = False
-				args['info_to_contact'] = "Erreur. Vous vous etes deja enregistre sur ce site et avec ce numero de telephone du superviseur. Envoyer un message bien ecrit et commencant par un mot cle valide ou X pour fermer la session"
-				the_one_existing_temp.delete()
-				return
+				#Let's check if the sent colline is the same with the already saved colline
+				the_already_saved_colline = check_duplication[0].sub_colline.colline
+				the_sent_colline = the_one_existing_temp.sub_hill.colline
 
-			check_duplication = ''
+				if(the_sent_colline == the_already_saved_colline):
+					#This phone user is trying to register himself/herself twice
+					#Already registered and nothing to update
+					args['valide'] = False
+					args['info_to_contact'] = "Erreur. Vous vous etes deja enregistre sur ce site et avec ce numero de telephone du superviseur. Envoyer un message bien ecrit et commencant par un mot cle valide ou X pour fermer la session"
+					the_one_existing_temp.delete()
+					return
+
+			'''check_duplication = ''
 
 
 			#Let's check if the contact wants to update his facility
@@ -281,14 +311,14 @@ def complete_registration(args):
 				args['valide'] = True
 				args['info_to_contact'] = "Modification reussie. Le nouveau numero de telephone de votre superviseur est '"+the_one_existing_temp.supervisor_phone_number+"' et votre nouveau site d affectation est '"+the_one_existing_temp.facility.name+"'"
 				the_one_existing_temp.delete()
-				return
+				return'''
 
 
 			#This contact is doing a first registration. Let's record him/her
-			Reporter.objects.create(phone_number = the_one_existing_temp.phone_number,facility = the_one_existing_temp.facility, supervisor_phone_number = the_one_existing_temp.supervisor_phone_number)
+			CHW.objects.create(phone_number = the_one_existing_temp.phone_number, cds = the_one_existing_temp.facility, supervisor_phone_number = the_one_existing_temp.supervisor_phone_number, sub_colline = the_one_existing_temp.sub_hill)
 			the_one_existing_temp.delete()
 			args['valide'] = True
-			args['info_to_contact'] = "Enregistrement reussi. Si vous voulez modifier le code de votre site d affectation ou le numero de telephone de votre superviseur, veuillez utiliser le mot cle REGM"
+			args['info_to_contact'] = "Enregistrement reussi. Si vous voulez modifier votre enregistrent, veuillez utiliser le mot cle REGM"
 		else:
 			the_one_existing_temp.delete()
 			args['valide'] = False

@@ -2,7 +2,7 @@ from jsonview.decorators import json_view
 from django.views.decorators.csrf import csrf_exempt
 import re
 from django.conf import settings
-from cmam_app.models import  Temporary
+from kiramama_app.models import  Temporary
 from recorders import *
 import urllib
 

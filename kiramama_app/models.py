@@ -280,13 +280,13 @@ class RIS_Report_Symptom(models.Model):
 
 
 class Temporary(models.Model):
-    '''
-    This model will be used to temporary store a reporter who doesn't finish his self registration
-    '''
-    facility = models.ForeignKey(Facility)
+	'''
+	This model will be used to temporary store a reporter who doesn't finish his self registration
+	'''
+	facility = models.ForeignKey(CDS)
 	sub_hill = models.ForeignKey(SousColline)
-    phone_number = models.CharField(max_length=20)
-    supervisor_phone_number = models.CharField(max_length=20)
+	phone_number = models.CharField(max_length=20)
+	supervisor_phone_number = models.CharField(max_length=20)
 
-    def __unicode__(self):
-        return self.phone_number
+	def __unicode__(self):
+		return self.phone_number
