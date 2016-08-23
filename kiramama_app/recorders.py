@@ -31,14 +31,14 @@ def check_if_is_reporter(args):
 
 	one_concerned_reporter = concerned_reporter[0]
 
-	if not one_concerned_reporter.facility:
+	if not one_concerned_reporter.cds:
 		#The CDS of this reporter is not known
 		args['valide'] = False
 		args['info_to_contact'] = "Exception. Votre site n est pas enregistre dans le systeme. Veuillez contacter l administrateur du systeme"
 		return
 
 	args['the_sender'] =  one_concerned_reporter
-	args['facility'] = one_concerned_reporter.facility
+	args['facility'] = one_concerned_reporter.cds
 	args['supervisor_phone_number'] = one_concerned_reporter.supervisor_phone_number
 	args['valide'] = True
 	args['info_to_contact'] = " Le bureau d affectation de ce rapporteur est connu "
@@ -188,7 +188,7 @@ def temporary_record_reporter(args):
 		if(args['valide'] == True):
 			#This contact is already a reporter and can't do the registration the second time
 			args['valide'] = False
-			args['info_to_contact'] = "Erreur. Vous vous etes deja enregistre. Si vous voulez modifier votre site d affectation ou le numero de telephone de votre superviseur, envoyer le message commencant par le mot cle 'REGM'"
+			args['info_to_contact'] = "Erreur. Vous vous etes deja enregistre. Si vous voulez modifier votre enregistrement, envoyer le message commencant par le mot cle 'REGM'"
 			return
 	
 	if(args['text'].split(' ')[0].upper() == 'REGM'):
@@ -327,3 +327,77 @@ def complete_registration(args):
 
 #-----------------------------------------------------------------
 
+
+
+
+#-----------------------------------------------------------------
+def record_pregnant_case(args):
+	pass
+#-----------------------------------------------------------------
+
+
+
+#-----------------------------------------------------------------
+def record_prenatal_consultation_report(args):
+	pass
+#-----------------------------------------------------------------
+
+
+
+#-----------------------------------------------------------------
+def save_temporary_the_reporter(args):
+	pass
+#-----------------------------------------------------------------
+
+
+
+#-----------------------------------------------------------------
+def record_birth_case_report(args):
+	pass
+#-----------------------------------------------------------------
+
+
+
+#-----------------------------------------------------------------
+def record_postnatal_care_report(args):
+	pass
+#-----------------------------------------------------------------
+
+
+
+#-----------------------------------------------------------------
+def record_child_follow_up_report(args):
+	pass
+#-----------------------------------------------------------------
+
+
+
+
+#-----------------------------------------------------------------
+def record_risk_report(args):
+	pass
+#-----------------------------------------------------------------
+
+
+
+
+#-----------------------------------------------------------------
+def record_response_to_risk_report(args):
+	pass
+#-----------------------------------------------------------------
+
+
+
+
+#-----------------------------------------------------------------
+def record_death_report(args):
+	pass
+#-----------------------------------------------------------------
+
+
+
+
+#-----------------------------------------------------------------
+def record_leave_report(args):
+	pass
+#-----------------------------------------------------------------

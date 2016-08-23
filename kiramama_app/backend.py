@@ -100,6 +100,33 @@ def handel_rapidpro_request(request):
 	if(incoming_data['message_type']=='SELF_REGISTRATION' or incoming_data['message_type']=='SELF_REGISTRATION_M'):
 		#The contact who sent the current message is doing self registration  in the group of reporters
 		temporary_record_reporter(incoming_data)
+	if(incoming_data['message_type']=='PREGNANT_CASE_REGISTRATION'):
+		#This contact is registering a pregnant case
+		record_pregnant_case(incoming_data)
+	if(incoming_data['message_type']=='PRENATAL_CONSULTATION_REGISTRATION'):
+		#This contact is registering a pregnant case
+		record_prenatal_consultation_report(incoming_data)
+	if(incoming_data['message_type']=='BIRTH_REGISTRATION'):
+		#This contact is registering a birth case
+		record_birth_case_report(incoming_data)
+	if(incoming_data['message_type']=='POSTNATAL_CARE_REPORT'):
+		#This contact is registering a postnatal care report
+		record_postnatal_care_report(incoming_data)
+	if(incoming_data['message_type']=='CHILD_FOLLOW_UP_REPORT'):
+		#This contact is registering a child follow up report
+		record_child_follow_up_report(incoming_data)
+	if(incoming_data['message_type']=='RISK_REPORT'):
+		#This contact is reporting a risk
+		record_risk_report(incoming_data)
+	if(incoming_data['message_type']=='RESPONSE_TO_RISK_REPORT'):
+		#This contact is reporting a response to a risk report
+		record_response_to_risk_report(incoming_data)
+	if(incoming_data['message_type']=='DEATH_REPORT'):
+		#This contact is reporting a death report
+		record_death_report(incoming_data)
+	if(incoming_data['message_type']=='LEAVE_REPORT'):
+		#This contact is reporting a pregnant mother who change where she live.
+		record_leave_report(incoming_data)
 
 
 
