@@ -45,7 +45,7 @@ def check_if_is_reporter(args):
 
 
 
-
+'''
 def check_number_of_values(args):
 	#This function checks if the message sent is composed by an expected number of values
 	print("==len(args['text'].split(' '))==")
@@ -64,8 +64,21 @@ def check_number_of_values(args):
 			args['valide'] = True
 			args['info_to_contact'] = "Le nombre de valeurs envoye est correct."
 		return
+'''
+def check_number_of_values(args):
+	''' This function checks if the message sent is composed by an expected number of values '''
+	expected_number_of_values_string = args["expected_number_of_values"]
+	expected_number_of_values_int = int(expected_number_of_values_string)
 
-
+	if len(args['text'].split(' ')) < expected_number_of_values_int:
+		args['valide'] = False
+		args['info_to_contact'] = "Erreur. Vous avez envoye peu de valeurs. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+	if len(args['text'].split(' ')) > expected_number_of_values_int:
+		args['valide'] = False
+		args['info_to_contact'] = "Erreur. Vous avez envoye beaucoup de valeurs. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+	if len(args['text'].split(' ')) == expected_number_of_values_int:
+		args['valide'] = True
+		args['info_to_contact'] = "Le nombre de valeurs envoye est correct."
 #======================reporters self registration==================================
 
 
@@ -202,6 +215,7 @@ def temporary_record_reporter(args):
 
 
 	#Let's check if the message sent is composed by an expected number of values
+	args["expected_number_of_values"] = getattr(settings,'EXPECTED_NUMBER_OF_VALUES','')[args['message_type']]
 	check_number_of_values(args)
 	if not args['valide']:
 		return
@@ -342,12 +356,6 @@ def record_prenatal_consultation_report(args):
 	pass
 #-----------------------------------------------------------------
 
-
-
-#-----------------------------------------------------------------
-def save_temporary_the_reporter(args):
-	pass
-#-----------------------------------------------------------------
 
 
 
