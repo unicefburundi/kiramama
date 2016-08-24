@@ -92,7 +92,7 @@ def check_is_future_date(args):
 	expression = r'^((0[1-9])|([1-2][0-9])|(3[01]))((0[1-9])|(1[0-2]))[0-9]{2}$'
 	if re.search(expression, given_date) is None:
 		args['valide'] = False
-		args['info_to_contact'] = "Erreur. La date indiquee n est pas valide. Verifier si vous avez mis chaque valeur dans sa place. Pour corriger, reenvoyez un message commencant par "+args['mot_cle']
+		args['info_to_contact'] = "Erreur. La date indiquee pour '"+args["date_meaning"]+"' n est pas valide. Verifier si vous avez mis chaque valeur dans sa place. Pour corriger, reenvoyez un message commencant par "+args['mot_cle']
 		return
 
 
@@ -103,14 +103,14 @@ def check_is_future_date(args):
 		date_sent = datetime.datetime.strptime(sent_date_without_dash, "%d%m%Y").date()
 	except:
 		args['valide'] = False
-		args['info_to_contact'] = "Erreur. La date indiquee n est pas valide. Verifier si vous avez mis chaque valeur dans sa place. Pour corriger, reenvoyez un message commencant par "+args['mot_cle']
+		args['info_to_contact'] = "Erreur. La date indiquee pour '"+args["date_meaning"]+"' n est pas valide. Verifier si vous avez mis chaque valeur dans sa place. Pour corriger, reenvoyez un message commencant par "+args['mot_cle']
 		return
 
 
 	if date_sent <= datetime.datetime.now().date():
 		#The reporter can not report for a past date
 		args['valide'] = False
-		args['info_to_contact'] = "Erreur. Vous avez indiquez une date du passe. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		args['info_to_contact'] = "Erreur. Vous avez indiquez une date du passe pour '"+args["date_meaning"]+"'. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
 		return
 	args['valide'] = True
 	args['info_to_contact'] = "La date verifiee est dans le future"
@@ -127,7 +127,7 @@ def check_is_past_date(args):
 	expression = r'^((0[1-9])|([1-2][0-9])|(3[01]))((0[1-9])|(1[0-2]))[0-9]{2}$'
 	if re.search(expression, given_date) is None:
 		args['valide'] = False
-		args['info_to_contact'] = "Erreur. La date indiquee n est pas valide. Verifier si vous avez mis chaque valeur dans sa place. Pour corriger, reenvoyez un message commencant par "+args['mot_cle']
+		args['info_to_contact'] = "Erreur. La date indiquee pour '"+args["date_meaning"]+"' n est pas valide. Verifier si vous avez mis chaque valeur dans sa place. Pour corriger, reenvoyez un message commencant par "+args['mot_cle']
 		return
 
 
@@ -138,14 +138,14 @@ def check_is_past_date(args):
 		date_sent = datetime.datetime.strptime(sent_date_without_dash, "%d%m%Y").date()
 	except:
 		args['valide'] = False
-		args['info_to_contact'] = "Erreur. La date indiquee n est pas valide. Verifier si vous avez mis chaque valeur dans sa place. Pour corriger, reenvoyez un message commencant par "+args['mot_cle']
+		args['info_to_contact'] = "Erreur. La date indiquee pour '"+args["date_meaning"]+"' n est pas valide. Verifier si vous avez mis chaque valeur dans sa place. Pour corriger, reenvoyez un message commencant par "+args['mot_cle']
 		return
 
 
 	if date_sent > datetime.datetime.now().date():
 		#The reporter can not report for a past date
 		args['valide'] = False
-		args['info_to_contact'] = "Erreur. Vous avez indiquez une date non acceptable. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		args['info_to_contact'] = "Erreur. Vous avez indiquez une date non acceptable pour '"+args["date_meaning"]+"'. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
 		return
 
 	args['valide'] = True
@@ -428,6 +428,14 @@ def record_pregnant_case(args):
 
 	#Let's check if the expected giving birth date is a future date
 	args["future_date"] = args['text'].split(' ')[1]
+	args["date_meaning"] = "date probable d accouchement"
+	check_is_future_date(args)
+	if not args['valide']:
+		return
+
+	#Let's check if the next appointment date is a future date
+	args["future_date"] = args['text'].split(' ')[2]
+	args["date_meaning"] = "date du prochain rendez-vous"
 	check_is_future_date(args)
 	if not args['valide']:
 		return
