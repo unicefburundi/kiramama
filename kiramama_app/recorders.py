@@ -83,10 +83,73 @@ def check_number_of_values(args):
 
 def check_is_future_date(args):
 	''' This function checks if a given date is a future date '''
-	pass
+	given_date = args["future_date"]
+	if not given_date:
+		args['valide'] = False
+		args['info_to_contact'] = "Exception. Pas de date trouvee pour la verification."
+		return
+
+	expression = r'^((0[1-9])|([1-2][0-9])|(3[01]))((0[1-9])|(1[0-2]))[0-9]{2}$'
+	if re.search(expression, given_date) is None:
+		args['valide'] = False
+		args['info_to_contact'] = "Erreur. La date indiquee n est pas valide. Verifier si vous avez mis chaque valeur dans sa place. Pour corriger, reenvoyez un message commencant par "+args['mot_cle']
+		return
+
+
+	sent_date = given_date[0:2]+"-"+given_date[2:4]+"-20"+given_date[4:]
+
+	sent_date_without_dash = sent_date.replace("-","")
+	try:
+		date_sent = datetime.datetime.strptime(sent_date_without_dash, "%d%m%Y").date()
+	except:
+		args['valide'] = False
+		args['info_to_contact'] = "Erreur. La date indiquee n est pas valide. Verifier si vous avez mis chaque valeur dans sa place. Pour corriger, reenvoyez un message commencant par "+args['mot_cle']
+		return
+
+
+	if date_sent <= datetime.datetime.now().date():
+		#The reporter can not report for a past date
+		args['valide'] = False
+		args['info_to_contact'] = "Erreur. Vous avez indiquez une date du passe. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		return
+	args['valide'] = True
+	args['info_to_contact'] = "La date verifiee est dans le future"
+
+
 def check_is_past_date(args):
 	''' This function checks if a given date is a past date '''
-	pass
+	given_date = args["past_date"]
+	if not given_date:
+		args['valide'] = False
+		args['info_to_contact'] = "Exception. Pas de date trouvee pour la verification."
+		return
+
+	expression = r'^((0[1-9])|([1-2][0-9])|(3[01]))((0[1-9])|(1[0-2]))[0-9]{2}$'
+	if re.search(expression, given_date) is None:
+		args['valide'] = False
+		args['info_to_contact'] = "Erreur. La date indiquee n est pas valide. Verifier si vous avez mis chaque valeur dans sa place. Pour corriger, reenvoyez un message commencant par "+args['mot_cle']
+		return
+
+
+	sent_date = given_date[0:2]+"-"+given_date[2:4]+"-20"+given_date[4:]
+
+	sent_date_without_dash = sent_date.replace("-","")
+	try:
+		date_sent = datetime.datetime.strptime(sent_date_without_dash, "%d%m%Y").date()
+	except:
+		args['valide'] = False
+		args['info_to_contact'] = "Erreur. La date indiquee n est pas valide. Verifier si vous avez mis chaque valeur dans sa place. Pour corriger, reenvoyez un message commencant par "+args['mot_cle']
+		return
+
+
+	if date_sent > datetime.datetime.now().date():
+		#The reporter can not report for a past date
+		args['valide'] = False
+		args['info_to_contact'] = "Erreur. Vous avez indiquez une date non acceptable. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		return
+
+	args['valide'] = True
+	args['info_to_contact'] = "La date verifiee est dans le passe"
 #======================reporters self registration==================================
 
 
@@ -360,6 +423,12 @@ def record_pregnant_case(args):
 	#Let's check if the message sent is composed by an expected number of values
 	args["expected_number_of_values"] = getattr(settings,'EXPECTED_NUMBER_OF_VALUES','')[args['message_type']]
 	check_number_of_values(args)
+	if not args['valide']:
+		return
+
+	#Let's check if the expected giving birth date is a future date
+	args["future_date"] = args['text'].split(' ')[1]
+	check_is_future_date(args)
 	if not args['valide']:
 		return
 #-----------------------------------------------------------------
