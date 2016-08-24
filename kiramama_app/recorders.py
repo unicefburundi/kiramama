@@ -79,6 +79,14 @@ def check_number_of_values(args):
 	if len(args['text'].split(' ')) == expected_number_of_values_int:
 		args['valide'] = True
 		args['info_to_contact'] = "Le nombre de valeurs envoye est correct."
+
+
+def check_is_future_date(args):
+	''' This function checks if a given date is a future date '''
+	pass
+def check_is_past_date(args):
+	''' This function checks if a given date is a past date '''
+	pass
 #======================reporters self registration==================================
 
 
@@ -346,14 +354,28 @@ def complete_registration(args):
 
 #-----------------------------------------------------------------
 def record_pregnant_case(args):
-	pass
+
+	args['mot_cle'] = "GRO"
+
+	#Let's check if the message sent is composed by an expected number of values
+	args["expected_number_of_values"] = getattr(settings,'EXPECTED_NUMBER_OF_VALUES','')[args['message_type']]
+	check_number_of_values(args)
+	if not args['valide']:
+		return
 #-----------------------------------------------------------------
 
 
 
 #-----------------------------------------------------------------
 def record_prenatal_consultation_report(args):
-	pass
+
+	args['mot_cle'] = "CPN"	
+
+	#Let's check if the message sent is composed by an expected number of values
+	args["expected_number_of_values"] = getattr(settings,'EXPECTED_NUMBER_OF_VALUES','')[args['message_type']]
+	check_number_of_values(args)
+	if not args['valide']:
+		return
 #-----------------------------------------------------------------
 
 
@@ -361,29 +383,59 @@ def record_prenatal_consultation_report(args):
 
 #-----------------------------------------------------------------
 def record_birth_case_report(args):
-	pass
+
+	args['mot_cle'] = "NSC"
+	
+	#Let's check if the message sent is composed by an expected number of values
+	args["expected_number_of_values"] = getattr(settings,'EXPECTED_NUMBER_OF_VALUES','')[args['message_type']]
+	check_number_of_values(args)
+	if not args['valide']:
+		return
 #-----------------------------------------------------------------
 
 
 
 #-----------------------------------------------------------------
 def record_postnatal_care_report(args):
-	pass
+
+	args['mot_cle'] = "CON"
+	
+	#Let's check if the message sent is composed by an expected number of values
+	args["expected_number_of_values"] = getattr(settings,'EXPECTED_NUMBER_OF_VALUES','')[args['message_type']]
+	check_number_of_values(args)
+	if not args['valide']:
+		return
 #-----------------------------------------------------------------
 
 
 
 #-----------------------------------------------------------------
 def record_child_follow_up_report(args):
-	pass
+
+	args['mot_cle'] = "VAC"
+	
+	#Let's check if the message sent is composed by an expected number of values
+	args["expected_number_of_values"] = getattr(settings,'EXPECTED_NUMBER_OF_VALUES','')[args['message_type']]
+	check_number_of_values(args)
+	if not args['valide']:
+		return
 #-----------------------------------------------------------------
+
+
 
 
 
 
 #-----------------------------------------------------------------
 def record_risk_report(args):
-	pass
+
+	args['mot_cle'] = "RIS"
+	
+	#Let's check if the message sent is composed by an expected number of values
+	args["expected_number_of_values"] = getattr(settings,'EXPECTED_NUMBER_OF_VALUES','')[args['message_type']]
+	check_number_of_values(args)
+	if not args['valide']:
+		return
 #-----------------------------------------------------------------
 
 
@@ -391,7 +443,14 @@ def record_risk_report(args):
 
 #-----------------------------------------------------------------
 def record_response_to_risk_report(args):
-	pass
+
+	args['mot_cle'] = "RER"
+	
+	#Let's check if the message sent is composed by an expected number of values
+	args["expected_number_of_values"] = getattr(settings,'EXPECTED_NUMBER_OF_VALUES','')[args['message_type']]
+	check_number_of_values(args)
+	if not args['valide']:
+		return
 #-----------------------------------------------------------------
 
 
@@ -399,7 +458,14 @@ def record_response_to_risk_report(args):
 
 #-----------------------------------------------------------------
 def record_death_report(args):
-	pass
+
+	args['mot_cle'] = "DEC"
+	
+	#Let's check if the message sent is composed by an expected number of values
+	args["expected_number_of_values"] = getattr(settings,'EXPECTED_NUMBER_OF_VALUES','')[args['message_type']]
+	check_number_of_values(args)
+	if not args['valide']:
+		return
 #-----------------------------------------------------------------
 
 
@@ -407,5 +473,12 @@ def record_death_report(args):
 
 #-----------------------------------------------------------------
 def record_leave_report(args):
-	pass
+
+	args['mot_cle'] = "DEP"
+	
+	#Let's check if the message sent is composed by an expected number of values
+	args["expected_number_of_values"] = getattr(settings,'EXPECTED_NUMBER_OF_VALUES','')[args['message_type']]
+	check_number_of_values(args)
+	if not args['valide']:
+		return
 #-----------------------------------------------------------------
