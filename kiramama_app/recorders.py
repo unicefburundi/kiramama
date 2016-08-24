@@ -150,6 +150,20 @@ def check_is_past_date(args):
 
 	args['valide'] = True
 	args['info_to_contact'] = "La date verifiee est dans le passe"
+
+
+
+def check_risk_level(args):
+	''' This function checks if a risk level specified is valid '''
+	sent_risk_level = args['text'].split(' ')[3]
+	risk_levels = RiskLevel.objects.filter(risk_designation = sent_risk_level)
+	if(len(risk_levels) < 1):
+		args['valide'] = False
+		args['info_to_contact'] = "Erreur. Le niveau de risque indique n est pas reconnu par le systeme. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+	else:
+		args["risklevel"] = risk_levels[0]
+		args['valide'] = True
+		args['info_to_contact'] = "Le niveau de risque indique est valide."
 #======================reporters self registration==================================
 
 
@@ -437,6 +451,11 @@ def record_pregnant_case(args):
 	args["future_date"] = args['text'].split(' ')[2]
 	args["date_meaning"] = "date du prochain rendez-vous"
 	check_is_future_date(args)
+	if not args['valide']:
+		return
+
+	#Let's check if the risk level is correct
+	check_risk_level(args)
 	if not args['valide']:
 		return
 #-----------------------------------------------------------------
