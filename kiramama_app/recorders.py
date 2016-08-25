@@ -550,6 +550,12 @@ def record_prenatal_consultation_report(args):
 
 	args['mot_cle'] = "CPN"	
 
+	#Let's check if the person who send this message is a reporter
+	check_if_is_reporter(args)
+	print(args['valide'])
+	if not args['valide']:
+		return
+
 	#Let's check if the message sent is composed by an expected number of values
 	args["expected_number_of_values"] = getattr(settings,'EXPECTED_NUMBER_OF_VALUES','')[args['message_type']]
 	check_number_of_values(args)
@@ -564,6 +570,12 @@ def record_prenatal_consultation_report(args):
 def record_birth_case_report(args):
 
 	args['mot_cle'] = "NSC"
+
+	#Let's check if the person who send this message is a reporter
+	check_if_is_reporter(args)
+	print(args['valide'])
+	if not args['valide']:
+		return
 	
 	#Let's check if the message sent is composed by an expected number of values
 	args["expected_number_of_values"] = getattr(settings,'EXPECTED_NUMBER_OF_VALUES','')[args['message_type']]
@@ -578,6 +590,12 @@ def record_birth_case_report(args):
 def record_postnatal_care_report(args):
 
 	args['mot_cle'] = "CON"
+
+	#Let's check if the person who send this message is a reporter
+	check_if_is_reporter(args)
+	print(args['valide'])
+	if not args['valide']:
+		return
 	
 	#Let's check if the message sent is composed by an expected number of values
 	args["expected_number_of_values"] = getattr(settings,'EXPECTED_NUMBER_OF_VALUES','')[args['message_type']]
@@ -592,6 +610,12 @@ def record_postnatal_care_report(args):
 def record_child_follow_up_report(args):
 
 	args['mot_cle'] = "VAC"
+
+	#Let's check if the person who send this message is a reporter
+	check_if_is_reporter(args)
+	print(args['valide'])
+	if not args['valide']:
+		return
 	
 	#Let's check if the message sent is composed by an expected number of values
 	args["expected_number_of_values"] = getattr(settings,'EXPECTED_NUMBER_OF_VALUES','')[args['message_type']]
@@ -609,6 +633,12 @@ def record_child_follow_up_report(args):
 def record_risk_report(args):
 
 	args['mot_cle'] = "RIS"
+
+	#Let's check if the person who send this message is a reporter
+	check_if_is_reporter(args)
+	print(args['valide'])
+	if not args['valide']:
+		return
 	
 	#Let's check if the message sent is composed by an expected number of values
 	args["expected_number_of_values"] = getattr(settings,'EXPECTED_NUMBER_OF_VALUES','')[args['message_type']]
@@ -624,6 +654,12 @@ def record_risk_report(args):
 def record_response_to_risk_report(args):
 
 	args['mot_cle'] = "RER"
+
+	#Let's check if the person who send this message is a reporter
+	check_if_is_reporter(args)
+	print(args['valide'])
+	if not args['valide']:
+		return
 	
 	#Let's check if the message sent is composed by an expected number of values
 	args["expected_number_of_values"] = getattr(settings,'EXPECTED_NUMBER_OF_VALUES','')[args['message_type']]
@@ -639,6 +675,12 @@ def record_response_to_risk_report(args):
 def record_death_report(args):
 
 	args['mot_cle'] = "DEC"
+
+	#Let's check if the person who send this message is a reporter
+	check_if_is_reporter(args)
+	print(args['valide'])
+	if not args['valide']:
+		return
 	
 	#Let's check if the message sent is composed by an expected number of values
 	args["expected_number_of_values"] = getattr(settings,'EXPECTED_NUMBER_OF_VALUES','')[args['message_type']]
@@ -654,6 +696,12 @@ def record_death_report(args):
 def record_leave_report(args):
 
 	args['mot_cle'] = "DEP"
+
+	#Let's check if the person who send this message is a reporter
+	check_if_is_reporter(args)
+	print(args['valide'])
+	if not args['valide']:
+		return
 	
 	#Let's check if the message sent is composed by an expected number of values
 	args["expected_number_of_values"] = getattr(settings,'EXPECTED_NUMBER_OF_VALUES','')[args['message_type']]
