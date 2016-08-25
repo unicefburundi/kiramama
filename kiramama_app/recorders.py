@@ -112,6 +112,7 @@ def check_is_future_date(args):
 		args['valide'] = False
 		args['info_to_contact'] = "Erreur. Vous avez indiquez une date du passe pour '"+args["date_meaning"]+"'. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
 		return
+	args['date_well_written'] = date_sent
 	args['valide'] = True
 	args['info_to_contact'] = "La date verifiee est dans le future"
 
@@ -191,9 +192,34 @@ def check_phone_number(args):
 		args['valide'] = False
 		args['info_to_contact'] = "Erreur. Le numero de telephone n est pas bien ecrit. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
 	else:
+		args["phone_number"] = phone_number_to_check_no_space
 		args['valide'] = True
 		args['info_to_contact'] = "Le numero de telephone est bien ecrit."
 
+
+def check_if_is_reporter(args):
+	''' This function checks if the contact who sent the current message is a CHW '''
+	concerned_chw = CHW.objects.filter(phone_number = args['phone'])
+	if len(concerned_chw) < 1:
+		#This person is not in the list of community health workers
+		args['valide'] = False
+		args['info_to_contact'] = "Erreur. Vous ne vous etes pas enregistre pour pouvoir donner des rapports. Veuillez vous enregistrer en envoyant le message d enregistrement commencant par REG"
+		return 
+
+	one_concerned_chw = concerned_chw[0]
+
+	if not one_concerned_chw.cds:
+		#The CDS of this reporter is not known
+		args['valide'] = False
+		args['info_to_contact'] = "Exception. Votre site n est pas enregistre dans le systeme. Veuillez contacter l administrateur du systeme"
+		return
+
+	args['the_sender'] =  one_concerned_chw
+	args['facility'] = one_concerned_chw.cds
+	args['supervisor_phone_number'] = one_concerned_chw.supervisor_phone_number
+	args['sub_colline'] = one_concerned_chw.sub_colline
+	args['valide'] = True
+	args['info_to_contact'] = " Le bureau d affectation de ce rapporteur est connu "
 
 #======================reporters self registration==================================
 
@@ -465,6 +491,12 @@ def record_pregnant_case(args):
 
 	args['mot_cle'] = "GRO"
 
+	#Let's check if the person who send this message is a reporter
+	check_if_is_reporter(args)
+	print(args['valide'])
+	if not args['valide']:
+		return
+
 	#Let's check if the message sent is composed by an expected number of values
 	args["expected_number_of_values"] = getattr(settings,'EXPECTED_NUMBER_OF_VALUES','')[args['message_type']]
 	check_number_of_values(args)
@@ -477,6 +509,7 @@ def record_pregnant_case(args):
 	check_is_future_date(args)
 	if not args['valide']:
 		return
+	args["expected_birth_date"] = args['date_well_written']
 
 	#Let's check if the next appointment date is a future date
 	args["future_date"] = args['text'].split(' ')[2]
@@ -484,6 +517,7 @@ def record_pregnant_case(args):
 	check_is_future_date(args)
 	if not args['valide']:
 		return
+	args["next_appointment_date"] = args['date_well_written']
 
 	#Let's check if the risk level is correct
 	args["risk_level"] = args['text'].split(' ')[3]
@@ -502,6 +536,11 @@ def record_pregnant_case(args):
 	check_phone_number(args)
 	if not args['valide']:
 		return
+
+	#All cheks passes. Let's record the pregnant women
+	the_created_mother_record, created = Mother.objects.get_or_create(phone_number = args["phone_number"])
+	the_created_report = Report.objects.create(chw = args['the_sender'], sub_hill = args['sub_colline'], cds = args['facility'], mother = the_created_mother_record, reporting_date = datetime.datetime.now().date(), text = args['text'], category = args['mot_cle'])
+	created_gro_report = ReportGRO.objects.create(report = the_created_report, expected_delivery_date = args["expected_birth_date"], next_appointment_date = args["next_appointment_date"], risk_level = args["risklevel"], consultation_location = args['location'])
 #-----------------------------------------------------------------
 
 

@@ -147,7 +147,7 @@ class ReportGRO(models.Model):
 	consultation_location = models.ForeignKey(Lieu)
 
 	def __unicode__(self):
-		return self.location_category_designation
+		return self.report.text
 
 class ReportCPN(models.Model):
 	''' In this model will be stored CPN (consultation prenatale) reports '''
@@ -159,7 +159,7 @@ class ReportCPN(models.Model):
 	next_appointment_date = models.DateField()
 
 	def __unicode__(self):
-		return self.report
+		return self.report.text
 
 class ReportNSC(models.Model):
 	''' In this model will be stored NSC (rapport de naissance) reports '''
@@ -173,7 +173,7 @@ class ReportNSC(models.Model):
 	breast_feading = models.CharField(max_length=10)
 
 	def __unicode__(self):
-		return self.report
+		return self.report.text
 
 class ReportCON(models.Model):
 	''' In this model will be stored CON (rapport de soins postnatals) reports '''
@@ -185,7 +185,7 @@ class ReportCON(models.Model):
 	next_appointment_date = models.DateField()
 
 	def __unicode__(self):
-		return self.report
+		return self.report.text
 
 class ReportVAC(models.Model):
 	''' In this model will be stored VAC (rapport de suivi de l enfant) reports '''
@@ -195,14 +195,14 @@ class ReportVAC(models.Model):
 	location = models.ForeignKey(Lieu)
 
 	def __unicode__(self):
-		return self.report
+		return self.report.text
 
 class ReportRIS(models.Model):
 	''' In this model will be stored RIS (Rapport de risque) reports '''
 	report = models.ForeignKey(Report)
 
 	def __unicode__(self):
-		return self.report
+		return self.report.text
 
 class ReportRISBebe(models.Model):
 	''' In this model will be stored informations specific to child in the case of a child RIS report '''
@@ -220,7 +220,7 @@ class ReportRER(models.Model):
 	current_state = models.ForeignKey(HealthState)
 	
 	def __unicode__(self):
-		return self.report
+		return self.report.text
 
 class ReportDEC(models.Model):
 	''' In this model will be stored DEC (Rapport de deces) reports '''
@@ -229,7 +229,7 @@ class ReportDEC(models.Model):
 	death_code = models.ForeignKey(DeathCode)
 
 	def __unicode__(self):
-		return self.report
+		return self.report.text
 
 class ReportDECBebe(models.Model):
 	''' In this model will be stored informations specific to child in the case of a child death report '''
@@ -244,7 +244,7 @@ class ReportDEP(models.Model):
 	report = models.ForeignKey(Report)
 
 	def __unicode__(self):
-		return self.report
+		return self.report.text
 
 class CONSymptom(models.Model):
 	''' In this model will be stored all options of CON symptoms '''
