@@ -155,8 +155,8 @@ def check_is_past_date(args):
 
 def check_risk_level(args):
 	''' This function checks if a risk level specified is valid '''
-	sent_risk_level = args['text'].split(' ')[3]
-	risk_levels = RiskLevel.objects.filter(risk_designation = sent_risk_level)
+	sent_risk_level = args["risk_level"]
+	risk_levels = RiskLevel.objects.filter(risk_designation__iexact = sent_risk_level)
 	if(len(risk_levels) < 1):
 		args['valide'] = False
 		args['info_to_contact'] = "Erreur. Le niveau de risque indique n est pas reconnu par le systeme. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
@@ -164,6 +164,20 @@ def check_risk_level(args):
 		args["risklevel"] = risk_levels[0]
 		args['valide'] = True
 		args['info_to_contact'] = "Le niveau de risque indique est valide."
+
+
+
+def check_location(args):
+	''' This function checks if the location sent is valid '''
+	location_to_check = args["location"]
+	locations = Lieu.objects.filter(location_category_designation__iexact = location_to_check)
+	if(len(locations) < 1):
+		args['valide'] = False
+		args['info_to_contact'] = "Erreur. Le lieu indique n est pas valide. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+	else:
+		args['location'] = locations[0]
+		args['valide'] = True
+		args['info_to_contact'] = "Le lieu indique est valide."
 #======================reporters self registration==================================
 
 
@@ -455,7 +469,14 @@ def record_pregnant_case(args):
 		return
 
 	#Let's check if the risk level is correct
+	args["risk_level"] = args['text'].split(' ')[3]
 	check_risk_level(args)
+	if not args['valide']:
+		return
+
+	#Let's check if the location sent is valid
+	args["location"] = args['text'].split(' ')[4]
+	check_location(args)
 	if not args['valide']:
 		return
 #-----------------------------------------------------------------
