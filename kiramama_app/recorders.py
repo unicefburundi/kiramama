@@ -178,6 +178,23 @@ def check_location(args):
 		args['location'] = locations[0]
 		args['valide'] = True
 		args['info_to_contact'] = "Le lieu indique est valide."
+
+
+
+def check_phone_number(args):
+	''' This function checks if a phone number sent is valid '''
+	phone_number_to_check = args["phone_number"]
+	phone_number_to_check_no_space = phone_number_to_check.replace(" ", "")
+	expression = r'^(\+?(257)?)((61)|(62)|(68)|(69)|(71)|(72)|(75)|(76)|(79))([0-9]{6})$'
+	if re.search(expression, phone_number_to_check_no_space) is None:
+		#The phone number is not well written
+		args['valide'] = False
+		args['info_to_contact'] = "Erreur. Le numero de telephone n est pas bien ecrit. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+	else:
+		args['valide'] = True
+		args['info_to_contact'] = "Le numero de telephone est bien ecrit."
+
+
 #======================reporters self registration==================================
 
 
@@ -477,6 +494,12 @@ def record_pregnant_case(args):
 	#Let's check if the location sent is valid
 	args["location"] = args['text'].split(' ')[4]
 	check_location(args)
+	if not args['valide']:
+		return
+
+	#Let's check if the phone number of the concerned mother is valid
+	args["phone_number"] = args['text'].split(' ')[5]
+	check_phone_number(args)
 	if not args['valide']:
 		return
 #-----------------------------------------------------------------
