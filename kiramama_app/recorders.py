@@ -537,10 +537,79 @@ def record_pregnant_case(args):
 	if not args['valide']:
 		return
 
+
+
+	#The mother id is made by two parts.
+	#The first part primary key of the cds on which works the CHW who registered her
+	#The second part is number of mother registered on that cds
+
+	mother_id = ""
+
+	#The first part of the mother id must have at minimum 3 caracters
+	mother_id_1 = str(args['facility'].id)
+	if len(mother_id_1) == 1:
+		mother_id_1 = "00"+mother_id_1
+	if len(mother_id_1) == 2:
+		mother_id_1 = "0"+mother_id_1
+
+	#Let's build the second part of the mother id. It's made at minimum by 3 caracters
+
+	gro_reports_from_this_cds = Report.objects.filter(cds = args['facility'])
+
+	#the_last_mother_registered_from_this_cds = the_last_gro_report_from_this_cds.mother
+
+	mother_id_2 = '0'
+	print("-1-")	
+	if(len(gro_reports_from_this_cds) > 0):
+		print("-2-")
+		the_last_mother_from_this_cds = Report.objects.filter(cds = args['facility']).order_by("-id")[0].mother
+		#Let's identify the id used by the system users for this patient
+		the_last_mother_id = the_last_mother_from_this_cds.id_mother
+
+		#Let's remove the first part (mother_id_1) and increment the second one
+		the_length_of_the_first_part = len(mother_id_1)
+		the_second_part = the_last_mother_id[the_length_of_the_first_part:]
+
+		#Let's increment the second part.
+		the_second_part_int = int(the_second_part)
+		the_second_part_int = the_second_part_int+1
+
+		#mother_id_2 is the second part of the new mother
+		mother_id_2 = str(the_second_part_int)
+		print("-3-")
+	else:
+		print("-4-")
+		mother_id_2 = '0'
+
+	print("-5-")
+	if len(mother_id_2) == 1:
+		mother_id_2 = "00"+mother_id_2
+	if len(mother_id_2) == 2:
+		mother_id_2 = "0"+mother_id_2
+
+
+	mother_id = mother_id_1+""+mother_id_2
+
+	#Let's check if there is no mother with that id
+	check_mother_exists = Mother.objects.filter(id_mother = mother_id)
+	if len(check_mother_exists) > 0:
+		args['valide'] = False
+		args['info_to_contact'] = "Exception. Consulter l equipe de maintenance du systeme."
+		return
+
+
+
+
+
+
 	#All cheks passes. Let's record the pregnant women
-	the_created_mother_record, created = Mother.objects.get_or_create(phone_number = args["phone_number"])
+	#the_created_mother_record, created = Mother.objects.get_or_create(phone_number = args["phone_number"])
+	the_created_mother_record = Mother.objects.create(id_mother = mother_id, phone_number = args["phone_number"])
 	the_created_report = Report.objects.create(chw = args['the_sender'], sub_hill = args['sub_colline'], cds = args['facility'], mother = the_created_mother_record, reporting_date = datetime.datetime.now().date(), text = args['text'], category = args['mot_cle'])
 	created_gro_report = ReportGRO.objects.create(report = the_created_report, expected_delivery_date = args["expected_birth_date"], next_appointment_date = args["next_appointment_date"], risk_level = args["risklevel"], consultation_location = args['location'])
+	
+	args['valide'] = True
+	args['info_to_contact'] = "La maman est bien enregistre. Son numero est "+mother_id
 #-----------------------------------------------------------------
 
 
@@ -561,6 +630,7 @@ def record_prenatal_consultation_report(args):
 	check_number_of_values(args)
 	if not args['valide']:
 		return
+
 #-----------------------------------------------------------------
 
 
