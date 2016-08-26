@@ -154,6 +154,43 @@ def check_is_past_date(args):
 
 
 
+def check_date_is_previous_or_today(args):
+	''' This function checks if a given date is for previous days or today '''
+	given_date = args["previous_days_or_today_date"]
+	if not given_date:
+		args['valide'] = False
+		args['info_to_contact'] = "Exception. Pas de date trouvee pour la verification."
+		return
+
+	expression = r'^((0[1-9])|([1-2][0-9])|(3[01]))((0[1-9])|(1[0-2]))[0-9]{2}$'
+	if re.search(expression, given_date) is None:
+		args['valide'] = False
+		args['info_to_contact'] = "Erreur. La date indiquee pour '"+args["date_meaning"]+"' n est pas valide. Verifier si vous avez mis chaque valeur dans sa place. Pour corriger, reenvoyez un message commencant par "+args['mot_cle']
+		return
+
+
+	sent_date = given_date[0:2]+"-"+given_date[2:4]+"-20"+given_date[4:]
+
+	sent_date_without_dash = sent_date.replace("-","")
+	try:
+		date_sent = datetime.datetime.strptime(sent_date_without_dash, "%d%m%Y").date()
+	except:
+		args['valide'] = False
+		args['info_to_contact'] = "Erreur. La date indiquee pour '"+args["date_meaning"]+"' n est pas valide. Verifier si vous avez mis chaque valeur dans sa place. Pour corriger, reenvoyez un message commencant par "+args['mot_cle']
+		return
+
+
+	if date_sent > datetime.datetime.now().date():
+		#The reporter can not report for a past date
+		args['valide'] = False
+		args['info_to_contact'] = "Erreur. Vous avez indiquez une date qui n est pas encore arrivee pour '"+args["date_meaning"]+"'. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		return
+
+	args['valide'] = True
+	args['info_to_contact'] = "La date verifiee est dans le passe"
+
+
+
 def check_risk_level(args):
 	''' This function checks if a risk level specified is valid '''
 	sent_risk_level = args["risk_level"]
@@ -663,6 +700,14 @@ def record_prenatal_consultation_report(args):
 	#Let's check if the CPN name sent exists
 	args["sent_cpn_name"] =  args['text'].split(' ')[2]
 	check_cpn_name_exists(args)
+	if not args['valide']:
+		return
+
+	#Let's check if the consultation date is valid
+	#It must be a previous date or today's date
+	args["previous_days_or_today_date"] = args['text'].split(' ')[3]
+	args["date_meaning"] = "Date de consultation prenatale"
+	check_date_is_previous_or_today(args)
 	if not args['valide']:
 		return
 
