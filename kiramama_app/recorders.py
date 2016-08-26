@@ -148,7 +148,7 @@ def check_is_past_date(args):
 		args['valide'] = False
 		args['info_to_contact'] = "Erreur. Vous avez indiquez une date non acceptable pour '"+args["date_meaning"]+"'. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
 		return
-
+	args['date_well_written'] = date_sent
 	args['valide'] = True
 	args['info_to_contact'] = "La date verifiee est dans le passe"
 
@@ -185,7 +185,7 @@ def check_date_is_previous_or_today(args):
 		args['valide'] = False
 		args['info_to_contact'] = "Erreur. Vous avez indiquez une date qui n est pas encore arrivee pour '"+args["date_meaning"]+"'. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
 		return
-
+	args['date_well_written'] = date_sent
 	args['valide'] = True
 	args['info_to_contact'] = "La date verifiee est dans le passe"
 
@@ -267,6 +267,7 @@ def check_mother_id_is_valid(args):
 		args['valide'] = False
 		args['info_to_contact'] = "Erreur. L identifiant de la maman n est pas valide. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
 	else:
+		args['concerned_mother'] = filtered_mother[0]
 		args['valide'] = True
 		args['info_to_contact'] = "L identifiant de la maman est valide"
 
@@ -279,8 +280,25 @@ def check_cpn_name_exists(args):
 		args['valide'] = False
 		args['info_to_contact'] = "Erreur. Le nom du CPN indique n existe pas dans le systeme. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
 	else:
+		args['specified_cpn'] =  filtered_cpn[0]
 		args['valide'] = True
 		args['info_to_contact'] = "Le nom du CPN indique existe dans le systeme"
+
+
+def check_is_float(args):
+	''' This function checks if a given value is a float '''
+
+	expression = r'^([0-9]+.[0-9]+)$|^([0-9]+)$|^([0-9]+,[0-9]+)$'
+
+	value_to_check = args["float_value"]
+
+	if re.search(expression, value_to_check) is None:
+		args['valide'] = False
+		args['info_to_contact'] = "Erreur. La valeur envoyee pour '"+args["date_meaning"]+"' n est pas valide. Pour corriger,  reenvoyez un message corrige et commencant par le mot cle "+args['mot_cle']
+	else:
+		args['checked_float'] = value_to_check
+		args['valide'] = True
+		args['info_to_contact'] = "La valeur envoyee pour '"+args["date_meaning"]+"' est valide."
 	
 #======================reporters self registration==================================
 
@@ -696,12 +714,14 @@ def record_prenatal_consultation_report(args):
 	check_mother_id_is_valid(args)
 	if not args['valide']:
 		return
+	args['concerned_woman'] = args['concerned_mother']
 	
 	#Let's check if the CPN name sent exists
 	args["sent_cpn_name"] =  args['text'].split(' ')[2]
 	check_cpn_name_exists(args)
 	if not args['valide']:
 		return
+	args["concerned_cpn"] = args['specified_cpn']
 
 	#Let's check if the consultation date is valid
 	#It must be a previous date or today's date
@@ -710,7 +730,37 @@ def record_prenatal_consultation_report(args):
 	check_date_is_previous_or_today(args)
 	if not args['valide']:
 		return
+	args["cpn_consultation_date"] = args['date_well_written']
 
+	#Let's check if the next appointment date is valid
+	args["future_date"] = args['text'].split(' ')[4]
+	args["date_meaning"] = "date du prochain rendez-vous"
+	check_is_future_date(args)
+	if not args['valide']:
+		return
+	args["next_appointment_date"] = args['date_well_written']
+
+	#Let's check if the consultation location is valid
+	args["location"] = args['text'].split(' ')[5]
+	check_location(args)
+	if not args['valide']:
+		return
+
+	#Let's check if the indicated woman weight is valid
+	args["float_value"] = args['text'].split(' ')[6]
+	args["date_meaning"] = "Poids de la mere"
+	check_is_float(args)
+	if not args['valide']:
+		return
+	try:
+		checked_value = float(args['checked_float'])
+	except:
+		args['valide'] = False
+		args['info_to_contact'] = "Erreur. La valeur envoyee pour '"+args["date_meaning"]+"' n est pas valide. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		return
+
+
+	
 #-----------------------------------------------------------------
 
 
