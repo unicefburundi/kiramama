@@ -219,8 +219,20 @@ def check_if_is_reporter(args):
 	args['supervisor_phone_number'] = one_concerned_chw.supervisor_phone_number
 	args['sub_colline'] = one_concerned_chw.sub_colline
 	args['valide'] = True
-	args['info_to_contact'] = " Le bureau d affectation de ce rapporteur est connu "
+	args['info_to_contact'] = "Le bureau d affectation de ce rapporteur est connu"
 
+
+def check_mother_id_is_valid(args):
+	''' This function checks if the mother id sent is valid '''
+	the_sent_mother_id = args["sent_mother_id"]
+	filtered_mother = Mother.objects.filter(id_mother = the_sent_mother_id)
+	if(len(filtered_mother) < 1):
+		args['valide'] = False
+		args['info_to_contact'] = "Erreur. L identifiant de la maman n est pas valide. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+	else:
+		args['valide'] = True
+		args['info_to_contact'] = "L identifiant de la maman est valide"
+		
 #======================reporters self registration==================================
 
 
@@ -609,7 +621,7 @@ def record_pregnant_case(args):
 	created_gro_report = ReportGRO.objects.create(report = the_created_report, expected_delivery_date = args["expected_birth_date"], next_appointment_date = args["next_appointment_date"], risk_level = args["risklevel"], consultation_location = args['location'])
 	
 	args['valide'] = True
-	args['info_to_contact'] = "La maman est bien enregistre. Son numero est "+mother_id
+	args['info_to_contact'] = "La femme enceinte est bien enregistree. Son numero est "+mother_id
 #-----------------------------------------------------------------
 
 
@@ -621,7 +633,6 @@ def record_prenatal_consultation_report(args):
 
 	#Let's check if the person who send this message is a reporter
 	check_if_is_reporter(args)
-	print(args['valide'])
 	if not args['valide']:
 		return
 
@@ -630,6 +641,13 @@ def record_prenatal_consultation_report(args):
 	check_number_of_values(args)
 	if not args['valide']:
 		return
+
+	#Let's check if the mother id sent is valid
+	args["sent_mother_id"] = args['text'].split(' ')[1]
+	check_mother_id_is_valid(args)
+	if not args['valide']:
+		return
+	
 
 #-----------------------------------------------------------------
 
