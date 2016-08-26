@@ -232,7 +232,19 @@ def check_mother_id_is_valid(args):
 	else:
 		args['valide'] = True
 		args['info_to_contact'] = "L identifiant de la maman est valide"
-		
+
+
+def check_cpn_name_exists(args):
+	''' This function checks if the CPN name sent exists in the system '''
+	the_sent_cpn_name = args["sent_cpn_name"]
+	filtered_cpn = CPN.objects.filter(cpn_designation__iexact = the_sent_cpn_name)
+	if(len(filtered_cpn) < 1):
+		args['valide'] = False
+		args['info_to_contact'] = "Erreur. Le nom du CPN indique n existe pas dans le systeme. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+	else:
+		args['valide'] = True
+		args['info_to_contact'] = "Le nom du CPN indique existe dans le systeme"
+	
 #======================reporters self registration==================================
 
 
@@ -648,6 +660,11 @@ def record_prenatal_consultation_report(args):
 	if not args['valide']:
 		return
 	
+	#Let's check if the CPN name sent exists
+	args["sent_cpn_name"] =  args['text'].split(' ')[2]
+	check_cpn_name_exists(args)
+	if not args['valide']:
+		return
 
 #-----------------------------------------------------------------
 
