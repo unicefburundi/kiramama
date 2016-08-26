@@ -670,6 +670,12 @@ def record_birth_case_report(args):
 	check_number_of_values(args)
 	if not args['valide']:
 		return
+
+	#Let's check if the mother id sent is valid
+	args["sent_mother_id"] = args['text'].split(' ')[1]
+	check_mother_id_is_valid(args)
+	if not args['valide']:
+		return
 #-----------------------------------------------------------------
 
 
@@ -690,6 +696,12 @@ def record_postnatal_care_report(args):
 	check_number_of_values(args)
 	if not args['valide']:
 		return
+
+	#Let's check if the mother id sent is valid
+	args["sent_mother_id"] = args['text'].split(' ')[1]
+	check_mother_id_is_valid(args)
+	if not args['valide']:
+		return
 #-----------------------------------------------------------------
 
 
@@ -708,6 +720,12 @@ def record_child_follow_up_report(args):
 	#Let's check if the message sent is composed by an expected number of values
 	args["expected_number_of_values"] = getattr(settings,'EXPECTED_NUMBER_OF_VALUES','')[args['message_type']]
 	check_number_of_values(args)
+	if not args['valide']:
+		return
+
+	#Let's check if the mother id sent is valid
+	args["sent_mother_id"] = args['text'].split(' ')[1]
+	check_mother_id_is_valid(args)
 	if not args['valide']:
 		return
 #-----------------------------------------------------------------
@@ -733,6 +751,12 @@ def record_risk_report(args):
 	check_number_of_values(args)
 	if not args['valide']:
 		return
+
+	#Let's check if the mother id sent is valid
+	args["sent_mother_id"] = args['text'].split(' ')[1]
+	check_mother_id_is_valid(args)
+	if not args['valide']:
+		return
 #-----------------------------------------------------------------
 
 
@@ -752,6 +776,12 @@ def record_response_to_risk_report(args):
 	#Let's check if the message sent is composed by an expected number of values
 	args["expected_number_of_values"] = getattr(settings,'EXPECTED_NUMBER_OF_VALUES','')[args['message_type']]
 	check_number_of_values(args)
+	if not args['valide']:
+		return
+
+	#Let's check if the mother id sent is valid
+	args["sent_mother_id"] = args['text'].split(' ')[1]
+	check_mother_id_is_valid(args)
 	if not args['valide']:
 		return
 #-----------------------------------------------------------------
@@ -775,6 +805,12 @@ def record_death_report(args):
 	check_number_of_values(args)
 	if not args['valide']:
 		return
+
+	#Let's check if the mother id sent is valid
+	args["sent_mother_id"] = args['text'].split(' ')[1]
+	check_mother_id_is_valid(args)
+	if not args['valide']:
+		return
 #-----------------------------------------------------------------
 
 
@@ -794,6 +830,12 @@ def record_leave_report(args):
 	#Let's check if the message sent is composed by an expected number of values
 	args["expected_number_of_values"] = getattr(settings,'EXPECTED_NUMBER_OF_VALUES','')[args['message_type']]
 	check_number_of_values(args)
+	if not args['valide']:
+		return
+
+	#Let's check if the mother id sent is valid
+	args["sent_mother_id"] = args['text'].split(' ')[1]
+	check_mother_id_is_valid(args)
 	if not args['valide']:
 		return
 #-----------------------------------------------------------------
