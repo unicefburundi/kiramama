@@ -92,7 +92,7 @@ def check_is_future_date(args):
 	expression = r'^((0[1-9])|([1-2][0-9])|(3[01]))((0[1-9])|(1[0-2]))[0-9]{2}$'
 	if re.search(expression, given_date) is None:
 		args['valide'] = False
-		args['info_to_contact'] = "Erreur. La date indiquee pour '"+args["date_meaning"]+"' n est pas valide. Verifier si vous avez mis chaque valeur dans sa place. Pour corriger, reenvoyez un message commencant par "+args['mot_cle']
+		args['info_to_contact'] = "Erreur. La date indiquee pour '"+args["date_meaning"]+"' n est pas valide. Verifier si vous avez mis chaque valeur dans sa place. Pour corriger, veuillez reenvoyer un message commencant par "+args['mot_cle']
 		return
 
 
@@ -103,7 +103,7 @@ def check_is_future_date(args):
 		date_sent = datetime.datetime.strptime(sent_date_without_dash, "%d%m%Y").date()
 	except:
 		args['valide'] = False
-		args['info_to_contact'] = "Erreur. La date indiquee pour '"+args["date_meaning"]+"' n est pas valide. Verifier si vous avez mis chaque valeur dans sa place. Pour corriger, reenvoyez un message commencant par "+args['mot_cle']
+		args['info_to_contact'] = "Erreur. La date indiquee pour '"+args["date_meaning"]+"' n est pas valide. Verifier si vous avez mis chaque valeur dans sa place. Pour corriger, veuillez reenvoyer un message commencant par "+args['mot_cle']
 		return
 
 
@@ -128,7 +128,7 @@ def check_is_past_date(args):
 	expression = r'^((0[1-9])|([1-2][0-9])|(3[01]))((0[1-9])|(1[0-2]))[0-9]{2}$'
 	if re.search(expression, given_date) is None:
 		args['valide'] = False
-		args['info_to_contact'] = "Erreur. La date indiquee pour '"+args["date_meaning"]+"' n est pas valide. Verifier si vous avez mis chaque valeur dans sa place. Pour corriger, reenvoyez un message commencant par "+args['mot_cle']
+		args['info_to_contact'] = "Erreur. La date indiquee pour '"+args["date_meaning"]+"' n est pas valide. Verifier si vous avez mis chaque valeur dans sa place. Pour corriger, veuillez reenvoyer un message commencant par "+args['mot_cle']
 		return
 
 
@@ -139,7 +139,7 @@ def check_is_past_date(args):
 		date_sent = datetime.datetime.strptime(sent_date_without_dash, "%d%m%Y").date()
 	except:
 		args['valide'] = False
-		args['info_to_contact'] = "Erreur. La date indiquee pour '"+args["date_meaning"]+"' n est pas valide. Verifier si vous avez mis chaque valeur dans sa place. Pour corriger, reenvoyez un message commencant par "+args['mot_cle']
+		args['info_to_contact'] = "Erreur. La date indiquee pour '"+args["date_meaning"]+"' n est pas valide. Verifier si vous avez mis chaque valeur dans sa place. Pour corriger, veuillez reenvoyer un message commencant par "+args['mot_cle']
 		return
 
 
@@ -165,7 +165,7 @@ def check_date_is_previous_or_today(args):
 	expression = r'^((0[1-9])|([1-2][0-9])|(3[01]))((0[1-9])|(1[0-2]))[0-9]{2}$'
 	if re.search(expression, given_date) is None:
 		args['valide'] = False
-		args['info_to_contact'] = "Erreur. La date indiquee pour '"+args["date_meaning"]+"' n est pas valide. Verifier si vous avez mis chaque valeur dans sa place. Pour corriger, reenvoyez un message commencant par "+args['mot_cle']
+		args['info_to_contact'] = "Erreur. La date indiquee pour '"+args["date_meaning"]+"' n est pas valide. Verifier si vous avez mis chaque valeur dans sa place. Pour corriger, veuillez reenvoyer un message commencant par "+args['mot_cle']
 		return
 
 
@@ -176,7 +176,7 @@ def check_date_is_previous_or_today(args):
 		date_sent = datetime.datetime.strptime(sent_date_without_dash, "%d%m%Y").date()
 	except:
 		args['valide'] = False
-		args['info_to_contact'] = "Erreur. La date indiquee pour '"+args["date_meaning"]+"' n est pas valide. Verifier si vous avez mis chaque valeur dans sa place. Pour corriger, reenvoyez un message commencant par "+args['mot_cle']
+		args['info_to_contact'] = "Erreur. La date indiquee pour '"+args["date_meaning"]+"' n est pas valide. Verifier si vous avez mis chaque valeur dans sa place. Pour corriger, veuillez reenvoyer un message commencant par "+args['mot_cle']
 		return
 
 
@@ -294,12 +294,28 @@ def check_is_float(args):
 
 	if re.search(expression, value_to_check) is None:
 		args['valide'] = False
-		args['info_to_contact'] = "Erreur. La valeur envoyee pour '"+args["date_meaning"]+"' n est pas valide. Pour corriger,  reenvoyez un message corrige et commencant par le mot cle "+args['mot_cle']
+		args['info_to_contact'] = "Erreur. La valeur envoyee pour '"+args["date_meaning"]+"' n est pas valide. Pour corriger,  veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
 	else:
 		args['checked_float'] = value_to_check
 		args['valide'] = True
 		args['info_to_contact'] = "La valeur envoyee pour '"+args["date_meaning"]+"' est valide."
-	
+
+
+
+def check_child_code(args):
+	''' This function is used to check if the child code is valid '''
+	the_sent_child_code = args["child_code"]
+
+	child_numbers = ChildNumber.objects.filter(child_code_designation = the_sent_child_code)
+
+	if(len(child_numbers) < 1):
+		args['valide'] = False
+		args['info_to_contact'] = "Erreur. Le numero de l enfant envoye n existe pas. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+	else:
+		args['child_number'] = child_numbers[0]
+		args['valide'] = True
+		args['info_to_contact'] = "Le numero de l enfant envoye est valide."
+
 #======================reporters self registration==================================
 
 
@@ -312,7 +328,7 @@ def check_facility(args):
 		args['info_to_contact'] = "Le code CDS envoye est reconnu."
 	else:
 		args['valide'] = False
-		args['info_to_contact'] = "Erreur. Le code envoye n est pas associe a un CDS. Pour corriger, reenvoyez un message corrige et commencant par le mot cle "+args['mot_cle']
+		args['info_to_contact'] = "Erreur. Le code envoye n est pas associe a un CDS. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
 
 def check_supervisor_phone_number(args):
 	''' This function checks if the phone number of the supervisor is well written '''
@@ -794,6 +810,31 @@ def record_birth_case_report(args):
 	check_mother_id_is_valid(args)
 	if not args['valide']:
 		return
+
+	#Let's check if the child code is valid
+	args["child_code"] = args['text'].split(' ')[2]
+	check_child_code(args)
+	if not args['valide']:
+		return
+
+	#Let check if the birth date is not a future date
+	#It must be a previous date or today's date
+	args["previous_days_or_today_date"] = args['text'].split(' ')[3]
+	args["date_meaning"] = "Date de naissance"
+	check_date_is_previous_or_today(args)
+	if not args['valide']:
+		return
+	args["birth_date"] = args['date_well_written']
+
+
+	#Let's check if the next CPoN date is a future date
+	args["future_date"] = args['text'].split(' ')[4]
+	args["date_meaning"] = "Prochaine date pour les soins postnatals"
+	check_is_future_date(args)
+	if not args['valide']:
+		return
+	args["next_cpon_appointment_date"] = args['date_well_written']
+	
 #-----------------------------------------------------------------
 
 
