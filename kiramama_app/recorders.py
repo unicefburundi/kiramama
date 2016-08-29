@@ -844,6 +844,7 @@ def record_birth_case_report(args):
 	check_mother_id_is_valid(args)
 	if not args['valide']:
 		return
+	args['concerned_woman'] = args['concerned_mother']
 
 	#Let's check if the child code is valid
 	args["child_code"] = args['text'].split(' ')[2]
@@ -903,6 +904,12 @@ def record_birth_case_report(args):
 		return
 	
 	
+	#Now, everything is checked. Let's record the report
+	the_created_report = Report.objects.create(chw = args['the_sender'], sub_hill = args['sub_colline'], cds = args['facility'], mother = args['concerned_woman'], reporting_date = datetime.datetime.now().date(), text = args['text'], category = args['mot_cle'])
+	created_nsc_report = ReportNSC.objects.create(report = the_created_report, child_number = args['child_number'], birth_date = args["birth_date"], birth_location = args['location'], gender = args['gender'], weight = checked_value, next_appointment_date = args["next_cpon_appointment_date"], breast_feading = args['code_allaitement'])
+	
+	args['valide'] = True
+	args['info_to_contact'] = "Le rapport de naissance du bebe '" +args['child_number'].child_code_designation+"' de la maman '"+args['concerned_woman'].id_mother+"' est bien enregistre."
 	
 #-----------------------------------------------------------------
 

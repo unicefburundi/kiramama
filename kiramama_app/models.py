@@ -164,10 +164,10 @@ class ReportCPN(models.Model):
 class ReportNSC(models.Model):
 	''' In this model will be stored NSC (rapport de naissance) reports '''
 	report = models.ForeignKey(Report)
-	child_number = models.CharField(max_length=10)
+	child_number = models.ForeignKey(ChildNumber)
 	birth_date = models.DateField()
 	birth_location = models.ForeignKey(Lieu)
-	gender = models.CharField(max_length=10)
+	gender = models.ForeignKey(Gender)
 	weight = models.FloatField()
 	next_appointment_date = models.DateField()
 	breast_feading = models.ForeignKey(BreastFeed)
