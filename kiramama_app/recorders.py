@@ -211,7 +211,7 @@ def check_location(args):
 	locations = Lieu.objects.filter(location_category_designation__iexact = location_to_check)
 	if(len(locations) < 1):
 		args['valide'] = False
-		args['info_to_contact'] = "Erreur. Le lieu indique n est pas valide. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		args['info_to_contact'] = "Erreur. La valeur envoyee pour '"+args["date_meaning"]+"' n est pas valide. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
 	else:
 		args['location'] = locations[0]
 		args['valide'] = True
@@ -315,6 +315,38 @@ def check_child_code(args):
 		args['child_number'] = child_numbers[0]
 		args['valide'] = True
 		args['info_to_contact'] = "Le numero de l enfant envoye est valide."
+
+
+def check_allaitement_maternel(args):
+	''' This function is used to check if the value sent for "Allaitement maternel" is valid '''
+	
+	the_sent_value = args["allaitement_maternel"]
+
+	allaitements = BreastFeed.objects.filter(breast_feed_option_name__iexact = the_sent_value)
+	if(len(allaitements) < 1):
+		args['valide'] = False
+		args['info_to_contact'] = "Erreur. La valeur envoye pour 'Allaitement maternel' n est pas valide. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+	else:
+		args['code_allaitement'] = allaitements[0]
+		args['valide'] = True
+		args['info_to_contact'] = "La valeur envoyee pour allaitement est valide"
+
+
+def check_gender(args):
+	''' This function is used to check if the value sent for gender is valid '''
+	
+	the_sent_gender = args["gender"]
+
+	genders = Gender.objects.filter(gender_code__iexact = the_sent_gender)
+
+	if(len(genders) < 1):
+		args['valide'] = False
+		args['info_to_contact'] = "Erreur. La valeur envoyee pour le genre du nouveau nee n est pas valide. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+	else:
+		args['gender'] = genders[0]
+		args['valide'] = True
+		args['info_to_contact'] = "La valeur envoyee pour le genre du nouveau nee est valide"
+	
 
 #======================reporters self registration==================================
 
@@ -622,6 +654,7 @@ def record_pregnant_case(args):
 
 	#Let's check if the location sent is valid
 	args["location"] = args['text'].split(' ')[4]
+	args["date_meaning"] = "lieu de consultation"
 	check_location(args)
 	if not args['valide']:
 		return
@@ -758,6 +791,7 @@ def record_prenatal_consultation_report(args):
 
 	#Let's check if the consultation location is valid
 	args["location"] = args['text'].split(' ')[5]
+	args["date_meaning"] = "lieu de consultation"
 	check_location(args)
 	if not args['valide']:
 		return
@@ -834,6 +868,41 @@ def record_birth_case_report(args):
 	if not args['valide']:
 		return
 	args["next_cpon_appointment_date"] = args['date_well_written']
+
+	
+	#Let's check if the location of birth is valid
+	args["location"] = args['text'].split(' ')[5]
+	args["date_meaning"] = "lieu de naissance"
+	check_location(args)
+	if not args['valide']:
+		return
+
+	#Let's check the value sent for "Allaitement maternel"
+	args["allaitement_maternel"] = args['text'].split(' ')[6]
+	check_allaitement_maternel(args)
+	if not args['valide']:
+		return
+
+	#Let's check if the value sent for gender is valid
+	args["gender"] = args['text'].split(' ')[7]
+	check_gender(args)
+	if not args['valide']:
+		return
+
+	#Let's check if the indicated child weight is valid
+	args["float_value"] = args['text'].split(' ')[8]
+	args["date_meaning"] = "Poids du nouveau ne"
+	check_is_float(args)
+	if not args['valide']:
+		return
+	try:
+		checked_value = float(args['checked_float'])
+	except:
+		args['valide'] = False
+		args['info_to_contact'] = "Erreur. La valeur envoyee pour '"+args["date_meaning"]+"' n est pas valide. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		return
+	
+	
 	
 #-----------------------------------------------------------------
 

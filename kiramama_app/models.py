@@ -170,7 +170,7 @@ class ReportNSC(models.Model):
 	gender = models.CharField(max_length=10)
 	weight = models.FloatField()
 	next_appointment_date = models.DateField()
-	breast_feading = models.CharField(max_length=10)
+	breast_feading = models.ForeignKey(BreastFeed)
 
 	def __unicode__(self):
 		return self.report.text
