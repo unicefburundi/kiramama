@@ -372,6 +372,21 @@ def check_child_exists(args):
 		args['valide'] = True
 		args['info_to_contact'] = "L enfant specifie a ete bien identifie"
 		
+
+def check_con_code(args):
+	''' This function checks if the CON code sent is valid '''
+
+	the_sent_con_code = args["con_code"]
+	
+	con_codes = CON.objects.filter(con_designation__iexact = the_sent_con_code)
+
+	if(len(con_codes) < 1):
+		args['valide'] = False
+		args['info_to_contact'] = "Erreur. La valeur envoyee pour 'CON effectuee' n est pas valide. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+	else:
+		args['concerned_con'] = con_codes[0]
+		args['valide'] = True
+		args['info_to_contact'] = "La valeur envoyee pour 'CON effectuee' est valide" 
 		
 
 #======================reporters self registration==================================
@@ -969,6 +984,13 @@ def record_postnatal_care_report(args):
 	check_child_exists(args)
 	if not args['valide']:
 		return
+
+	#Let's check if the consultation code sent is valid
+	args["con_code"] = args['text'].split(' ')[3]
+	check_con_code(args)
+	if not args['valide']:
+		return
+	
 #-----------------------------------------------------------------
 
 
