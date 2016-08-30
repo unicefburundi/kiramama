@@ -995,6 +995,12 @@ def record_child_follow_up_report(args):
 	check_mother_id_is_valid(args)
 	if not args['valide']:
 		return
+
+	#Let's check if this mother has a child with the sent child number
+	args["child_id"] = args['text'].split(' ')[2]
+	check_child_exists(args)
+	if not args['valide']:
+		return
 #-----------------------------------------------------------------
 
 
