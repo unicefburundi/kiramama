@@ -110,7 +110,7 @@ def check_is_future_date(args):
 	if date_sent <= datetime.datetime.now().date():
 		#The reporter can not report for a past date
 		args['valide'] = False
-		args['info_to_contact'] = "Erreur. Vous avez indiquez une date du passe pour '"+args["date_meaning"]+"'. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		args['info_to_contact'] = "Erreur. Vous n avez pas indiquez une date du futur pour '"+args["date_meaning"]+"'. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
 		return
 	args['date_well_written'] = date_sent
 	args['valide'] = True
@@ -990,6 +990,14 @@ def record_postnatal_care_report(args):
 	check_con_code(args)
 	if not args['valide']:
 		return
+
+	#Let's check if the next appointment date is a future date
+	args["future_date"] = args['text'].split(' ')[4]
+	args["date_meaning"] = "Date du prochain rendez-vous"
+	check_is_future_date(args)
+	if not args['valide']:
+		return
+	args["next_appointment_date"] = args['date_well_written']
 	
 #-----------------------------------------------------------------
 
