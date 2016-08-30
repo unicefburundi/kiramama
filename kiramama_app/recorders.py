@@ -346,7 +346,33 @@ def check_gender(args):
 		args['gender'] = genders[0]
 		args['valide'] = True
 		args['info_to_contact'] = "La valeur envoyee pour le genre du nouveau nee est valide"
+
+
+
+def check_child_exists(args):
+	''' This function checks if the child number sent exists and if that mother has a child with that number '''
+	the_sent_child_number = args["child_id"]
+
+	child_numbers = ChildNumber.objects.filter(child_code_designation__iexact = the_sent_child_number)
 	
+	if(len(child_numbers) < 1):
+		args['valide'] = False
+		args['info_to_contact'] = "Erreur. Le numero de l enfant envoye n existe pas dans le systeme. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		return
+	
+	child_number = child_numbers[0]
+
+	birth_reports_with_this_mother_and_childcode = ReportNSC.objects.filter(report__mother = args['concerned_mother'], child_number = child_number)
+
+	if(len(birth_reports_with_this_mother_and_childcode) < 1):
+		args['valide'] = False
+		args['info_to_contact'] = "Erreur. La dame '"+args['concerned_mother'].id_mother+"' n a pas de naissance '"+the_sent_child_number+"'. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+	else:
+		args['concerned_child'] = birth_reports_with_this_mother_and_childcode[0]
+		args['valide'] = True
+		args['info_to_contact'] = "L enfant specifie a ete bien identifie"
+		
+		
 
 #======================reporters self registration==================================
 
@@ -935,6 +961,12 @@ def record_postnatal_care_report(args):
 	#Let's check if the mother id sent is valid
 	args["sent_mother_id"] = args['text'].split(' ')[1]
 	check_mother_id_is_valid(args)
+	if not args['valide']:
+		return
+
+	#Let's check if this mother has a child with the sent child number
+	args["child_id"] = args['text'].split(' ')[2]
+	check_child_exists(args)
 	if not args['valide']:
 		return
 #-----------------------------------------------------------------
