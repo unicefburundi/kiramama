@@ -420,6 +420,21 @@ def check_symptoms(args):
 		args['valide'] = True
 		args['info_to_contact'] = "La liste des symboles envoyes est valide"
 
+
+def check_health_status(args):
+	''' This function checks if the health status values are valid '''
+
+	sent_health_status_value = args["health_status_value"]
+
+	health_status_group = HealthState.objects.filter(health_state_desigantion__iexact = sent_health_status_value)
+
+	if(len(health_status_group) < 1):
+		args['valide'] = False
+		args['info_to_contact'] = "Erreur. La valeur envoyee pour '"+args["health_status_meaning"]+"' n est pas valide. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+	else:
+		args['concerned_health_status'] = health_status_group[0]
+		args['valide'] = True
+		args['info_to_contact'] = "La valeur envoyee pour '"+args["health_status_meaning"]+"' est valide" 
 #======================reporters self registration==================================
 
 
@@ -1033,6 +1048,20 @@ def record_postnatal_care_report(args):
 	#Let's check if the symptom(s) is/are valid
 	args["symptoms"] = args['text'].split(' ')[5]
 	check_symptoms(args)
+	if not args['valide']:
+		return
+
+	#Let's check mother health status value
+	args["health_status_value"] = args['text'].split(' ')[6]
+	args["health_status_meaning"] = "etat de sante de la mere"
+	check_health_status(args)
+	if not args['valide']:
+		return
+
+	#Let's check child health status value
+	args["health_status_value"] = args['text'].split(' ')[7]
+	args["health_status_meaning"] = "etat de sante de l enfant"
+	check_health_status(args)
 	if not args['valide']:
 		return
 
