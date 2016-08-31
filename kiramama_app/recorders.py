@@ -114,7 +114,7 @@ def check_is_future_date(args):
 		return
 	args['date_well_written'] = date_sent
 	args['valide'] = True
-	args['info_to_contact'] = "La date verifiee est dans le future"
+	args['info_to_contact'] = "La date verifiee est dans le futur"
 
 
 def check_is_past_date(args):
@@ -387,7 +387,38 @@ def check_con_code(args):
 		args['concerned_con'] = con_codes[0]
 		args['valide'] = True
 		args['info_to_contact'] = "La valeur envoyee pour 'CON effectuee' est valide" 
-		
+
+
+def check_symptoms(args):
+	''' This function checks if symptoms sent are valid '''
+
+	sent_symptoms = args["symptoms"]
+	
+	#Symptoms are separated by comma. Let's put them in a list.
+	print("====>>>")
+	print(sent_symptoms)
+	sent_symptoms_list = sent_symptoms.split(",")
+	print("====>>>")
+	print(sent_symptoms_list)
+
+	#Let's assume that all symbols are correct
+	valid = True
+
+	#Let's check if every element of the list is a valid symptom
+	for current_symptom in sent_symptoms_list:
+		if(valid == True):
+			symptoms = Symptom.objects.filter(symtom_designation = current_symptom)
+			if(len(symptoms) < 1):
+				valid = False
+				not_valid_symptom = current_symptom
+				args['valide'] = False
+				args['info_to_contact'] = "Erreur. Le symptome '"+not_valid_symptom+"' n existe pas dans le systeme. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+
+	if(valid == True):
+		#All sent symptoms are known in the system
+		args['checked_symbols_list'] = sent_symptoms_list
+		args['valide'] = True
+		args['info_to_contact'] = "La liste des symboles envoyes est valide"
 
 #======================reporters self registration==================================
 
@@ -998,6 +1029,13 @@ def record_postnatal_care_report(args):
 	if not args['valide']:
 		return
 	args["next_appointment_date"] = args['date_well_written']
+	
+	#Let's check if the symptom(s) is/are valid
+	args["symptoms"] = args['text'].split(' ')[5]
+	check_symptoms(args)
+	if not args['valide']:
+		return
+
 	
 #-----------------------------------------------------------------
 
