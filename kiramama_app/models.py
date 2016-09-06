@@ -245,9 +245,9 @@ class ReportDEP(models.Model):
 
 	def __unicode__(self):
 		return self.report.text
-
+'''
 class CONSymptom(models.Model):
-	''' In this model will be stored all options of CON symptoms '''
+	In this model will be stored all options of CON symptoms
 	con_symptom_code = models.CharField(max_length=10)
 	con_symptom_code_meaning = models.CharField(max_length=50)
 
@@ -255,17 +255,17 @@ class CONSymptom(models.Model):
 		return "{0} - {1}".format(self.con_symptom_code, self.con_symptom_code_meaning)
 
 class RISSymptom(models.Model):
-	''' In this model will be stored all options of RIS symptoms '''
+	In this model will be stored all options of RIS symptoms
 	ris_symptom_code = models.CharField(max_length=10)
 	ris_symptom_code_meaning = models.CharField(max_length=50)
 
 	def __unicode__(self):
-		return "{0} - {1}".format(self.ris_symptom_code, self.ris_symptom_code_meaning)
+		return "{0} - {1}".format(self.ris_symptom_code, self.ris_symptom_code_meaning)'''
 
 class CON_Report_Symptom(models.Model):
 	''' This model is for CON reports and Symptoms association '''
 	con_report = models.ForeignKey(ReportCON)
-	symptom = models.ForeignKey(CONSymptom)
+	symptom = models.ForeignKey(Symptom)
 
 	def __unicode__(self):
 		return "{0} - {1}".format(self.con_report, self.symptom)
@@ -273,7 +273,7 @@ class CON_Report_Symptom(models.Model):
 class RIS_Report_Symptom(models.Model):
 	''' This model is for RIS reports and Symptoms association '''
 	ris_report = models.ForeignKey(ReportRIS)
-	symptom = models.ForeignKey(RISSymptom)
+	symptom = models.ForeignKey(Symptom)
 
 	def __unicode__(self):
 		return "{0} - {1}".format(self.ris_report, self.symptom)

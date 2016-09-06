@@ -369,6 +369,7 @@ def check_child_exists(args):
 		args['info_to_contact'] = "Erreur. La dame '"+args['concerned_mother'].id_mother+"' n a pas de naissance '"+the_sent_child_number+"'. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
 	else:
 		args['concerned_child'] = birth_reports_with_this_mother_and_childcode[0]
+		args['child_number'] = child_number
 		args['valide'] = True
 		args['info_to_contact'] = "L enfant specifie a ete bien identifie"
 		
@@ -416,7 +417,7 @@ def check_symptoms(args):
 
 	if(valid == True):
 		#All sent symptoms are known in the system
-		args['checked_symbols_list'] = sent_symptoms_list
+		args['checked_symptoms_list'] = sent_symptoms_list
 		args['valide'] = True
 		args['info_to_contact'] = "La liste des symboles envoyes est valide"
 
@@ -1057,6 +1058,7 @@ def record_postnatal_care_report(args):
 	check_health_status(args)
 	if not args['valide']:
 		return
+	args['mother_s_health_state'] = args['concerned_health_status']
 
 	#Let's check child health status value
 	args["health_status_value"] = args['text'].split(' ')[7]
@@ -1064,8 +1066,20 @@ def record_postnatal_care_report(args):
 	check_health_status(args)
 	if not args['valide']:
 		return
+	args['child_s_health_state'] = args['concerned_health_status']
 
 	
+	#Now, everything is checked. Let's record the report
+	the_created_report = Report.objects.create(chw = args['the_sender'], sub_hill = args['sub_colline'], cds = args['facility'], mother = args['concerned_mother'], reporting_date = datetime.datetime.now().date(), text = args['text'], category = args['mot_cle'])
+	created_con_report = ReportCON.objects.create(report = the_created_report, child = args['concerned_child'], con = args['concerned_con'], child_health_state = args['child_s_health_state'], mother_health_state = args['mother_s_health_state'], next_appointment_date = args["next_appointment_date"])
+
+
+	for one_symbol in args['checked_symptoms_list']:
+		one_symptom = Symptom.objects.filter(symtom_designation = one_symbol)[0]
+		created_report_symptom_connection = CON_Report_Symptom.objects.create(con_report = created_con_report, symptom = one_symptom)
+
+	args['valide'] = True
+	args['info_to_contact'] = "Le rapport de soins postnatals pour le bebe '" +args['child_number'].child_code_designation+"' de la maman '"+args['concerned_mother'].id_mother+"' est bien enregistre."
 #-----------------------------------------------------------------
 
 
