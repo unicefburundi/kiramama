@@ -123,10 +123,10 @@ class DeathCode(models.Model):
 	def __unicode__(self):
 		return "{0} - {1}".format(self.Death_code, self.Death_code_meaning)
 
-class HealthState(models.Model):
+class HealthStatus(models.Model):
 	'''In this model will be stored health state designations'''
-	health_state_desigantion = models.CharField(max_length=10)
-	health_state_code_meaning = models.CharField(max_length=50)
+	health_status_desigantion = models.CharField(max_length=10)
+	health_status_code_meaning = models.CharField(max_length=50)
 
 	def __unicode__(self):
 		return "{0} - {1}".format(self.health_state_desigantion, self.health_state_code_meaning)
@@ -180,8 +180,8 @@ class ReportCON(models.Model):
 	report = models.ForeignKey(Report)
 	child = models.ForeignKey(ReportNSC)
 	con = models.ForeignKey(CON)
-	child_health_state = models.ForeignKey(HealthState, related_name='child_state')
-	mother_health_state = models.ForeignKey(HealthState, related_name='mother_state')
+	child_health_state = models.ForeignKey(HealthStatus, related_name='child_state')
+	mother_health_state = models.ForeignKey(HealthStatus, related_name='mother_state')
 	next_appointment_date = models.DateField()
 
 	def __unicode__(self):
@@ -217,7 +217,7 @@ class ReportRER(models.Model):
 	report = models.ForeignKey(Report)
 	ris = models.ForeignKey(ReportRIS)
 	rescue = models.ForeignKey(Rescue)
-	current_state = models.ForeignKey(HealthState)
+	current_state = models.ForeignKey(HealthStatus)
 	
 	def __unicode__(self):
 		return self.report.text

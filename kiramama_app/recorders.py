@@ -427,7 +427,7 @@ def check_health_status(args):
 
 	sent_health_status_value = args["health_status_value"]
 
-	health_status_group = HealthState.objects.filter(health_state_desigantion__iexact = sent_health_status_value)
+	health_status_group = HealthStatus.objects.filter(health_status_desigantion__iexact = sent_health_status_value)
 
 	if(len(health_status_group) < 1):
 		args['valide'] = False
@@ -1134,6 +1134,14 @@ def record_child_follow_up_report(args):
 	check_vac_code(args)
 	if not args['valide']:
 		return
+
+	#Let's check if the location sent is valid
+	args["location"] = args['text'].split(' ')[4]
+	args["date_meaning"] = "lieu de vaccination"
+	check_location(args)
+	if not args['valide']:
+		return
+
 #-----------------------------------------------------------------
 
 
@@ -1161,6 +1169,12 @@ def record_risk_report(args):
 	#Let's check if the mother id sent is valid
 	args["sent_mother_id"] = args['text'].split(' ')[1]
 	check_mother_id_is_valid(args)
+	if not args['valide']:
+		return
+
+	#Let's check if the symptom(s) is/are valid
+	args["symptoms"] = args['text'].split(' ')[2]
+	check_symptoms(args)
 	if not args['valide']:
 		return
 #-----------------------------------------------------------------
