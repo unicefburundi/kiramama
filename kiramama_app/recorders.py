@@ -436,6 +436,22 @@ def check_health_status(args):
 		args['concerned_health_status'] = health_status_group[0]
 		args['valide'] = True
 		args['info_to_contact'] = "La valeur envoyee pour '"+args["health_status_meaning"]+"' est valide" 
+
+
+def check_vac_code(args):
+	''' This function cheks if the vaccine code sent is valide '''
+	sent_vaccine_code = args["vac_code"]
+
+	concerned_vac_code_objects = VAC.objects.filter(vac_designation__iexact = sent_vaccine_code)
+
+	if(len(concerned_vac_code_objects) < 1):
+		args['valide'] = False
+		args['info_to_contact'] = "Erreur. Le code envoye pour la vaccination effectuee n est pas valide. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+	else:
+		args['concerned_health_status'] = concerned_vac_code_objects[0]
+		args['valide'] = True
+		args['info_to_contact'] = "Le code envoye pour la vaccination effectuee est valide"
+
 #======================reporters self registration==================================
 
 
@@ -1110,6 +1126,12 @@ def record_child_follow_up_report(args):
 	#Let's check if this mother has a child with the sent child number
 	args["child_id"] = args['text'].split(' ')[2]
 	check_child_exists(args)
+	if not args['valide']:
+		return
+
+	#Let's check if the vaccine code sent is valid
+	args["vac_code"] = args['text'].split(' ')[3]
+	check_vac_code(args)
 	if not args['valide']:
 		return
 #-----------------------------------------------------------------
