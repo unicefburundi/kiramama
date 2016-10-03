@@ -448,7 +448,7 @@ def check_vac_code(args):
 		args['valide'] = False
 		args['info_to_contact'] = "Erreur. Le code envoye pour la vaccination effectuee n est pas valide. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
 	else:
-		args['concerned_health_status'] = concerned_vac_code_objects[0]
+		args['concerned_vac'] = concerned_vac_code_objects[0]
 		args['valide'] = True
 		args['info_to_contact'] = "Le code envoye pour la vaccination effectuee est valide"
 
@@ -786,7 +786,7 @@ def record_pregnant_case(args):
 
 	#Let's build the second part of the mother id. It's made at minimum by 3 caracters
 
-	gro_reports_from_this_cds = Report.objects.filter(cds = args['facility'])
+	gro_reports_from_this_cds = Report.objects.filter(cds = args['facility'], category = args['mot_cle'])
 
 	#the_last_mother_registered_from_this_cds = the_last_gro_report_from_this_cds.mother
 
@@ -794,7 +794,7 @@ def record_pregnant_case(args):
 	print("-1-")	
 	if(len(gro_reports_from_this_cds) > 0):
 		print("-2-")
-		the_last_mother_from_this_cds = Report.objects.filter(cds = args['facility']).order_by("-id")[0].mother
+		the_last_mother_from_this_cds = Report.objects.filter(cds = args['facility'], category = args['mot_cle']).order_by("-id")[0].mother
 		#Let's identify the id used by the system users for this patient
 		the_last_mother_id = the_last_mother_from_this_cds.id_mother
 
@@ -821,6 +821,10 @@ def record_pregnant_case(args):
 
 
 	mother_id = mother_id_1+""+mother_id_2
+
+	print("Mother id")
+	print("=========")
+	print(mother_id)
 
 	#Let's check if there is no mother with that id
 	check_mother_exists = Mother.objects.filter(id_mother = mother_id)
@@ -1142,6 +1146,13 @@ def record_child_follow_up_report(args):
 	if not args['valide']:
 		return
 
+	#Let's record the report
+	the_created_report = Report.objects.create(chw = args['the_sender'], sub_hill = args['sub_colline'], cds = args['facility'], mother = args['concerned_mother'], reporting_date = datetime.datetime.now().date(), text = args['text'], category = args['mot_cle'])
+
+	created_vac_report = ReportVAC.objects.create(report = the_created_report, child = args['concerned_child'], vac = args['concerned_vac'], location = args['location'])
+	
+	args['valide'] = True
+	args['info_to_contact'] = "Le rapport de suivi du bebe '" +args['child_number'].child_code_designation+"' de la maman '"+args['concerned_mother'].id_mother+"' est bien enregistre."
 #-----------------------------------------------------------------
 
 
@@ -1177,6 +1188,8 @@ def record_risk_report(args):
 	check_symptoms(args)
 	if not args['valide']:
 		return
+
+	
 #-----------------------------------------------------------------
 
 
@@ -1202,6 +1215,13 @@ def record_response_to_risk_report(args):
 	#Let's check if the mother id sent is valid
 	args["sent_mother_id"] = args['text'].split(' ')[1]
 	check_mother_id_is_valid(args)
+	if not args['valide']:
+		return
+
+	#Let's check health status value
+	args["health_status_value"] = args['text'].split(' ')[2]
+	args["health_status_meaning"] = "etat de sante"
+	check_health_status(args)
 	if not args['valide']:
 		return
 #-----------------------------------------------------------------
@@ -1258,4 +1278,12 @@ def record_leave_report(args):
 	check_mother_id_is_valid(args)
 	if not args['valide']:
 		return
+
+	#Let's record the report
+	the_created_report = Report.objects.create(chw = args['the_sender'], sub_hill = args['sub_colline'], cds = args['facility'], mother = args['concerned_mother'], reporting_date = datetime.datetime.now().date(), text = args['text'], category = args['mot_cle'])
+
+	created_dep_report = ReportDEP.objects.create(report = the_created_report)
+	
+	args['valide'] = True
+	args['info_to_contact'] = "Le rapport du depart de la maman '"+args['concerned_mother'].id_mother+"' est bien enregistre."
 #-----------------------------------------------------------------
