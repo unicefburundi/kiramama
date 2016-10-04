@@ -327,6 +327,20 @@ def check_mother_id_is_valid(args):
 		args['info_to_contact'] = "L identifiant de la maman est valide"
 
 
+def check_mother_has_ris_report(args):
+	''' This function checks if the current mother has a RIS report recorded '''
+	
+	mother_set = ReportRIS.objects.filter(report__mother = args['concerned_mother'])
+
+	if len(mother_set) < 1:
+		args['valide'] = False
+		args['info_to_contact'] = "Erreur. Il n y a pas de risque rapportee pour la maman '"+args['concerned_mother'].id_mother+"'"
+	else:
+		args['valide'] = True
+		the_concerned_ris = ReportRIS.objects.filter(report__mother = args['concerned_mother']).order_by('-id')[0]
+		args['the_concerned_ris'] = the_concerned_ris
+		args['info_to_contact'] = "Un rapport RIS de cette maman a ete bien trouve"
+
 def check_cpn_name_exists(args):
 	''' This function checks if the CPN name sent exists in the system '''
 	the_sent_cpn_name = args["sent_cpn_name"]
@@ -1322,6 +1336,9 @@ def record_response_to_risk_report(args):
 		return
 
 	#Let's check if there is a RIS report already recorded
+	check_mother_has_ris_report(args)
+	if not args['valide']:
+		return
 
 	#Let's check health status value
 	args["health_status_value"] = args['text'].split(' ')[2]
@@ -1338,6 +1355,12 @@ def record_response_to_risk_report(args):
 		return
 
 	#Let's record the report
+	the_created_report = Report.objects.create(chw = args['the_sender'], sub_hill = args['sub_colline'], cds = args['facility'], mother = args['concerned_mother'], reporting_date = datetime.datetime.now().date(), text = args['text'], category = args['mot_cle'])
+
+	created_rer_report = ReportRER.objects.create(report = the_created_report, ris = args['the_concerned_ris'], rescue = args['concerned_rescue_received'], current_state = args['concerned_health_status'])
+	
+	args['valide'] = True
+	args['info_to_contact'] = "Le rapport envoye de reponse au risque de la maman '"+args['concerned_mother'].id_mother+"' est bien enregistre."
 #-----------------------------------------------------------------
 
 
