@@ -1421,6 +1421,24 @@ def record_death_report(args):
 	if(args['dec_type'] == "DEC_WOMAN"):
 		#We record a woman report
 		pass
+
+
+	#Now, everything is checked. Let's record the report
+	the_created_report = Report.objects.create(chw = args['the_sender'], sub_hill = args['sub_colline'], cds = args['facility'], mother = args['concerned_mother'], reporting_date = datetime.datetime.now().date(), text = args['text'], category = args['mot_cle'])
+
+	created_dec_report = ReportDEC.objects.create(report = the_created_report, location = args['location'], death_code = args['death_code'])
+
+	
+	if(args['dec_type'] == "DEC_CHILD"):
+		#Let's record informations related to the child
+		report_dec_bebe = ReportDECBebe.objects.create(death_report = created_dec_report, concerned_child = args['concerned_child'])
+
+	args['valide'] = True
+	
+	if(args['dec_type'] == "DEC_CHILD"):
+		args['info_to_contact'] = "Le rapport de deces du bebe '" +args['child_number'].child_code_designation+"' de la maman '"+args['concerned_mother'].id_mother+"' est bien enregistre."
+	if(args['dec_type'] == "DEC_WOMAN"):
+		args['info_to_contact'] = "Le rapport de deces de la maman '"+args['concerned_mother'].id_mother+"' est bien enregistre."
 #-----------------------------------------------------------------
 
 
