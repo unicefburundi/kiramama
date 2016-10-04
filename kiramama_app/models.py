@@ -129,14 +129,14 @@ class HealthStatus(models.Model):
 	health_status_code_meaning = models.CharField(max_length=50)
 
 	def __unicode__(self):
-		return "{0} - {1}".format(self.health_state_desigantion, self.health_state_code_meaning)
+		return "{0} - {1}".format(self.health_status_desigantion, self.health_status_code_meaning)
 
 class Rescue(models.Model):
 	'''In ths model will be stored rescue designations'''
 	rescue_designation = models.CharField(max_length=50)
 
 	def __unicode__(self):
-		return self.location_category_designation
+		return self.rescue_designation
 
 class ReportGRO(models.Model):
 	''' In this model will be stored pregnancy confirmation reports '''
@@ -210,7 +210,7 @@ class ReportRISBebe(models.Model):
 	concerned_child = models.ForeignKey(ReportNSC)
 
 	def __unicode__(self):
-		return self.concerned_child
+		return self.ris_report.report.text
 
 class ReportRER(models.Model):
 	''' In this model will be stored RER (Reponse du rapport de risque) reports '''

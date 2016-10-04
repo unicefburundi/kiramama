@@ -81,6 +81,49 @@ def check_number_of_values(args):
 		args['info_to_contact'] = "Le nombre de valeurs envoye est correct."
 
 
+def check_number_of_values_ris(args):
+	''' This function checks if the RIS report sent is composed by an expected number of values '''
+
+	#I have to change how the two below variables are initiated. Values must be taken from settings.py
+	number_of_values_for_a_child = 4
+	number_of_values_for_a_woman = 3
+
+	if((len(args['text'].split(' ')) != number_of_values_for_a_child) and (len(args['text'].split(' ')) != number_of_values_for_a_woman) ):
+		args['valide'] = False
+		args['info_to_contact'] = "Erreur. Le nombre de valeurs envoye n est pas correct. Il doit etre '"+str(number_of_values_for_a_child)+"' (pour un enfant) ou '"+str(number_of_values_for_a_woman)+"' (pour une maman). Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+	if(len(args['text'].split(' ')) == number_of_values_for_a_child):
+		#This contact is sending a RIS report for a child
+		args['valide'] = True
+		args['ris_type'] = "RIS_CHILD"
+		args['info_to_contact'] = "Le rapport envoye concerne un enfant"
+	if(len(args['text'].split(' ')) == number_of_values_for_a_woman):
+		#This contact is sending a RIS report for a woman
+		args['valide'] = True
+		args['ris_type'] = "RIS_WOMAN"
+		args['info_to_contact'] = "Le rapport envoye concerne une maman"
+
+
+def check_number_of_values_dec(args):
+	''' This function checks if the DEC report sent is composed by an expected number of values '''
+
+	#I have to change how the two below variables are initiated. Values must be taken from settings.py
+	number_of_values_for_a_child = 5
+	number_of_values_for_a_woman = 4
+	
+	if((len(args['text'].split(' ')) != number_of_values_for_a_child) and (len(args['text'].split(' ')) != number_of_values_for_a_woman) ):
+		args['valide'] = False
+		args['info_to_contact'] = "Erreur. Le nombre de valeurs envoye n est pas correct. Il doit etre '"+str(number_of_values_for_a_child)+"' (pour un enfant) ou '"+str(number_of_values_for_a_woman)+"' (pour une maman). Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+	if(len(args['text'].split(' ')) == number_of_values_for_a_child):
+		#This contact is sending a DEC report for a child
+		args['valide'] = True
+		args['dec_type'] = "DEC_CHILD"
+		args['info_to_contact'] = "Le rapport envoye concerne un enfant"
+	if(len(args['text'].split(' ')) == number_of_values_for_a_woman):
+		#This contact is sending a DEC report for a woman
+		args['valide'] = True
+		args['dec_type'] = "DEC_WOMAN"
+		args['info_to_contact'] = "Le rapport envoye concerne une maman"
+
 def check_is_future_date(args):
 	''' This function checks if a given date is a future date '''
 	given_date = args["future_date"]
@@ -217,7 +260,19 @@ def check_location(args):
 		args['valide'] = True
 		args['info_to_contact'] = "Le lieu indique est valide."
 
-
+def check_death_code(args):
+	''' This function checks if the death code sent is valid '''
+	death_code_sent = args["death_code"]
+	
+	death_code_set = DeathCode.objects.filter(Death_code__iexact = death_code_sent)
+	
+	if(len(death_code_set) < 1):
+		args['valide'] = False
+		args['info_to_contact'] = "Erreur. La valeur envoyee pour '"+args["death_code_meaning"]+"' n est pas valide. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+	else:
+		args['death_code'] = death_code_set[0]
+		args['valide'] = True
+		args['info_to_contact'] = "Le code de deces indique est valide."
 
 def check_phone_number(args):
 	''' This function checks if a phone number sent is valid '''
@@ -437,6 +492,20 @@ def check_health_status(args):
 		args['valide'] = True
 		args['info_to_contact'] = "La valeur envoyee pour '"+args["health_status_meaning"]+"' est valide" 
 
+def check_rescue_received(args):
+	''' This function checks if the value sent for the rescue received is valid '''
+
+	sent_rescue_received_value = args["rescue_received"]
+
+	rescue_received_set = Rescue.objects.filter(rescue_designation__iexact = sent_rescue_received_value)
+
+	if(len(rescue_received_set) < 1):
+		args['valide'] = False
+		args['info_to_contact'] = "Erreur. La valeur envoyee pour '"+args["rescue_received_meaning"]+"' n est pas valide. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+	else:
+		args['concerned_rescue_received'] = rescue_received_set[0]
+		args['valide'] = True
+		args['info_to_contact'] = "La valeur envoyee pour '"+args["rescue_received_meaning"]+"' est valide" 
 
 def check_vac_code(args):
 	''' This function cheks if the vaccine code sent is valide '''
@@ -1170,10 +1239,11 @@ def record_risk_report(args):
 	print(args['valide'])
 	if not args['valide']:
 		return
-	
+
+	#Let's check if it is report about a child or a mother. We count the number of values sent
 	#Let's check if the message sent is composed by an expected number of values
-	args["expected_number_of_values"] = getattr(settings,'EXPECTED_NUMBER_OF_VALUES','')[args['message_type']]
-	check_number_of_values(args)
+	#args["expected_number_of_values"] = getattr(settings,'EXPECTED_NUMBER_OF_VALUES','')[args['message_type']]
+	check_number_of_values_ris(args)
 	if not args['valide']:
 		return
 
@@ -1182,14 +1252,47 @@ def record_risk_report(args):
 	check_mother_id_is_valid(args)
 	if not args['valide']:
 		return
-
+	
 	#Let's check if the symptom(s) is/are valid
 	args["symptoms"] = args['text'].split(' ')[2]
 	check_symptoms(args)
 	if not args['valide']:
 		return
 
+
+	if(args['ris_type'] == "RIS_CHILD"):
+		#The report sent is a child report
+		#Let's check if this mother has a child with the sent child number
+		args["child_id"] = args['text'].split(' ')[3]
+		check_child_exists(args)
+		if not args['valide']:
+			return
+
+	if(args['ris_type'] == "RIS_WOMAN"):
+		#We record a woman report
+		pass
+
+	#Now, everything is checked. Let's record the report
+	the_created_report = Report.objects.create(chw = args['the_sender'], sub_hill = args['sub_colline'], cds = args['facility'], mother = args['concerned_mother'], reporting_date = datetime.datetime.now().date(), text = args['text'], category = args['mot_cle'])
+	created_ris_report = ReportRIS.objects.create(report = the_created_report)
+
+
+	for one_symbol in args['checked_symptoms_list']:
+		one_symptom = Symptom.objects.filter(symtom_designation = one_symbol)[0]
+		created_report_symptom_connection = RIS_Report_Symptom.objects.create(ris_report = created_ris_report, symptom = one_symptom)
+
 	
+	if(args['ris_type'] == "RIS_CHILD"):
+		#Let's record informations related to the child
+		report_ris_bebe = ReportRISBebe.objects.create(ris_report = created_ris_report, concerned_child = args['concerned_child'])
+
+	args['valide'] = True
+	
+	if(args['ris_type'] == "RIS_CHILD"):
+		args['info_to_contact'] = "Le rapport de risque pour le bebe '" +args['child_number'].child_code_designation+"' de la maman '"+args['concerned_mother'].id_mother+"' est bien enregistre."
+	if(args['ris_type'] == "RIS_WOMAN"):
+		args['info_to_contact'] = "Le rapport de risque de la maman '"+args['concerned_mother'].id_mother+"' est bien enregistre."
+
 #-----------------------------------------------------------------
 
 
@@ -1218,12 +1321,23 @@ def record_response_to_risk_report(args):
 	if not args['valide']:
 		return
 
+	#Let's check if there is a RIS report already recorded
+
 	#Let's check health status value
 	args["health_status_value"] = args['text'].split(' ')[2]
 	args["health_status_meaning"] = "etat de sante"
 	check_health_status(args)
 	if not args['valide']:
 		return
+
+	#Let's check if the value of rescue received exists
+	args["rescue_received"] = args['text'].split(' ')[3]
+	args["rescue_received_meaning"] = "Secourt recu"
+	check_rescue_received(args)
+	if not args['valide']:
+		return
+
+	#Let's record the report
 #-----------------------------------------------------------------
 
 
@@ -1241,8 +1355,14 @@ def record_death_report(args):
 		return
 	
 	#Let's check if the message sent is composed by an expected number of values
-	args["expected_number_of_values"] = getattr(settings,'EXPECTED_NUMBER_OF_VALUES','')[args['message_type']]
+	'''args["expected_number_of_values"] = getattr(settings,'EXPECTED_NUMBER_OF_VALUES','')[args['message_type']]
 	check_number_of_values(args)
+	if not args['valide']:
+		return'''
+
+	#Let's check if it is report about a child or a mother. We count the number of values sent
+	#Let's check if the message sent is composed by an expected number of values
+	check_number_of_values_dec(args)
 	if not args['valide']:
 		return
 
@@ -1251,6 +1371,33 @@ def record_death_report(args):
 	check_mother_id_is_valid(args)
 	if not args['valide']:
 		return
+
+	#Let's check if the location is valid
+	args["location"] = args['text'].split(' ')[2]
+	#date_meaning should be change to location_meaning
+	args["date_meaning"] = "lieu de deces"
+	check_location(args)
+	if not args['valide']:
+		return
+
+	#Let's check if the death code is valid
+	args["death_code"] = args['text'].split(' ')[3]
+	args["death_code_meaning"] = "Code de deces"
+	check_death_code(args)
+	if not args['valide']:
+		return
+
+	if(args['dec_type'] == "DEC_CHILD"):
+		#The report sent is a child report
+		#Let's check if this mother has a child with the sent child number
+		args["child_id"] = args['text'].split(' ')[4]
+		check_child_exists(args)
+		if not args['valide']:
+			return
+
+	if(args['dec_type'] == "DEC_WOMAN"):
+		#We record a woman report
+		pass
 #-----------------------------------------------------------------
 
 
