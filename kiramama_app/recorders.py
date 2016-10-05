@@ -320,7 +320,7 @@ def check_mother_id_is_valid(args):
 	filtered_mother = Mother.objects.filter(id_mother = the_sent_mother_id)
 	if(len(filtered_mother) < 1):
 		args['valide'] = False
-		args['info_to_contact'] = "Erreur. L identifiant de la maman n est pas valide. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		args['info_to_contact'] = "Erreur. Une maman avec cet identifiant n existe pas dans le systeme. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
 	else:
 		args['concerned_mother'] = filtered_mother[0]
 		args['valide'] = True
