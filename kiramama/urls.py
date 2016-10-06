@@ -22,4 +22,5 @@ urlpatterns = [
 urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
     url(r'^kiramama/', include('kiramama_app.urls')),
+	url(r'^$', include('kiramama_app.urls')),
     )

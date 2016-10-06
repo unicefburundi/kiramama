@@ -5,4 +5,5 @@ from kiramama_app.views import *
 
 urlpatterns = patterns('',
     url(r'external_request', handel_rapidpro_request, name="handel_request"),
+	url(r'^$', landing, name="landing"),
 )
