@@ -13,5 +13,4 @@ local_settings.py~
 static/
 *ipynb*
 fixtures/
-staticfiles/img/
 *.mo
