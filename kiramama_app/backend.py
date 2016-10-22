@@ -130,6 +130,35 @@ def handel_rapidpro_request(request):
 
 
 
+	if(incoming_data['message_type']=='PREGNANT_CASE_REGISTRATION'):
+		#This contact is modifying a pregnant case report
+		modify_record_pregnant_case(incoming_data)
+	if(incoming_data['message_type']=='PRENATAL_CONSULTATION_REGISTRATION'):
+		#This contact is modifying a pregnant case report
+		modify_record_prenatal_consultation_report(incoming_data)
+	if(incoming_data['message_type']=='BIRTH_REGISTRATION'):
+		#This contact is modifying a birth case report
+		modify_record_birth_case_report(incoming_data)
+	if(incoming_data['message_type']=='POSTNATAL_CARE_REPORT'):
+		#This contact is modifying a postnatal care report
+		modify_record_postnatal_care_report(incoming_data)
+	if(incoming_data['message_type']=='CHILD_FOLLOW_UP_REPORT'):
+		#This contact is modifying a child follow up report
+		modify_record_child_follow_up_report(incoming_data)
+	if(incoming_data['message_type']=='RISK_REPORT'):
+		#This contact is modifying a risk report
+		modify_record_risk_report(incoming_data)
+	if(incoming_data['message_type']=='RESPONSE_TO_RISK_REPORT'):
+		#This contact is modifying a response to a risk report
+		modify_record_response_to_risk_report(incoming_data)
+	if(incoming_data['message_type']=='DEATH_REPORT'):
+		#This contact is modifying a death report
+		modify_record_death_report(incoming_data)
+	if(incoming_data['message_type']=='LEAVE_REPORT'):
+		#This contact is modifying a pregnant mother departure report.
+		modify_record_leave_report(incoming_data)
+
+
 	if incoming_data['valide'] :
 		#The message have been recorded
 		response['ok'] = True

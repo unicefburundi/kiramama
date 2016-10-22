@@ -817,6 +817,8 @@ def record_pregnant_case(args):
 	if not args['valide']:
 		return
 
+	
+
 	#Let's check if the expected giving birth date is a future date
 	args["future_date"] = args['text'].split(' ')[1]
 	args["date_meaning"] = "date probable d accouchement"
