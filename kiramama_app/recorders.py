@@ -572,7 +572,7 @@ def save_temporary_the_reporter(args):
 		same_existing_temp = same_existing_temp[0]
 		same_existing_temp.delete()
 		args['valide'] = False
-		args['info_to_contact'] = "Erreur. Vous devriez envoyer le numero de telephone de votre superviseur seulement. Pour corriger, reenvoyer le message commencant par REG"
+		args['info_to_contact'] = "Erreur. Vous devriez envoyer le numero de telephone de votre superviseur seulement. Pour corriger, veuillez recommencer l enregistrement."
 	else:
 		the_phone_number = args['phone']
 
@@ -641,7 +641,7 @@ def check_has_already_session(args):
 		same_existing_temp = same_existing_temp[0]
 		same_existing_temp.delete()
 		args['valide'] = False
-		args['info_to_contact'] = "Erreur. Vous devriez envoyer le numero de telephone de votre superviseur seulement. Pour corriger, reenvoyer le message commencant par REG"
+		args['info_to_contact'] = "Erreur. Vous devriez envoyer le numero de telephone de votre superviseur seulement. Pour corriger, veuillez recommencer l enregistrement."
 	else:
 		args['valide'] = True
 		args['info_to_contact'] = "Ok."
@@ -723,7 +723,10 @@ def complete_registration(args):
 			#check_duplication = CHW.objects.filter(phone_number = the_one_existing_temp.phone_number, cds = the_one_existing_temp.facility, sub_colline = the_one_existing_temp.sub_hill, sub_colline.colline = the_one_existing_temp.sub_hill.colline, supervisor_phone_number = the_one_existing_temp.supervisor_phone_number)
 			check_duplication = CHW.objects.filter(phone_number = the_one_existing_temp.phone_number, cds = the_one_existing_temp.facility, sub_colline = the_one_existing_temp.sub_hill, supervisor_phone_number = the_one_existing_temp.supervisor_phone_number)
 			if len(check_duplication) > 0:
-				#Let's check if the sent colline is the same with the already saved colline
+				#This contact is doing an update. We delete the existing registration and create a new one
+				the_existing_contact = check_duplication[0]
+				the_existing_contact.delete()
+				'''#Let's check if the sent colline is the same with the already saved colline
 				the_already_saved_colline = check_duplication[0].sub_colline.colline
 				the_sent_colline = the_one_existing_temp.sub_hill.colline
 
@@ -733,7 +736,7 @@ def complete_registration(args):
 					args['valide'] = False
 					args['info_to_contact'] = "Erreur. Vous vous etes deja enregistre sur ce site et avec ce numero de telephone du superviseur. Envoyer un message bien ecrit et commencant par un mot cle valide ou X pour fermer la session"
 					the_one_existing_temp.delete()
-					return
+					return'''
 
 			'''check_duplication = ''
 
@@ -788,7 +791,7 @@ def complete_registration(args):
 			CHW.objects.create(phone_number = the_one_existing_temp.phone_number, cds = the_one_existing_temp.facility, supervisor_phone_number = the_one_existing_temp.supervisor_phone_number, sub_colline = the_one_existing_temp.sub_hill)
 			the_one_existing_temp.delete()
 			args['valide'] = True
-			args['info_to_contact'] = "Enregistrement reussi. Si vous voulez modifier votre enregistrent, veuillez utiliser le mot cle REGM"
+			args['info_to_contact'] = "Enregistrement reussi. [CDS : '"+the_one_existing_temp.facility.name+"', Colline :  '"+the_one_existing_temp.sub_hill.colline.name+"', sous colline : '"+the_one_existing_temp.sub_hill.name+"', Numero du superviseur :  '"+the_one_existing_temp.supervisor_phone_number+"']. Si vous voulez modifier votre enregistrent, veuillez utiliser le mot cle REGM"
 		else:
 			the_one_existing_temp.delete()
 			args['valide'] = False
