@@ -794,6 +794,7 @@ def complete_registration(args):
 			#This contact is doing a first registration. Let's record him/her
 			if is_first_registration:
 				CHW.objects.create(phone_number = the_one_existing_temp.phone_number, cds = the_one_existing_temp.facility, supervisor_phone_number = the_one_existing_temp.supervisor_phone_number, sub_colline = the_one_existing_temp.sub_hill)
+				args['info_to_contact'] = "Enregistrement reussi. [CDS : '"+the_one_existing_temp.facility.name+"', Colline :  '"+the_one_existing_temp.sub_hill.colline.name+"', sous colline : '"+the_one_existing_temp.sub_hill.name+"', Numero du superviseur :  '"+the_one_existing_temp.supervisor_phone_number+"']. Si vous voulez modifier votre enregistrent, veuillez utiliser le mot cle REGM"
 			else:
 				#The contact is doing an update
 				the_existing_contact.phone_number = the_one_existing_temp.phone_number
@@ -801,10 +802,11 @@ def complete_registration(args):
 				the_existing_contact.supervisor_phone_number = the_one_existing_temp.supervisor_phone_number
 				the_existing_contact.sub_colline = the_one_existing_temp.sub_hill
 				the_existing_contact.save()
+				args['info_to_contact'] = "Modification reussie. [CDS : '"+the_one_existing_temp.facility.name+"', Colline :  '"+the_one_existing_temp.sub_hill.colline.name+"', sous colline : '"+the_one_existing_temp.sub_hill.name+"', Numero du superviseur :  '"+the_one_existing_temp.supervisor_phone_number+"']. Si vous voulez modifier votre enregistrent, veuillez utiliser le mot cle REGM"
 
 			the_one_existing_temp.delete()
 			args['valide'] = True
-			args['info_to_contact'] = "Enregistrement reussi. [CDS : '"+the_one_existing_temp.facility.name+"', Colline :  '"+the_one_existing_temp.sub_hill.colline.name+"', sous colline : '"+the_one_existing_temp.sub_hill.name+"', Numero du superviseur :  '"+the_one_existing_temp.supervisor_phone_number+"']. Si vous voulez modifier votre enregistrent, veuillez utiliser le mot cle REGM"
+			#args['info_to_contact'] = "Enregistrement reussi. [CDS : '"+the_one_existing_temp.facility.name+"', Colline :  '"+the_one_existing_temp.sub_hill.colline.name+"', sous colline : '"+the_one_existing_temp.sub_hill.name+"', Numero du superviseur :  '"+the_one_existing_temp.supervisor_phone_number+"']. Si vous voulez modifier votre enregistrent, veuillez utiliser le mot cle REGM"
 		else:
 			the_one_existing_temp.delete()
 			args['valide'] = False
