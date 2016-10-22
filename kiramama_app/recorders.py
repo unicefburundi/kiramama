@@ -721,11 +721,15 @@ def complete_registration(args):
 			#Let's check if this contact is not registered with the same data as he/she is registered
 			#If it is the case, this contact is doing an unnecessary registration
 			#check_duplication = CHW.objects.filter(phone_number = the_one_existing_temp.phone_number, cds = the_one_existing_temp.facility, sub_colline = the_one_existing_temp.sub_hill, sub_colline.colline = the_one_existing_temp.sub_hill.colline, supervisor_phone_number = the_one_existing_temp.supervisor_phone_number)
-			check_duplication = CHW.objects.filter(phone_number = the_one_existing_temp.phone_number, cds = the_one_existing_temp.facility, sub_colline = the_one_existing_temp.sub_hill, supervisor_phone_number = the_one_existing_temp.supervisor_phone_number)
+			#check_duplication = CHW.objects.filter(phone_number = the_one_existing_temp.phone_number, cds = the_one_existing_temp.facility, sub_colline = the_one_existing_temp.sub_hill, supervisor_phone_number = the_one_existing_temp.supervisor_phone_number)
+			check_duplication = CHW.objects.filter(phone_number = the_one_existing_temp.phone_number)
+			the_existing_contact = 0
+			is_first_registration = True
 			if len(check_duplication) > 0:
-				#This contact is doing an update. We delete the existing registration and create a new one
+				#This contact is doing an update. We update the existing registration
+				is_first_registration = False
 				the_existing_contact = check_duplication[0]
-				the_existing_contact.delete()
+				#the_existing_contact.delete()
 				'''#Let's check if the sent colline is the same with the already saved colline
 				the_already_saved_colline = check_duplication[0].sub_colline.colline
 				the_sent_colline = the_one_existing_temp.sub_hill.colline
@@ -788,7 +792,16 @@ def complete_registration(args):
 
 
 			#This contact is doing a first registration. Let's record him/her
-			CHW.objects.create(phone_number = the_one_existing_temp.phone_number, cds = the_one_existing_temp.facility, supervisor_phone_number = the_one_existing_temp.supervisor_phone_number, sub_colline = the_one_existing_temp.sub_hill)
+			if is_first_registration:
+				CHW.objects.create(phone_number = the_one_existing_temp.phone_number, cds = the_one_existing_temp.facility, supervisor_phone_number = the_one_existing_temp.supervisor_phone_number, sub_colline = the_one_existing_temp.sub_hill)
+			else:
+				#The contact is doing an update
+				the_existing_contact.phone_number = the_one_existing_temp.phone_number
+				the_existing_contact.cds = the_one_existing_temp.facility
+				the_existing_contact.supervisor_phone_number = the_one_existing_temp.supervisor_phone_number
+				the_existing_contact.sub_colline = the_one_existing_temp.sub_hill
+				the_existing_contact.save()
+
 			the_one_existing_temp.delete()
 			args['valide'] = True
 			args['info_to_contact'] = "Enregistrement reussi. [CDS : '"+the_one_existing_temp.facility.name+"', Colline :  '"+the_one_existing_temp.sub_hill.colline.name+"', sous colline : '"+the_one_existing_temp.sub_hill.name+"', Numero du superviseur :  '"+the_one_existing_temp.supervisor_phone_number+"']. Si vous voulez modifier votre enregistrent, veuillez utiliser le mot cle REGM"
