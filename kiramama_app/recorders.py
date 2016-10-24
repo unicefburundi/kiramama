@@ -535,6 +535,18 @@ def check_vac_code(args):
 		args['valide'] = True
 		args['info_to_contact'] = "Le code envoye pour la vaccination effectuee est valide"
 
+def check_mother_id_is_valide(args):
+	''' This function cheks if the mother id is valide '''
+	sent_mother_id = args["sent_mother_id"]
+
+	concerned_mother = Mother.objects.filter(id_mother = sent_mother_id)
+	if len(concerned_mother) < 1:
+		args['valide'] = False
+		args['info_to_contact'] = "Erreur. L identifiant de la mere envoye n est pas valide. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+	else:
+		args['concerned_mother'] = concerned_mother[0]
+		args['valide'] = True
+		args['info_to_contact'] = "L identifiant de la mere envoye est valide."
 #======================reporters self registration==================================
 
 
@@ -818,7 +830,13 @@ def complete_registration(args):
 
 
 
-#-----------------------------------------------------------------
+
+
+
+
+#------------------------------PREGNANT CONFIRMATION REPORT-----------------------------------
+
+#RECORD
 def record_pregnant_case(args):
 
 	args['mot_cle'] = "GRO"
@@ -949,6 +967,102 @@ def record_pregnant_case(args):
 	
 	args['valide'] = True
 	args['info_to_contact'] = "La femme enceinte est bien enregistree. Son numero est "+mother_id
+
+
+
+
+#MODIFY
+def modify_record_pregnant_case(args):
+
+	args['mot_cle'] = "GROM"
+
+	#Let's check if the person who send this message is a reporter
+	check_if_is_reporter(args)
+	print(args['valide'])
+	if not args['valide']:
+		return
+
+	#Let's check if the message sent is composed by an expected number of values
+	args["expected_number_of_values"] = getattr(settings,'EXPECTED_NUMBER_OF_VALUES','')[args['message_type']]
+	check_number_of_values(args)
+	if not args['valide']:
+		return
+
+	#Let's check if the mother id sent is valid
+	args["sent_mother_id"] = args['text'].split(' ')[1]
+	check_mother_id_is_valide(args)
+	if not args['valide']:
+		return
+
+	#Let's check if the expected giving birth date is a future date
+	args["future_date"] = args['text'].split(' ')[2]
+	args["date_meaning"] = "date probable d accouchement"
+	check_is_future_date(args)
+	if not args['valide']:
+		return
+	args["expected_birth_date"] = args['date_well_written']
+
+	#Let's check if the next appointment date is a future date
+	args["future_date"] = args['text'].split(' ')[3]
+	args["date_meaning"] = "date du prochain rendez-vous"
+	check_is_future_date(args)
+	if not args['valide']:
+		return
+	args["next_appointment_date"] = args['date_well_written']
+
+	#Let's check if the risk level is correct
+	args["risk_level"] = args['text'].split(' ')[4]
+	check_risk_level(args)
+	if not args['valide']:
+		return
+
+	#Let's check if the location sent is valid
+	args["location"] = args['text'].split(' ')[5]
+	args["date_meaning"] = "lieu de consultation"
+	check_location(args)
+	if not args['valide']:
+		return
+
+	#Let's check if the phone number of the concerned mother is valid
+	args["phone_number"] = args['text'].split(' ')[6]
+	check_phone_number(args)
+	if not args['valide']:
+		return
+
+
+	#Let's identify the corresponding Report
+	the_corresponding_report = Report.objects.filter(mother = args['concerned_mother'], category = args['mot_cle'][0:3])
+	if len(the_corresponding_report) < 1:
+		args['valide'] = False
+		args['info_to_contact'] = "Exception. Un rapport de categorie 'GRO' correspondant a la maman indiquee n est pas trouve. Veuillez contacter l administrateur du systeme"
+		return
+	the_one_corresponding_report = the_corresponding_report[0]
+
+	the_corresponding_gro_report = ReportGRO.objects.filter(report = the_one_corresponding_report)
+	if len(the_corresponding_gro_report) < 1:
+		args['valide'] = False
+		args['info_to_contact'] = "Exception. Un rapport 'GRO' correspondant a la maman indiquee n est pas trouve. Veuillez contacter l administrateur du systeme"
+		return
+	the_one_corresponding_gro_report = the_corresponding_gro_report[0]
+
+	#Let's update all values
+	args['concerned_mother'].phone_number = args["phone_number"]
+	args['concerned_mother'].save()
+
+	the_one_corresponding_report.mother = args['concerned_mother']
+	the_one_corresponding_report.reporting_date = datetime.datetime.now().date()
+	the_one_corresponding_report.text = args['text']
+	the_one_corresponding_report.save()
+
+	the_one_corresponding_gro_report.expected_delivery_date = args["expected_birth_date"]
+	the_one_corresponding_gro_report.next_appointment_date = args["next_appointment_date"]
+	the_one_corresponding_gro_report.risk_level = args["risklevel"]
+	the_one_corresponding_gro_report.consultation_location = args['location']
+	the_one_corresponding_gro_report.save()
+	
+	args['valide'] = True
+	args['info_to_contact'] = "Mise a jour du rapport de confirmation de grossesse de la femme '"+args['concerned_mother'].id_mother+"' a reussie."
+
 #-----------------------------------------------------------------
 
 
