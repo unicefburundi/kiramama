@@ -237,7 +237,7 @@ class ReportDECBebe(models.Model):
 	concerned_child = models.ForeignKey(ReportNSC)
 
 	def __unicode__(self):
-		return self.death_report
+		return self.death_report.report.text
 
 class ReportDEP(models.Model):
 	''' In this model will be stored mother departure cases from one "Sous colline" to an other '''
