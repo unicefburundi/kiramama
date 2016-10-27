@@ -1349,7 +1349,135 @@ def record_birth_case_report(args):
 	
 	args['valide'] = True
 	args['info_to_contact'] = "Le rapport de naissance du bebe '" +args['child_number'].child_code_designation+"' de la maman '"+args['concerned_woman'].id_mother+"' est bien enregistre."
+
+
+
+#Modify
+def modify_record_birth_case_report(args):
+
+	args['mot_cle'] = "NSCM"
+
+	#Let's check if the person who send this message is a reporter
+	check_if_is_reporter(args)
+	print(args['valide'])
+	if not args['valide']:
+		return
 	
+	#Let's check if the message sent is composed by an expected number of values
+	args["expected_number_of_values"] = getattr(settings,'EXPECTED_NUMBER_OF_VALUES','')[args['message_type']]
+	check_number_of_values(args)
+	if not args['valide']:
+		return
+
+	#Let's check if the mother id sent is valid
+	args["sent_mother_id"] = args['text'].split(' ')[1]
+	check_mother_id_is_valid(args)
+	if not args['valide']:
+		return
+	args['concerned_woman'] = args['concerned_mother']
+
+	#Let's check if the child code is valid
+	args["child_code"] = args['text'].split(' ')[2]
+	check_child_code(args)
+	if not args['valide']:
+		return
+
+	#Let check if the birth date is not a future date
+	#It must be a previous date or today's date
+	args["previous_days_or_today_date"] = args['text'].split(' ')[3]
+	args["date_meaning"] = "Date de naissance"
+	check_date_is_previous_or_today(args)
+	if not args['valide']:
+		return
+	args["birth_date"] = args['date_well_written']
+
+
+	#Let's check if the next CPoN date is a future date
+	args["future_date"] = args['text'].split(' ')[4]
+	args["date_meaning"] = "Prochaine date pour les soins postnatals"
+	check_is_future_date(args)
+	if not args['valide']:
+		return
+	args["next_cpon_appointment_date"] = args['date_well_written']
+
+	
+	#Let's check if the location of birth is valid
+	args["location"] = args['text'].split(' ')[5]
+	args["date_meaning"] = "lieu de naissance"
+	check_location(args)
+	if not args['valide']:
+		return
+
+	#Let's check the value sent for "Allaitement maternel"
+	args["allaitement_maternel"] = args['text'].split(' ')[6]
+	check_allaitement_maternel(args)
+	if not args['valide']:
+		return
+
+	#Let's check if the value sent for gender is valid
+	args["gender"] = args['text'].split(' ')[7]
+	check_gender(args)
+	if not args['valide']:
+		return
+
+	#Let's check if the indicated child weight is valid
+	args["float_value"] = args['text'].split(' ')[8]
+	args["date_meaning"] = "Poids du nouveau ne"
+	check_is_float(args)
+	if not args['valide']:
+		return
+	try:
+		checked_value = float(args['checked_float'])
+	except:
+		args['valide'] = False
+		args['info_to_contact'] = "Erreur. La valeur envoyee pour '"+args["date_meaning"]+"' n est pas valide. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		return
+
+
+
+
+	#Let's check if the mother with this id has an already registered NSC report
+	the_existing_nsc_report = Report.objects.filter(mother = args['concerned_mother'], category = args['mot_cle'][0:3])
+	if len(the_existing_nsc_report) < 1:
+		args['valide'] = False
+		args['info_to_contact'] = "Erreur. Aucun rapport 'NSC' trouve de la maman '"+args['concerned_mother'].id_mother+"'. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		return
+
+	the_only_one_corresponding_report = Report.objects.filter(mother = args['concerned_mother'], category = args['mot_cle'][0:3]).order_by('-id')[0]
+
+	the_corresponding_nsc_report = ReportNSC.objects.filter(report = the_only_one_corresponding_report)
+	if len(the_corresponding_nsc_report) < 1:
+		args['valide'] = False
+		args['info_to_contact'] = "Exception. Un rapport 'NSC' correspondant a la maman indiquee n est pas trouve. Veuillez contacter l administrateur du systeme"
+		return
+	the_one_corresponding_nscreport = the_corresponding_nsc_report[0]
+	
+	
+
+	
+	#Now, everything is checked. Let's do the update
+
+	the_only_one_corresponding_report.chw = args['the_sender']
+	the_only_one_corresponding_report.sub_hill = args['sub_colline']
+	the_only_one_corresponding_report.cds = args['facility']
+	the_only_one_corresponding_report.mother = args['concerned_woman']
+	the_only_one_corresponding_report.reporting_date = datetime.datetime.now().date()
+	the_only_one_corresponding_report.text = args['text']
+	the_only_one_corresponding_report.save()
+
+	the_one_corresponding_nscreport.report = the_only_one_corresponding_report
+	the_one_corresponding_nscreport.child_number = args['child_number']
+	the_one_corresponding_nscreport.birth_date = args["birth_date"]
+	the_one_corresponding_nscreport.birth_location = args['location']
+	the_one_corresponding_nscreport.gender = args['gender']
+	the_one_corresponding_nscreport.weight = checked_value
+	the_one_corresponding_nscreport.next_appointment_date = args["next_cpon_appointment_date"]
+	the_one_corresponding_nscreport.breast_feading = args['code_allaitement']
+	the_one_corresponding_nscreport.save()
+	
+	args['valide'] = True
+	args['info_to_contact'] = "Mise a jour du rapport de naissance du bebe '" +args['child_number'].child_code_designation+"' de la maman '"+args['concerned_woman'].id_mother+"' a reussie."
+
 #-----------------------------------------------------------------
 
 
