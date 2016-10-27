@@ -1888,6 +1888,103 @@ def record_risk_report(args):
 	if(args['ris_type'] == "RIS_WOMAN"):
 		args['info_to_contact'] = "Le rapport de risque de la maman '"+args['concerned_mother'].id_mother+"' est bien enregistre."
 
+
+
+
+
+def modify_record_risk_report(args):
+
+	args['mot_cle'] = "RISM"
+
+	#Let's check if the person who send this message is a reporter
+	check_if_is_reporter(args)
+	print(args['valide'])
+	if not args['valide']:
+		return
+
+	#Let's check if it is report about a child or a mother. We count the number of values sent
+	#Let's check if the message sent is composed by an expected number of values
+	#args["expected_number_of_values"] = getattr(settings,'EXPECTED_NUMBER_OF_VALUES','')[args['message_type']]
+	check_number_of_values_ris(args)
+	if not args['valide']:
+		return
+
+	#Let's check if the mother id sent is valid
+	args["sent_mother_id"] = args['text'].split(' ')[1]
+	check_mother_id_is_valid(args)
+	if not args['valide']:
+		return
+	
+	#Let's check if the symptom(s) is/are valid
+	args["symptoms"] = args['text'].split(' ')[2]
+	check_symptoms(args)
+	if not args['valide']:
+		return
+
+
+	if(args['ris_type'] == "RIS_CHILD"):
+		#The report sent is a child report
+		#Let's check if this mother has a child with the sent child number
+		args["child_id"] = args['text'].split(' ')[3]
+		check_child_exists(args)
+		if not args['valide']:
+			return
+
+	if(args['ris_type'] == "RIS_WOMAN"):
+		#We record a woman report
+		pass
+
+	
+	#Let's check if the mother with this id has an already registered RIS report
+	the_existing_ris_report = Report.objects.filter(mother = args['concerned_mother'], category = args['mot_cle'][0:3])
+	if len(the_existing_ris_report) < 1:
+		args['valide'] = False
+		args['info_to_contact'] = "Erreur. Aucun rapport 'RIS' trouve de la maman '"+args['concerned_mother'].id_mother+"'. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		return
+
+	the_only_one_corresponding_report = Report.objects.filter(mother = args['concerned_mother'], category = args['mot_cle'][0:3]).order_by('-id')[0]
+
+	the_corresponding_ris_report = ReportRIS.objects.filter(report = the_only_one_corresponding_report)
+	if len(the_corresponding_ris_report) < 1:
+		args['valide'] = False
+		args['info_to_contact'] = "Exception. Un rapport 'RIS' correspondant a la maman indiquee n est pas trouve. Veuillez contacter l administrateur du systeme"
+		return
+	the_one_corresponding_risreport = the_corresponding_ris_report[0]
+
+	#Let's update
+	the_only_one_corresponding_report.chw = args['the_sender']
+	the_only_one_corresponding_report.sub_hill = args['sub_colline']
+	the_only_one_corresponding_report.cds = args['facility']
+	the_only_one_corresponding_report.mother = args['concerned_mother']
+	the_only_one_corresponding_report.reporting_date = datetime.datetime.now().date()
+	the_only_one_corresponding_report.text = args['text']
+	the_only_one_corresponding_report.save()
+
+	the_one_corresponding_risreport.report = the_only_one_corresponding_report
+	the_one_corresponding_risreport.save()
+
+	all_ris_report_symptom_connections = RIS_Report_Symptom.objects.filter(ris_report = the_one_corresponding_risreport)
+	if len(all_ris_report_symptom_connections) > 0:
+		for one_ris_report_symptom_connection in all_ris_report_symptom_connections:
+			one_ris_report_symptom_connection.delete()
+
+	for one_symbol in args['checked_symptoms_list']:
+		one_symptom = Symptom.objects.filter(symtom_designation = one_symbol)[0]
+		created_report_symptom_connection = RIS_Report_Symptom.objects.create(ris_report = the_one_corresponding_risreport, symptom = one_symptom)
+
+	
+	if(args['ris_type'] == "RIS_CHILD"):
+		#Let's record informations related to the child
+		report_ris_bebe = ReportRISBebe.objects.get_or_create(ris_report = the_one_corresponding_risreport, concerned_child = args['concerned_child'])
+
+
+	args['valide'] = True
+	
+	if(args['ris_type'] == "RIS_CHILD"):
+		args['info_to_contact'] = "Mise a jour du rapport de risque pour le bebe '" +args['child_number'].child_code_designation+"' de la maman '"+args['concerned_mother'].id_mother+"' a reussie."
+	if(args['ris_type'] == "RIS_WOMAN"):
+		args['info_to_contact'] = "Mise a jour du rapport de risque de la maman '"+args['concerned_mother'].id_mother+"' a reussie."
+
 #-----------------------------------------------------------------
 
 
