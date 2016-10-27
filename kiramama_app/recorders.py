@@ -2039,6 +2039,86 @@ def record_response_to_risk_report(args):
 	
 	args['valide'] = True
 	args['info_to_contact'] = "Le rapport envoye de reponse au risque de la maman '"+args['concerned_mother'].id_mother+"' est bien enregistre."
+
+
+
+#Modify
+def modify_record_response_to_risk_report(args):
+
+	args['mot_cle'] = "RERM"
+
+	#Let's check if the person who send this message is a reporter
+	check_if_is_reporter(args)
+	print(args['valide'])
+	if not args['valide']:
+		return
+	
+	#Let's check if the message sent is composed by an expected number of values
+	args["expected_number_of_values"] = getattr(settings,'EXPECTED_NUMBER_OF_VALUES','')[args['message_type']]
+	check_number_of_values(args)
+	if not args['valide']:
+		return
+
+	#Let's check if the mother id sent is valid
+	args["sent_mother_id"] = args['text'].split(' ')[1]
+	check_mother_id_is_valid(args)
+	if not args['valide']:
+		return
+
+	#Let's check if there is a RIS report already recorded
+	check_mother_has_ris_report(args)
+	if not args['valide']:
+		return
+
+	#Let's check health status value
+	args["health_status_value"] = args['text'].split(' ')[2]
+	args["health_status_meaning"] = "etat de sante"
+	check_health_status(args)
+	if not args['valide']:
+		return
+
+	#Let's check if the value of rescue received exists
+	args["rescue_received"] = args['text'].split(' ')[3]
+	args["rescue_received_meaning"] = "Secourt recu"
+	check_rescue_received(args)
+	if not args['valide']:
+		return
+	
+
+	#Let's check if the mother with this id has an already registered RER report
+	the_existing_rer_report = Report.objects.filter(mother = args['concerned_mother'], category = args['mot_cle'][0:3])
+	if len(the_existing_rer_report) < 1:
+		args['valide'] = False
+		args['info_to_contact'] = "Erreur. Aucun rapport 'RER' trouve de la maman '"+args['concerned_mother'].id_mother+"'. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		return
+
+	the_only_one_corresponding_report = Report.objects.filter(mother = args['concerned_mother'], category = args['mot_cle'][0:3]).order_by('-id')[0]
+
+	the_corresponding_rer_report = ReportRER.objects.filter(report = the_only_one_corresponding_report)
+	if len(the_corresponding_rer_report) < 1:
+		args['valide'] = False
+		args['info_to_contact'] = "Exception. Un rapport 'RER' correspondant a la maman indiquee n est pas trouve. Veuillez contacter l administrateur du systeme"
+		return
+	the_one_corresponding_rerreport = the_corresponding_rer_report[0]
+
+	#Let's update
+	the_only_one_corresponding_report.chw = args['the_sender']
+	the_only_one_corresponding_report.sub_hill = args['sub_colline']
+	the_only_one_corresponding_report.cds = args['facility']
+	the_only_one_corresponding_report.mother = args['concerned_mother']
+	the_only_one_corresponding_report.reporting_date = datetime.datetime.now().date()
+	the_only_one_corresponding_report.text = args['text']
+	the_only_one_corresponding_report.save()
+
+	the_one_corresponding_rerreport.report = the_only_one_corresponding_report
+	the_one_corresponding_rerreport.ris = args['the_concerned_ris']
+	the_one_corresponding_rerreport.rescue = args['concerned_rescue_received']
+	the_one_corresponding_rerreport.current_state = args['concerned_health_status']
+	the_one_corresponding_rerreport.save()
+
+
+	args['valide'] = True
+	args['info_to_contact'] = "Mise a jour du rapport envoye en rapport avec la reponse au risque concernant la maman '"+args['concerned_mother'].id_mother+"' a reussie."
 #-----------------------------------------------------------------
 
 
