@@ -1559,6 +1559,126 @@ def record_postnatal_care_report(args):
 
 	args['valide'] = True
 	args['info_to_contact'] = "Le rapport de soins postnatals pour le bebe '" +args['child_number'].child_code_designation+"' de la maman '"+args['concerned_mother'].id_mother+"' est bien enregistre."
+
+
+
+#Modify
+def modify_record_postnatal_care_report(args):
+
+	args['mot_cle'] = "CONM"
+
+	#Let's check if the person who send this message is a reporter
+	check_if_is_reporter(args)
+	print(args['valide'])
+	if not args['valide']:
+		return
+	
+	#Let's check if the message sent is composed by an expected number of values
+	args["expected_number_of_values"] = getattr(settings,'EXPECTED_NUMBER_OF_VALUES','')[args['message_type']]
+	check_number_of_values(args)
+	if not args['valide']:
+		return
+
+	#Let's check if the mother id sent is valid
+	args["sent_mother_id"] = args['text'].split(' ')[1]
+	check_mother_id_is_valid(args)
+	if not args['valide']:
+		return
+
+	#Let's check if this mother has a child with the sent child number
+	args["child_id"] = args['text'].split(' ')[2]
+	check_child_exists(args)
+	if not args['valide']:
+		return
+
+	#Let's check if the consultation code sent is valid
+	args["con_code"] = args['text'].split(' ')[3]
+	check_con_code(args)
+	if not args['valide']:
+		return
+
+	#Let's check if the next appointment date is a future date
+	args["future_date"] = args['text'].split(' ')[4]
+	args["date_meaning"] = "Date du prochain rendez-vous"
+	check_is_future_date(args)
+	if not args['valide']:
+		return
+	args["next_appointment_date"] = args['date_well_written']
+	
+	#Let's check if the symptom(s) is/are valid
+	args["symptoms"] = args['text'].split(' ')[5]
+	check_symptoms(args)
+	if not args['valide']:
+		return
+
+	#Let's check mother health status value
+	args["health_status_value"] = args['text'].split(' ')[6]
+	args["health_status_meaning"] = "etat de sante de la mere"
+	check_health_status(args)
+	if not args['valide']:
+		return
+	args['mother_s_health_state'] = args['concerned_health_status']
+
+	#Let's check child health status value
+	args["health_status_value"] = args['text'].split(' ')[7]
+	args["health_status_meaning"] = "etat de sante de l enfant"
+	check_health_status(args)
+	if not args['valide']:
+		return
+	args['child_s_health_state'] = args['concerned_health_status']
+
+
+
+
+	#Let's check if the mother with this id has an already registered CON report
+	the_existing_con_report = Report.objects.filter(mother = args['concerned_mother'], category = args['mot_cle'][0:3])
+	if len(the_existing_con_report) < 1:
+		args['valide'] = False
+		args['info_to_contact'] = "Erreur. Aucun rapport 'CON' trouve de la maman '"+args['concerned_mother'].id_mother+"'. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		return
+
+	the_only_one_corresponding_report = Report.objects.filter(mother = args['concerned_mother'], category = args['mot_cle'][0:3]).order_by('-id')[0]
+
+	the_corresponding_con_report = ReportCON.objects.filter(report = the_only_one_corresponding_report)
+	if len(the_corresponding_con_report) < 1:
+		args['valide'] = False
+		args['info_to_contact'] = "Exception. Un rapport 'CON' correspondant a la maman indiquee n est pas trouve. Veuillez contacter l administrateur du systeme"
+		return
+	the_one_corresponding_conreport = the_corresponding_con_report[0]
+
+
+
+	#Now, everything is checked. Let's record the report
+	the_only_one_corresponding_report.chw = args['the_sender']
+	the_only_one_corresponding_report.sub_hill = args['sub_colline']
+	the_only_one_corresponding_report.cds = args['facility']
+	the_only_one_corresponding_report.mother = args['concerned_mother']
+	the_only_one_corresponding_report.reporting_date = datetime.datetime.now().date()
+	the_only_one_corresponding_report.text = args['text']
+	the_only_one_corresponding_report.save()
+
+
+	the_one_corresponding_conreport.report = the_only_one_corresponding_report
+	the_one_corresponding_conreport.child = args['concerned_child']
+	the_one_corresponding_conreport.con = args['concerned_con']
+	the_one_corresponding_conreport.child_health_state = args['child_s_health_state']
+	the_one_corresponding_conreport.mother_health_state = args['mother_s_health_state']
+	the_one_corresponding_conreport.next_appointment_date = args["next_appointment_date"]
+	the_one_corresponding_conreport.save()
+
+	#Let's update 'CON_Report_Symptom' connections
+	concerned_con_report_symptom_connections = CON_Report_Symptom.objects.filter(con_report = the_one_corresponding_conreport)
+	if len(concerned_con_report_symptom_connections) > 0:
+		for one_connection in concerned_con_report_symptom_connections:
+			one_connection.delete()
+
+	for one_symbol in args['checked_symptoms_list']:
+		one_symptom = Symptom.objects.filter(symtom_designation = one_symbol)[0]
+		created_report_symptom_connection = CON_Report_Symptom.objects.create(con_report = the_one_corresponding_conreport, symptom = one_symptom)
+
+	args['valide'] = True
+	args['info_to_contact'] = "Mise a jour du rapport de soins postnatals pour le bebe '" +args['child_number'].child_code_designation+"' de la maman '"+args['concerned_mother'].id_mother+"' a reussie."
+
 #-----------------------------------------------------------------
 
 
