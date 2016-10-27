@@ -535,6 +535,7 @@ def check_vac_code(args):
 		args['valide'] = True
 		args['info_to_contact'] = "Le code envoye pour la vaccination effectuee est valide"
 
+#This function will be deleted and we will use 'def check_mother_id_is_valid(args)' wherever it is used
 def check_mother_id_is_valide(args):
 	''' This function cheks if the mother id is valide '''
 	sent_mother_id = args["sent_mother_id"]
@@ -542,7 +543,7 @@ def check_mother_id_is_valide(args):
 	concerned_mother = Mother.objects.filter(id_mother = sent_mother_id)
 	if len(concerned_mother) < 1:
 		args['valide'] = False
-		args['info_to_contact'] = "Erreur. L identifiant de la mere envoye n est pas valide. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		args['info_to_contact'] = "Erreur. Une maman avec cet identifiant n existe pas dans le systeme. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
 	else:
 		args['concerned_mother'] = concerned_mother[0]
 		args['valide'] = True
@@ -1141,6 +1142,119 @@ def record_prenatal_consultation_report(args):
 	
 	args['valide'] = True
 	args['info_to_contact'] = "Le rapport '"+args["concerned_cpn"].cpn_designation+"' de la maman '"+args['concerned_woman'].id_mother+"' est bien enregistre."
+
+
+
+
+def modify_record_prenatal_consultation_report(args):
+
+	args['mot_cle'] = "CPNM"	
+
+	#Let's check if the person who send this message is a reporter
+	check_if_is_reporter(args)
+	if not args['valide']:
+		return
+
+	#Let's check if the message sent is composed by an expected number of values
+	args["expected_number_of_values"] = getattr(settings,'EXPECTED_NUMBER_OF_VALUES','')[args['message_type']]
+	check_number_of_values(args)
+	if not args['valide']:
+		return
+
+	#Let's check if the mother id sent is valid
+	args["sent_mother_id"] = args['text'].split(' ')[1]
+	check_mother_id_is_valid(args)
+	if not args['valide']:
+		return
+	args['concerned_woman'] = args['concerned_mother']
+	
+	#Let's check if the CPN name sent exists
+	args["sent_cpn_name"] =  args['text'].split(' ')[2]
+	check_cpn_name_exists(args)
+	if not args['valide']:
+		return
+	args["concerned_cpn"] = args['specified_cpn']
+
+	#Let's check if the consultation date is valid
+	#It must be a previous date or today's date
+	args["previous_days_or_today_date"] = args['text'].split(' ')[3]
+	args["date_meaning"] = "Date de consultation prenatale"
+	check_date_is_previous_or_today(args)
+	if not args['valide']:
+		return
+	args["cpn_consultation_date"] = args['date_well_written']
+
+	#Let's check if the next appointment date is valid
+	args["future_date"] = args['text'].split(' ')[4]
+	args["date_meaning"] = "date du prochain rendez-vous"
+	check_is_future_date(args)
+	if not args['valide']:
+		return
+	args["next_appointment_date"] = args['date_well_written']
+
+	#Let's check if the consultation location is valid
+	args["location"] = args['text'].split(' ')[5]
+	args["date_meaning"] = "lieu de consultation"
+	check_location(args)
+	if not args['valide']:
+		return
+
+	#Let's check if the indicated woman weight is valid
+	args["float_value"] = args['text'].split(' ')[6]
+	args["date_meaning"] = "Poids de la mere"
+	check_is_float(args)
+	if not args['valide']:
+		return
+	try:
+		checked_value = float(args['checked_float'])
+	except:
+		args['valide'] = False
+		args['info_to_contact'] = "Erreur. La valeur envoyee pour '"+args["date_meaning"]+"' n est pas valide. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		return
+
+
+	#Let's check if the mother with this id has an already registered CPN report
+	the_existing_cpn_report = Report.objects.filter(mother = args['concerned_mother'], category = args['mot_cle'][0:3])
+	if len(the_existing_cpn_report) < 1:
+		args['valide'] = False
+		args['info_to_contact'] = "Erreur. Aucun rapport 'CPN' trouve de la maman '"+args['concerned_mother'].id_mother+"'. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		return
+
+	the_only_one_corresponding_report = Report.objects.filter(mother = args['concerned_mother'], category = args['mot_cle'][0:3]).order_by('-id')[0]
+
+	the_corresponding_cpn_report = ReportCPN.objects.filter(report = the_only_one_corresponding_report)
+	if len(the_corresponding_cpn_report) < 1:
+		args['valide'] = False
+		args['info_to_contact'] = "Exception. Un rapport 'CON' correspondant a la maman indiquee n est pas trouve. Veuillez contacter l administrateur du systeme"
+		return
+	the_one_corresponding_cpnreport = the_corresponding_cpn_report[0]
+		
+
+	#Now, everything is checked. Let's do the update
+
+	the_created_report = Report.objects.create(chw = args['the_sender'], sub_hill = args['sub_colline'], cds = args['facility'], mother = args['concerned_woman'], reporting_date = datetime.datetime.now().date(), text = args['text'], category = args['mot_cle'])
+	created_cpn_report = ReportCPN.objects.create(report = the_created_report, concerned_cpn = args["concerned_cpn"], consultation_date = args["cpn_consultation_date"], consultation_location = args['location'], mother_weight = checked_value, next_appointment_date = args["next_appointment_date"])
+
+	the_only_one_corresponding_report.chw = args['the_sender']
+	the_only_one_corresponding_report.sub_hill = args['sub_colline']
+	the_only_one_corresponding_report.cds = args['facility']
+	the_only_one_corresponding_report.mother = args['concerned_woman']
+	the_only_one_corresponding_report.reporting_date = datetime.datetime.now().date()
+	the_only_one_corresponding_report.text = args['text']
+	the_only_one_corresponding_report.save()
+
+	the_one_corresponding_cpnreport.report = the_created_report
+	the_one_corresponding_cpnreport.concerned_cpn = args["concerned_cpn"]
+	the_one_corresponding_cpnreport.consultation_date = args["cpn_consultation_date"]
+	the_one_corresponding_cpnreport.consultation_location = args['location']
+	the_one_corresponding_cpnreport.mother_weight = checked_value
+	the_one_corresponding_cpnreport.next_appointment_date = args["next_appointment_date"]
+	the_one_corresponding_cpnreport.save()
+
+	args['valide'] = True
+	args['info_to_contact'] = "Mise a jour du rapport de consultation prenatale de la femme '"+args['concerned_mother'].id_mother+"' a reussie."
+
+
 	
 #-----------------------------------------------------------------
 
