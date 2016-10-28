@@ -2342,4 +2342,69 @@ def record_leave_report(args):
 	
 	args['valide'] = True
 	args['info_to_contact'] = "Le rapport du depart de la maman '"+args['concerned_mother'].id_mother+"' est bien enregistre."
+
+
+def modify_record_leave_report(args):
+
+	args['mot_cle'] = "DEPM"
+
+	#Let's check if the person who send this message is a reporter
+	check_if_is_reporter(args)
+	print(args['valide'])
+	if not args['valide']:
+		return
+	
+	#Let's check if the message sent is composed by an expected number of values
+	args["expected_number_of_values"] = getattr(settings,'EXPECTED_NUMBER_OF_VALUES','')[args['message_type']]
+	check_number_of_values(args)
+	if not args['valide']:
+		return
+
+	#Let's check if the mother id sent is valid
+	args["sent_mother_id"] = args['text'].split(' ')[1]
+	check_mother_id_is_valid(args)
+	if not args['valide']:
+		return
+
+	
+
+	#Let's check if the last report of this mother comes from this colline
+	the_existing_dep_report = Report.objects.filter(mother = args['concerned_mother'])
+	if len(the_existing_dep_report) < 1:
+		args['valide'] = False
+		args['info_to_contact'] = "Erreur. Aucun rapport trouve concernant la maman '"+args['concerned_mother'].id_mother+"'. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		return
+
+	the_only_one_corresponding_report = Report.objects.filter(mother = args['concerned_mother']).order_by('-id')[0]
+
+	if(the_only_one_corresponding_report.sub_hill != args['the_sender'].sub_colline):
+		args['valide'] = False
+		args['info_to_contact'] = "Erreur. Le dernier rapport de la maman '"+args['concerned_mother'].id_mother+"' n est pas venu de votre sous colline. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		return
+
+	the_corresponding_dep_report = ReportDEP.objects.filter(report = the_only_one_corresponding_report)
+	if len(the_corresponding_dep_report) < 1:
+		args['valide'] = False
+		args['info_to_contact'] = "Exception. Un rapport 'DEP' correspondant a la maman indiquee n est pas trouve. Veuillez contacter l administrateur du systeme"
+		return
+	the_one_corresponding_depreport =the_corresponding_dep_report[0]
+
+
+	#Let's update
+	the_only_one_corresponding_report.chw = args['the_sender']
+	the_only_one_corresponding_report.sub_hill = args['sub_colline']
+	the_only_one_corresponding_report.cds = args['facility']
+	the_only_one_corresponding_report.mother = args['concerned_mother']
+	the_only_one_corresponding_report.reporting_date = datetime.datetime.now().date()
+	the_only_one_corresponding_report.text = args['text']
+	the_only_one_corresponding_report.save()
+
+	the_one_corresponding_depreport.report = the_only_one_corresponding_report
+	the_one_corresponding_depreport.save()
+	
+	
+
+	
+	args['valide'] = True
+	args['info_to_contact'] = "Mise a jour du rapport de depart de la maman '"+args['concerned_mother'].id_mother+"' a reussie."
 #-----------------------------------------------------------------
