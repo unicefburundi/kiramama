@@ -2197,6 +2197,116 @@ def record_death_report(args):
 		args['info_to_contact'] = "Le rapport de deces du bebe '" +args['child_number'].child_code_designation+"' de la maman '"+args['concerned_mother'].id_mother+"' est bien enregistre."
 	if(args['dec_type'] == "DEC_WOMAN"):
 		args['info_to_contact'] = "Le rapport de deces de la maman '"+args['concerned_mother'].id_mother+"' est bien enregistre."
+
+
+
+#Modify
+def modify_record_death_report(args):
+
+	args['mot_cle'] = "DECM"
+
+	#Let's check if the person who send this message is a reporter
+	check_if_is_reporter(args)
+	print(args['valide'])
+	if not args['valide']:
+		return
+	
+	#Let's check if the message sent is composed by an expected number of values
+	'''args["expected_number_of_values"] = getattr(settings,'EXPECTED_NUMBER_OF_VALUES','')[args['message_type']]
+	check_number_of_values(args)
+	if not args['valide']:
+		return'''
+
+	#Let's check if it is report about a child or a mother. We count the number of values sent
+	#Let's check if the message sent is composed by an expected number of values
+	check_number_of_values_dec(args)
+	if not args['valide']:
+		return
+
+	#Let's check if the mother id sent is valid
+	args["sent_mother_id"] = args['text'].split(' ')[1]
+	check_mother_id_is_valid(args)
+	if not args['valide']:
+		return
+
+	#Let's check if the location is valid
+	args["location"] = args['text'].split(' ')[2]
+	#date_meaning should be change to location_meaning
+	args["date_meaning"] = "lieu de deces"
+	check_location(args)
+	if not args['valide']:
+		return
+
+	#Let's check if the death code is valid
+	args["death_code"] = args['text'].split(' ')[3]
+	args["death_code_meaning"] = "Code de deces"
+	check_death_code(args)
+	if not args['valide']:
+		return
+
+	if(args['dec_type'] == "DEC_CHILD"):
+		#The report sent is a child report
+		#Let's check if this mother has a child with the sent child number
+		args["child_id"] = args['text'].split(' ')[4]
+		check_child_exists(args)
+		if not args['valide']:
+			return
+
+	if(args['dec_type'] == "DEC_WOMAN"):
+		#We record a woman report
+		pass
+
+
+	#Let's check if the mother with this id has an already registered DEC report
+	the_existing_dec_report = Report.objects.filter(mother = args['concerned_mother'], category = args['mot_cle'][0:3])
+	if len(the_existing_dec_report) < 1:
+		args['valide'] = False
+		args['info_to_contact'] = "Erreur. Aucun rapport 'DEC' trouve de la maman '"+args['concerned_mother'].id_mother+"'. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		return
+
+	the_only_one_corresponding_report = Report.objects.filter(mother = args['concerned_mother'], category = args['mot_cle'][0:3]).order_by('-id')[0]
+
+	the_corresponding_dec_report = ReportDEC.objects.filter(report = the_only_one_corresponding_report)
+	if len(the_corresponding_dec_report) < 1:
+		args['valide'] = False
+		args['info_to_contact'] = "Exception. Un rapport 'DEC' correspondant a la maman indiquee n est pas trouve. Veuillez contacter l administrateur du systeme"
+		return
+	the_one_corresponding_decreport = the_corresponding_dec_report[0]
+
+
+	#Let's update
+	the_only_one_corresponding_report.chw = args['the_sender']
+	the_only_one_corresponding_report.sub_hill = args['sub_colline']
+	the_only_one_corresponding_report.cds = args['facility']
+	the_only_one_corresponding_report.mother = args['concerned_mother']
+	the_only_one_corresponding_report.reporting_date = datetime.datetime.now().date()
+	the_only_one_corresponding_report.text = args['text']
+	the_only_one_corresponding_report.save()
+
+	the_one_corresponding_decreport.report = the_only_one_corresponding_report
+	the_one_corresponding_decreport.location = args['location']
+	the_one_corresponding_decreport.death_code = args['death_code']
+	if(args['dec_type'] == "DEC_CHILD"):
+		#Let's update informations related to the child
+		reports_dec_bebe = ReportDECBebe.objects.filter(death_report = the_one_corresponding_decreport)
+		if len(reports_dec_bebe) < 1:
+			report_dec_bebe = ReportDECBebe.objects.create(death_report = the_one_corresponding_decreport, concerned_child = args['concerned_child'])
+		else:
+			one_corresponding_report_dec_bebe = reports_dec_bebe[0]
+			one_corresponding_report_dec_bebe.death_report = the_one_corresponding_decreport
+			one_corresponding_report_dec_bebe.concerned_child = args['concerned_child']
+			one_corresponding_report_dec_bebe.save()
+	the_one_corresponding_decreport.save()
+
+
+	args['valide'] = True
+	
+	if(args['dec_type'] == "DEC_CHILD"):
+		args['info_to_contact'] = "Mise a jour du rapport de deces du bebe '" +args['child_number'].child_code_designation+"' de la maman '"+args['concerned_mother'].id_mother+"' a reussie."
+	if(args['dec_type'] == "DEC_WOMAN"):
+		args['info_to_contact'] = "Mise a jour du rapport de deces de la maman '"+args['concerned_mother'].id_mother+"' a reussie."
+
+
 #-----------------------------------------------------------------
 
 
