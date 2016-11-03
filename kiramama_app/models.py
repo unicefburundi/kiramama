@@ -339,8 +339,8 @@ class NotificationsMother(models.Model):
 	''' 
 	This model is used to link notifications to mothers
 	'''
-	mother = models.ForeignKey()
-	notification = models.ForeignKey()
+	mother = models.ForeignKey(Mother)
+	notification = models.ForeignKey(NotificationsForMother)
 	is_sent = models.BooleanField(default=False)
 
 	def __unicode__(self):
@@ -350,8 +350,8 @@ class NotificationsCHW(models.Model):
 	''' 
 	This model is used to link notifications to CHWs
 	'''
-	chw = models.ForeignKey()
-	notification = models.ForeignKey()
+	chw = models.ForeignKey(CHW)
+	notification = models.ForeignKey(NotificationsForCHW)
 	is_sent = models.BooleanField(default=False)
 	
 	def __unicode__(self):
