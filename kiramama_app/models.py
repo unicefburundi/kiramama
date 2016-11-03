@@ -290,3 +290,69 @@ class Temporary(models.Model):
 
 	def __unicode__(self):
 		return self.phone_number
+
+class NotificationType(models.Model):
+	''' 
+	This model is used to store notification categories
+	'''
+	code = models.CharField(max_length=20)
+	description = models.CharField(max_length=100)
+	
+	def __unicode__(self):
+		return "{0} - {1}".format(self.code, self.description)
+
+class TimeMeasuringUnit(models.Model):
+	'''
+	This model is used to store time measuring units
+	'''
+	code = models.CharField(max_length=4)
+	description = models.CharField(max_length=20)
+
+	def __unicode__(self):
+		return "{0} - {1}".format(self.code, self.description)
+	
+class NotificationsForMother(models.Model):
+	''' 
+	This model is used to store notifications which are sent to mothers
+	'''
+	notification_type = models.ForeignKey(NotificationType)
+	message_to_send = models.CharField(max_length=160)
+	time_measuring_unit = models.ForeignKey(TimeMeasuringUnit)
+	time_number = models.IntegerField()
+
+	def __unicode__(self):
+		return self.message_to_send
+
+class NotificationsForCHW(models.Model):
+	''' 
+	This model is used to store notifications which are sent to CHW
+	'''
+	notification_type = models.ForeignKey(NotificationType)
+	message_to_send = models.CharField(max_length=160)
+	time_measuring_unit = models.ForeignKey(TimeMeasuringUnit)
+	time_number = models.IntegerField()
+
+	def __unicode__(self):
+		return self.message_to_send
+
+class NotificationsMother(models.Model):
+	''' 
+	This model is used to link notifications to mothers
+	'''
+	mother = models.ForeignKey()
+	notification = models.ForeignKey()
+	is_sent = models.BooleanField(default=False)
+
+	def __unicode__(self):
+		return "{0} - {1}".format(self.mother, self.notification)
+
+class NotificationsCHW(models.Model):
+	''' 
+	This model is used to link notifications to CHWs
+	'''
+	chw = models.ForeignKey()
+	notification = models.ForeignKey()
+	is_sent = models.BooleanField(default=False)
+	
+	def __unicode__(self):
+		return "{0} - {1}".format(self.CHW, self.notification)
