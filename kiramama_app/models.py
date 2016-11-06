@@ -316,6 +316,7 @@ class NotificationsForMother(models.Model):
 	This model is used to store notifications which are sent to mothers
 	'''
 	notification_type = models.ForeignKey(NotificationType)
+	word_to_replace_by_the_date_in_the_message_to_send = models.CharField(max_length=50)
 	message_to_send = models.CharField(max_length=160)
 	time_measuring_unit = models.ForeignKey(TimeMeasuringUnit)
 	time_number = models.IntegerField()
@@ -328,6 +329,8 @@ class NotificationsForCHW(models.Model):
 	This model is used to store notifications which are sent to CHW
 	'''
 	notification_type = models.ForeignKey(NotificationType)
+	word_to_replace_by_the_mother_id_in_the_message_to_send = models.CharField(max_length=50)
+	word_to_replace_by_the_date_in_the_message_to_send = models.CharField(max_length=50)
 	message_to_send = models.CharField(max_length=160)
 	time_measuring_unit = models.ForeignKey(TimeMeasuringUnit)
 	time_number = models.IntegerField()
