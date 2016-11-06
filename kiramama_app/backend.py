@@ -2,7 +2,7 @@ from jsonview.decorators import json_view
 from django.views.decorators.csrf import csrf_exempt
 import re
 from django.conf import settings
-from kiramama_app.models import  Temporary
+from kiramama_app.models import  Temporary, NotificationType
 from recorders import *
 import urllib
 
@@ -45,6 +45,26 @@ def eliminate_unnecessary_spaces(args):
     print("The text after sub args['text'] "+args['text'])
 
 
+def check_necessary_configurations_are_done(args):
+	''' This function checks if the necessary configurations are done '''
+
+	#Let's check if all CPN are created in the database. No need to create CPN1
+	cpn2 = NotificationType.objects.filter(code__iexact = "cpn2")
+	if len(cpn2) < 1:
+		args['valide'] = False
+		args['info'] = "Exception. L administrateur du systeme n a pas cree la notification 'CPN2' dans la base de donnees."
+	cpn3 = NotificationType.objects.filter(code__iexact = "cpn3")
+	if len(cpn3) < 1:
+		args['valide'] = False
+		args['info'] = "Exception. L administrateur du systeme n a pas cree la notification 'CPN3' dans la base de donnees."
+	cpn4 = NotificationType.objects.filter(code__iexact = "cpn4")
+	if len(cpn4) < 1:
+		print("ttttttttttttt")
+		args['valide'] = False
+		args['info'] = "Exception. L administrateur du systeme n a pas cree la notification 'CPN4' dans la base de donnees."
+	
+
+
 @csrf_exempt
 @json_view
 def handel_rapidpro_request(request):
@@ -74,6 +94,15 @@ def handel_rapidpro_request(request):
 
 	#Let's eliminate unnecessary spaces in the incoming message
 	eliminate_unnecessary_spaces(incoming_data)
+	
+
+	#The system can be used if some configurations are done
+	check_necessary_configurations_are_done(incoming_data)
+	if not incoming_data['valide']:
+		print("T2T2T2")
+		response['ok'] = False
+		response['info_to_contact'] = incoming_data['info']
+		return response
 
 	#Let's check which kind of message this message is.
 	identify_message(incoming_data)
