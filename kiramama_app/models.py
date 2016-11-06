@@ -4,6 +4,7 @@ from django.db import models
 
 from health_administration_structure_app.models import CDS
 from public_administration_structure_app.models import SousColline
+from datetime import datetime
 
 
 class CHW(models.Model):
@@ -344,6 +345,7 @@ class NotificationsMother(models.Model):
 	'''
 	mother = models.ForeignKey(Mother)
 	notification = models.ForeignKey(NotificationsForMother)
+	date_time_for_sending = models.DateTimeField()
 	is_sent = models.BooleanField(default=False)
 
 	def __unicode__(self):
@@ -355,6 +357,7 @@ class NotificationsCHW(models.Model):
 	'''
 	chw = models.ForeignKey(CHW)
 	notification = models.ForeignKey(NotificationsForCHW)
+	date_time_for_sending = models.DateTimeField()
 	is_sent = models.BooleanField(default=False)
 	
 	def __unicode__(self):
