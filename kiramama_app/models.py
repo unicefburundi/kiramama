@@ -361,4 +361,4 @@ class NotificationsCHW(models.Model):
 	is_sent = models.BooleanField(default=False)
 	
 	def __unicode__(self):
-		return "{0} - {1}".format(self.CHW, self.notification)
+		return "{0} - {1}".format(self.chw, self.notification)

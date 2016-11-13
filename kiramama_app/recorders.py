@@ -965,7 +965,59 @@ def record_pregnant_case(args):
 	the_created_mother_record = Mother.objects.create(id_mother = mother_id, phone_number = args["phone_number"])
 	the_created_report = Report.objects.create(chw = args['the_sender'], sub_hill = args['sub_colline'], cds = args['facility'], mother = the_created_mother_record, reporting_date = datetime.datetime.now().date(), text = args['text'], category = args['mot_cle'])
 	created_gro_report = ReportGRO.objects.create(report = the_created_report, expected_delivery_date = args["expected_birth_date"], next_appointment_date = args["next_appointment_date"], risk_level = args["risklevel"], consultation_location = args['location'])
+
+
+	#Let's record reminders which will be sent out for the next appointment
+	cpn2_notification_type = NotificationType.objects.filter(code__iexact = "cpn2")
+	if len(cpn2_notification_type) < 1:
+		#This case can not occur because we do this check before(In the backend.py file)
+		args['valide'] = False
+		args['info_to_contact'] = "Exception. L administrateur du systeme n a pas cree la notification 'CPN2' dans la base de donnees."
+		return
+
+	#-----------------	
+	next_appointment_date_time = datetime.datetime.combine(args["next_appointment_date"], datetime.datetime.now().time())
+	print("next_appointment_date_time ==>")
+	print(next_appointment_date_time)
+	#-----------------
 	
+	the_cpn2_notification_type = cpn2_notification_type[0]
+
+	notifications_for_mother = NotificationsForMother.objects.filter(notification_type = the_cpn2_notification_type)
+	if len(notifications_for_mother) > 0:
+		notification_for_mother = notifications_for_mother[0]
+
+		time_measure_unit = notification_for_mother.time_measuring_unit
+		number_for_time = notification_for_mother.time_number
+		
+		if(time_measure_unit.code.startswith("m") or time_measure_unit.code.startswith("M")):
+			time_for_reminder = next_appointment_date_time - datetime.timedelta(minutes = number_for_time)
+		if(time_measure_unit.code.startswith("h") or time_measure_unit.code.startswith("H")):
+			time_for_reminder = next_appointment_date_time - datetime.timedelta(hours = number_for_time)
+
+		print("[Mother] - time_for_reminder after changing hour and minute")
+		print(time_for_reminder)
+
+		created_reminder = NotificationsMother.objects.create(mother = the_created_mother_record, notification = notification_for_mother, date_time_for_sending = time_for_reminder)
+
+
+	notifications_for_chw = NotificationsForCHW.objects.filter(notification_type = the_cpn2_notification_type)
+	if len(notifications_for_chw) > 0:
+		notification_for_chw = notifications_for_chw[0]
+
+		time_measure_unit = notification_for_chw.time_measuring_unit
+		number_for_time = notification_for_chw.time_number
+		
+		if(time_measure_unit.code.startswith("m") or time_measure_unit.code.startswith("M")):
+			time_for_reminder = next_appointment_date_time - datetime.timedelta(minutes = number_for_time)
+		if(time_measure_unit.code.startswith("h") or time_measure_unit.code.startswith("H")):
+			time_for_reminder = next_appointment_date_time - datetime.timedelta(hours = number_for_time)
+
+		print("[CHW] - time_for_reminder after changing hour and minute")
+		print(time_for_reminder)
+
+		created_reminder = NotificationsCHW.objects.create(chw = args['the_sender'], notification = notification_for_chw, date_time_for_sending = time_for_reminder)
+
 	args['valide'] = True
 	args['info_to_contact'] = "La femme enceinte est bien enregistree. Son numero est "+mother_id
 
