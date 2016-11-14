@@ -1658,7 +1658,7 @@ def record_postnatal_care_report(args):
 
 
 	for one_symbol in args['checked_symptoms_list']:
-		one_symptom = Symptom.objects.filter(symtom_designation = one_symbol)[0]
+		one_symptom = Symptom.objects.filter(symtom_designation__iexact = one_symbol)[0]
 		created_report_symptom_connection = CON_Report_Symptom.objects.create(con_report = created_con_report, symptom = one_symptom)
 
 	args['valide'] = True
@@ -1777,7 +1777,7 @@ def modify_record_postnatal_care_report(args):
 			one_connection.delete()
 
 	for one_symbol in args['checked_symptoms_list']:
-		one_symptom = Symptom.objects.filter(symtom_designation = one_symbol)[0]
+		one_symptom = Symptom.objects.filter(symtom_designation__iexact = one_symbol)[0]
 		created_report_symptom_connection = CON_Report_Symptom.objects.create(con_report = the_one_corresponding_conreport, symptom = one_symptom)
 
 	args['valide'] = True
@@ -1979,7 +1979,7 @@ def record_risk_report(args):
 	first_symptom = True
 
 	for one_symbol in args['checked_symptoms_list']:
-		one_symptom = Symptom.objects.filter(symtom_designation = one_symbol)[0]
+		one_symptom = Symptom.objects.filter(symtom_designation__iexact = one_symbol)[0]
 		created_report_symptom_connection = RIS_Report_Symptom.objects.create(ris_report = created_ris_report, symptom = one_symptom)
 		
 		if first_symptom:
@@ -2087,7 +2087,7 @@ def modify_record_risk_report(args):
 			one_ris_report_symptom_connection.delete()
 
 	for one_symbol in args['checked_symptoms_list']:
-		one_symptom = Symptom.objects.filter(symtom_designation = one_symbol)[0]
+		one_symptom = Symptom.objects.filter(symtom_designation__iexact = one_symbol)[0]
 		created_report_symptom_connection = RIS_Report_Symptom.objects.create(ris_report = the_one_corresponding_risreport, symptom = one_symptom)
 
 	
