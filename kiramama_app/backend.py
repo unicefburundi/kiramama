@@ -102,6 +102,7 @@ def handel_rapidpro_request(request):
 	#Let's eliminate unnecessary spaces in the incoming message
 	eliminate_unnecessary_spaces(incoming_data)
 	
+	incoming_data['info_to_supervisors'] = False
 
 	#The system can be used if some configurations are done
 	check_necessary_configurations_are_done(incoming_data)
