@@ -1018,6 +1018,58 @@ def record_pregnant_case(args):
 
 		created_reminder = NotificationsCHW.objects.create(chw = args['the_sender'], notification = notification_for_chw, date_time_for_sending = time_for_reminder)
 
+
+	#acc is a reminder for the delivery
+	acc_notification_type = NotificationType.objects.filter(code__iexact = "acc")
+	if len(acc_notification_type) < 1:
+		#This case can not occur because we do this check before(In the backend.py file)
+		args['valide'] = False
+		args['info_to_contact'] = "Exception. L administrateur du systeme n a pas cree la notification 'acc' dans la base de donnees."
+		return
+
+	#-----------------	
+	expected_delivery_date_time = datetime.datetime.combine(args["expected_birth_date"], datetime.datetime.now().time())
+	print("expected_delivery_date_time ==>")
+	print(expected_delivery_date_time)
+	#-----------------
+
+	the_acc_notification_type = acc_notification_type[0]
+
+	notifications_for_mother = NotificationsForMother.objects.filter(notification_type = the_acc_notification_type)
+	if len(notifications_for_mother) > 0:
+		notification_for_mother = notifications_for_mother[0]
+
+		time_measure_unit = notification_for_mother.time_measuring_unit
+		number_for_time = notification_for_mother.time_number
+		
+		if(time_measure_unit.code.startswith("m") or time_measure_unit.code.startswith("M")):
+			time_for_reminder = expected_delivery_date_time - datetime.timedelta(minutes = number_for_time)
+		if(time_measure_unit.code.startswith("h") or time_measure_unit.code.startswith("H")):
+			time_for_reminder = expected_delivery_date_time - datetime.timedelta(hours = number_for_time)
+
+		print("[Mother] - time_for_reminder after changing hour and minute")
+		print(time_for_reminder)
+
+		created_reminder = NotificationsMother.objects.create(mother = the_created_mother_record, notification = notification_for_mother, date_time_for_sending = time_for_reminder)
+
+	notifications_for_chw = NotificationsForCHW.objects.filter(notification_type = the_acc_notification_type)
+	if len(notifications_for_chw) > 0:
+		notification_for_chw = notifications_for_chw[0]
+
+		time_measure_unit = notification_for_chw.time_measuring_unit
+		number_for_time = notification_for_chw.time_number
+		
+		if(time_measure_unit.code.startswith("m") or time_measure_unit.code.startswith("M")):
+			time_for_reminder = expected_delivery_date_time - datetime.timedelta(minutes = number_for_time)
+		if(time_measure_unit.code.startswith("h") or time_measure_unit.code.startswith("H")):
+			time_for_reminder = expected_delivery_date_time - datetime.timedelta(hours = number_for_time)
+
+		print("[CHW] - time_for_reminder after changing hour and minute")
+		print(time_for_reminder)
+
+		created_reminder = NotificationsCHW.objects.create(chw = args['the_sender'], notification = notification_for_chw, date_time_for_sending = time_for_reminder)
+
+
 	args['valide'] = True
 	args['info_to_contact'] = "La femme enceinte est bien enregistree. Son numero est "+mother_id
 

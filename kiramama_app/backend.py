@@ -59,9 +59,12 @@ def check_necessary_configurations_are_done(args):
 		args['info'] = "Exception. L administrateur du systeme n a pas cree la notification 'CPN3' dans la base de donnees."
 	cpn4 = NotificationType.objects.filter(code__iexact = "cpn4")
 	if len(cpn4) < 1:
-		print("ttttttttttttt")
 		args['valide'] = False
 		args['info'] = "Exception. L administrateur du systeme n a pas cree la notification 'CPN4' dans la base de donnees."
+	acc = NotificationType.objects.filter(code__iexact = "acc")
+	if len(acc) < 1:
+		args['valide'] = False
+		args['info'] = "Exception. L administrateur du systeme n a pas cree la notification 'acc' (accouchement) dans la base de donnees."
 	
 
 
