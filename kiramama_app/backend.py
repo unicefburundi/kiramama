@@ -65,6 +65,10 @@ def check_necessary_configurations_are_done(args):
 	if len(acc) < 1:
 		args['valide'] = False
 		args['info'] = "Exception. L administrateur du systeme n a pas cree la notification 'acc' (accouchement) dans la base de donnees."
+	#ris = NotificationType.objects.filter(code__iexact = "ris")
+	#if len(acc) < 1:
+		#args['valide'] = False
+		#args['info'] = "Exception. L administrateur du systeme n a pas cree la notification 'ris' (risque) dans la base de donnees."
 	
 
 

@@ -1975,24 +1975,38 @@ def record_risk_report(args):
 	the_created_report = Report.objects.create(chw = args['the_sender'], sub_hill = args['sub_colline'], cds = args['facility'], mother = args['concerned_mother'], reporting_date = datetime.datetime.now().date(), text = args['text'], category = args['mot_cle'])
 	created_ris_report = ReportRIS.objects.create(report = the_created_report)
 
+	string_of_symptoms = ""
+	first_symptom = True
 
 	for one_symbol in args['checked_symptoms_list']:
 		one_symptom = Symptom.objects.filter(symtom_designation = one_symbol)[0]
 		created_report_symptom_connection = RIS_Report_Symptom.objects.create(ris_report = created_ris_report, symptom = one_symptom)
-
+		
+		if first_symptom:
+			string_of_symptoms = string_of_symptoms+one_symptom.symtom_designation
+			first_symptom = False
+		else:
+			string_of_symptoms = string_of_symptoms+", "+one_symptom.symtom_designation
 	
 	if(args['ris_type'] == "RIS_CHILD"):
 		#Let's record informations related to the child
 		report_ris_bebe = ReportRISBebe.objects.create(ris_report = created_ris_report, concerned_child = args['concerned_child'])
 
+	#The message in this variable will be sent to supervisors
+	args['info_to_supervisors'] = ""
+
 	args['valide'] = True
 	
 	if(args['ris_type'] == "RIS_CHILD"):
 		args['info_to_contact'] = "Le rapport de risque pour le bebe '" +args['child_number'].child_code_designation+"' de la maman '"+args['concerned_mother'].id_mother+"' est bien enregistre."
+		args['info_to_supervisors'] = "L enfant '" +args['child_number'].child_code_designation+"' de la maman '"+args['concerned_mother'].id_mother+"' presente les symptomes suivants : "+string_of_symptoms
+
 	if(args['ris_type'] == "RIS_WOMAN"):
 		args['info_to_contact'] = "Le rapport de risque de la maman '"+args['concerned_mother'].id_mother+"' est bien enregistre."
+		args['info_to_supervisors'] = "La maman '"+args['concerned_mother'].id_mother+"' presente les symptomes suivants : "+string_of_symptoms
 
-
+	print("args['info_to_supervisors']")
+	print(args['info_to_supervisors'])
 
 
 
