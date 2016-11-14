@@ -477,7 +477,7 @@ def check_symptoms(args):
 	#Let's check if every element of the list is a valid symptom
 	for current_symptom in sent_symptoms_list:
 		if(valid == True):
-			symptoms = Symptom.objects.filter(symtom_designation = current_symptom)
+			symptoms = Symptom.objects.filter(symtom_designation__iexact = current_symptom)
 			if(len(symptoms) < 1):
 				valid = False
 				not_valid_symptom = current_symptom
