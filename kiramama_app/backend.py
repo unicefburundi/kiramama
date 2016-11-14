@@ -202,6 +202,9 @@ def handel_rapidpro_request(request):
 		#The message haven't been recorded
 		response['ok'] = False
 
+	if incoming_data['info_to_supervisors']:
+		response['info_to_supervisors'] = incoming_data['info_to_supervisors']
+
 	response['info_to_contact'] = incoming_data['info_to_contact']
 
 	return response
