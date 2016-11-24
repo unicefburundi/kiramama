@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'kiramama_app',
     'health_administration_structure_app',
-    'public_administration_structure_app'
+    'public_administration_structure_app',
+	'django_celery_beat'
 ]
 
 MIDDLEWARE_CLASSES = [

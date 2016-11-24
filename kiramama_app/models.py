@@ -346,6 +346,7 @@ class NotificationsMother(models.Model):
 	mother = models.ForeignKey(Mother)
 	notification = models.ForeignKey(NotificationsForMother)
 	date_time_for_sending = models.DateTimeField()
+	message_to_send = models.CharField(max_length=160)
 	is_sent = models.BooleanField(default=False)
 
 	def __unicode__(self):
@@ -358,6 +359,7 @@ class NotificationsCHW(models.Model):
 	chw = models.ForeignKey(CHW)
 	notification = models.ForeignKey(NotificationsForCHW)
 	date_time_for_sending = models.DateTimeField()
+	message_to_send = models.CharField(max_length=160)
 	is_sent = models.BooleanField(default=False)
 	
 	def __unicode__(self):
