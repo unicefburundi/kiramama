@@ -998,7 +998,19 @@ def record_pregnant_case(args):
 		print("[Mother] - time_for_reminder after changing hour and minute")
 		print(time_for_reminder)
 
-		created_reminder = NotificationsMother.objects.create(mother = the_created_mother_record, notification = notification_for_mother, date_time_for_sending = time_for_reminder)
+		remind_message_to_send_to_mother = notification_for_mother.message_to_send
+
+		if notification_for_mother.word_to_replace_by_the_date_in_the_message_to_send:
+			print("@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@")
+			print("remind_message_to_send_to_mother Before replacing")
+			print(remind_message_to_send_to_mother)
+			remind_message_to_send_to_mother = remind_message_to_send_to_mother.replace(notification_for_mother.word_to_replace_by_the_date_in_the_message_to_send, next_appointment_date_time.isoformat())
+			print("remind_message_to_send_to_mother after replacing")
+			print(remind_message_to_send_to_mother)
+			print("@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@")
+			
+
+		created_reminder = NotificationsMother.objects.create(mother = the_created_mother_record, notification = notification_for_mother, date_time_for_sending = time_for_reminder, message_to_send = remind_message_to_send_to_mother)
 
 
 	notifications_for_chw = NotificationsForCHW.objects.filter(notification_type = the_cpn2_notification_type)
@@ -1016,7 +1028,15 @@ def record_pregnant_case(args):
 		print("[CHW] - time_for_reminder after changing hour and minute")
 		print(time_for_reminder)
 
-		created_reminder = NotificationsCHW.objects.create(chw = args['the_sender'], notification = notification_for_chw, date_time_for_sending = time_for_reminder)
+		remind_message_to_send_to_chw = notification_for_chw.message_to_send
+
+		if notification_for_chw.word_to_replace_by_the_mother_id_in_the_message_to_send:
+			remind_message_to_send_to_chw = remind_message_to_send_to_chw.replace(notification_for_chw.word_to_replace_by_the_mother_id_in_the_message_to_send, the_created_mother_record.id_mother)
+
+		if notification_for_chw.word_to_replace_by_the_date_in_the_message_to_send:
+			remind_message_to_send_to_chw = remind_message_to_send_to_chw.replace(notification_for_chw.word_to_replace_by_the_date_in_the_message_to_send, next_appointment_date_time.isoformat())
+
+		created_reminder = NotificationsCHW.objects.create(chw = args['the_sender'], notification = notification_for_chw, date_time_for_sending = time_for_reminder, message_to_send = remind_message_to_send_to_chw)
 
 
 	#acc is a reminder for the delivery
@@ -1050,7 +1070,13 @@ def record_pregnant_case(args):
 		print("[Mother] - time_for_reminder after changing hour and minute")
 		print(time_for_reminder)
 
-		created_reminder = NotificationsMother.objects.create(mother = the_created_mother_record, notification = notification_for_mother, date_time_for_sending = time_for_reminder)
+
+		remind_message_to_send_to_mother = notification_for_mother.message_to_send
+
+		if notification_for_mother.word_to_replace_by_the_date_in_the_message_to_send:
+			remind_message_to_send_to_mother = remind_message_to_send_to_mother.replace(notification_for_mother.word_to_replace_by_the_date_in_the_message_to_send, next_appointment_date_time.isoformat())
+
+		created_reminder = NotificationsMother.objects.create(mother = the_created_mother_record, notification = notification_for_mother, date_time_for_sending = time_for_reminder, message_to_send = remind_message_to_send_to_mother)
 
 	notifications_for_chw = NotificationsForCHW.objects.filter(notification_type = the_acc_notification_type)
 	if len(notifications_for_chw) > 0:
@@ -1067,7 +1093,15 @@ def record_pregnant_case(args):
 		print("[CHW] - time_for_reminder after changing hour and minute")
 		print(time_for_reminder)
 
-		created_reminder = NotificationsCHW.objects.create(chw = args['the_sender'], notification = notification_for_chw, date_time_for_sending = time_for_reminder)
+		remind_message_to_send_to_chw = notification_for_chw.message_to_send
+
+		if notification_for_chw.word_to_replace_by_the_mother_id_in_the_message_to_send:
+			remind_message_to_send_to_chw = remind_message_to_send_to_chw.replace(notification_for_chw.word_to_replace_by_the_mother_id_in_the_message_to_send, the_created_mother_record.id_mother)
+
+		if notification_for_chw.word_to_replace_by_the_date_in_the_message_to_send:
+			remind_message_to_send_to_chw = remind_message_to_send_to_chw.replace(notification_for_chw.word_to_replace_by_the_date_in_the_message_to_send, next_appointment_date_time.isoformat())		
+
+		created_reminder = NotificationsCHW.objects.create(chw = args['the_sender'], notification = notification_for_chw, date_time_for_sending = time_for_reminder, message_to_send = remind_message_to_send_to_chw)
 
 
 	args['valide'] = True
