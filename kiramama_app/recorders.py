@@ -15,7 +15,8 @@ def check_supervisor_phone_number_not_for_this_contact(args):
 
 	if args['text'].split(' ')[4] in args['phone']:
 		args['valide'] = False
-		args['info_to_contact'] = "Erreur. Vous avez envoye votre numero de telephone a la place de celui de votre superviseur. Pour corriger, veuillez reenvoyer le message commencant par '"+args['mot_cle']+"' et contenant le vrai numero de ton superviseur"
+		#args['info_to_contact'] = "Erreur. Vous avez envoye votre numero de telephone a la place de celui de votre superviseur. Pour corriger, veuillez reenvoyer le message commencant par '"+args['mot_cle']+"' et contenant le vrai numero de ton superviseur"
+		args['info_to_contact'] = "Ikosa. Wanditse inomero ya telefone yawe mu kibanza c inomero ya telefone yuwugukurikirana. Kosora mu kurungika kandi ubutumwa butangurwa na '"+args['mot_cle']+"' ushiremwo n inomero ya telefone yukuri yuwugukurikirana"
 	else:
 		args['valide'] = True
 		args['info_to_contact'] = "Le numero de telephone du superviseur est bien note."
@@ -26,7 +27,8 @@ def check_if_is_reporter(args):
 	if len(concerned_reporter) < 1:
 		#This person is not in the list of reporters
 		args['valide'] = False
-		args['info_to_contact'] = "Erreur. Vous ne vous etes pas enregistre pour pouvoir donner des rapports. Veuillez vous enregistrer en envoyant le message d enregistrement commencant par REG"
+		#args['info_to_contact'] = "Erreur. Vous ne vous etes pas enregistre pour pouvoir donner des rapports. Veuillez vous enregistrer en envoyant le message d enregistrement commencant par REG"
+		args['info_to_contact'] = "Ikosa. Ntiwiyandikishije kugira ushobore gutanga raporo. Kugira ushobore gutanga ama raporo, banza wiyandikishe mu kurungika mesaje yo kwiyandikisha itangurwa nakajambo REG"
 		return 
 
 	one_concerned_reporter = concerned_reporter[0]
@@ -72,10 +74,12 @@ def check_number_of_values(args):
 
 	if len(args['text'].split(' ')) < expected_number_of_values_int:
 		args['valide'] = False
-		args['info_to_contact'] = "Erreur. Vous avez envoye peu de valeurs. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		#args['info_to_contact'] = "Erreur. Vous avez envoye peu de valeurs. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		args['info_to_contact'] = "Ikosa. Warungitse mesage idakwiye. Mu gukosora, subira urungike iyo mesage itangurwa na '"+args['mot_cle']+"' yanditse neza"
 	if len(args['text'].split(' ')) > expected_number_of_values_int:
 		args['valide'] = False
-		args['info_to_contact'] = "Erreur. Vous avez envoye beaucoup de valeurs. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		#args['info_to_contact'] = "Erreur. Vous avez envoye beaucoup de valeurs. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		args['info_to_contact'] = "Ikosa. Warungitse mesage ndende. Mu gukosora, subira urungike iyo mesage itangurwa na '"+args['mot_cle']+"' yanditse neza"
 	if len(args['text'].split(' ')) == expected_number_of_values_int:
 		args['valide'] = True
 		args['info_to_contact'] = "Le nombre de valeurs envoye est correct."
@@ -90,7 +94,8 @@ def check_number_of_values_ris(args):
 
 	if((len(args['text'].split(' ')) != number_of_values_for_a_child) and (len(args['text'].split(' ')) != number_of_values_for_a_woman) ):
 		args['valide'] = False
-		args['info_to_contact'] = "Erreur. Le nombre de valeurs envoye n est pas correct. Il doit etre '"+str(number_of_values_for_a_child)+"' (pour un enfant) ou '"+str(number_of_values_for_a_woman)+"' (pour une maman). Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		#args['info_to_contact'] = "Erreur. Le nombre de valeurs envoye n est pas correct. Il doit etre '"+str(number_of_values_for_a_child)+"' (pour un enfant) ou '"+str(number_of_values_for_a_woman)+"' (pour une maman). Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		args['info_to_contact'] = "Ikosa. Igitigiri civyo warungitse sico. Gitegerezwa kuba '"+str(number_of_values_for_a_child)+"' (mugihe iyo mesaje yerekeye umwana) canke '"+str(number_of_values_for_a_woman)+"' (mu gihe iyo mesaje yerekeye umuvyeyi). Mu gukosora, subira urungike iyo mesage itangurwa na '"+args['mot_cle']+"' yanditse neza"
 	if(len(args['text'].split(' ')) == number_of_values_for_a_child):
 		#This contact is sending a RIS report for a child
 		args['valide'] = True
@@ -112,7 +117,8 @@ def check_number_of_values_dec(args):
 	
 	if((len(args['text'].split(' ')) != number_of_values_for_a_child) and (len(args['text'].split(' ')) != number_of_values_for_a_woman) ):
 		args['valide'] = False
-		args['info_to_contact'] = "Erreur. Le nombre de valeurs envoye n est pas correct. Il doit etre '"+str(number_of_values_for_a_child)+"' (pour un enfant) ou '"+str(number_of_values_for_a_woman)+"' (pour une maman). Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		#args['info_to_contact'] = "Erreur. Le nombre de valeurs envoye n est pas correct. Il doit etre '"+str(number_of_values_for_a_child)+"' (pour un enfant) ou '"+str(number_of_values_for_a_woman)+"' (pour une maman). Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		args['info_to_contact'] = "Ikosa. Igitigiri civyo warungitse sico. Gitegerezwa kuba '"+str(number_of_values_for_a_child)+"' (mugihe iyo mesaje yerekeye umwana) canke '"+str(number_of_values_for_a_woman)+"' (mu gihe iyo mesaje yerekeye umuvyeyi). Mu gukosora, subira urungike iyo mesage itangurwa na '"+args['mot_cle']+"' yanditse neza"
 	if(len(args['text'].split(' ')) == number_of_values_for_a_child):
 		#This contact is sending a DEC report for a child
 		args['valide'] = True
@@ -135,7 +141,8 @@ def check_is_future_date(args):
 	expression = r'^((0[1-9])|([1-2][0-9])|(3[01]))((0[1-9])|(1[0-2]))[0-9]{2}$'
 	if re.search(expression, given_date) is None:
 		args['valide'] = False
-		args['info_to_contact'] = "Erreur. La date indiquee pour '"+args["date_meaning"]+"' n est pas valide. Verifier si vous avez mis chaque valeur dans sa place. Pour corriger, veuillez reenvoyer un message commencant par "+args['mot_cle']
+		#args['info_to_contact'] = "Erreur. La date indiquee pour '"+args["date_meaning"]+"' n est pas valide. Verifier si vous avez mis chaque valeur dans sa place. Pour corriger, veuillez reenvoyer un message commencant par "+args['mot_cle']
+		args['info_to_contact'] = "Ikosa. '"+args["date_meaning"]+"' siyo. Mu gukosora, subira urungike iyo mesaje itangurwa na '"+args['mot_cle']+"' yanditse neza"
 		return
 
 
@@ -146,14 +153,16 @@ def check_is_future_date(args):
 		date_sent = datetime.datetime.strptime(sent_date_without_dash, "%d%m%Y").date()
 	except:
 		args['valide'] = False
-		args['info_to_contact'] = "Erreur. La date indiquee pour '"+args["date_meaning"]+"' n est pas valide. Verifier si vous avez mis chaque valeur dans sa place. Pour corriger, veuillez reenvoyer un message commencant par "+args['mot_cle']
+		#args['info_to_contact'] = "Erreur. La date indiquee pour '"+args["date_meaning"]+"' n est pas valide. Verifier si vous avez mis chaque valeur dans sa place. Pour corriger, veuillez reenvoyer un message commencant par "+args['mot_cle']
+		args['info_to_contact'] = "Ikosa. '"+args["date_meaning"]+"' watanze siryo. Mu gukosora, subira urungike iyo mesaje itangurwa na '"+args['mot_cle']+"' yanditse neza"
 		return
 
 
 	if date_sent <= datetime.datetime.now().date():
 		#The reporter can not report for a past date
 		args['valide'] = False
-		args['info_to_contact'] = "Erreur. Vous n avez pas indiquez une date du futur pour '"+args["date_meaning"]+"'. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		#args['info_to_contact'] = "Erreur. Vous n avez pas indiquez une date du futur pour '"+args["date_meaning"]+"'. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		args['info_to_contact'] = "Ikosa. '"+args["date_meaning"]+"' watanze ntirirashika. Mu gukosora, subira urungike iyo mesaje itangurwa na '"+args['mot_cle']+"' yanditse neza"
 		return
 	args['date_well_written'] = date_sent
 	args['valide'] = True
@@ -171,7 +180,8 @@ def check_is_past_date(args):
 	expression = r'^((0[1-9])|([1-2][0-9])|(3[01]))((0[1-9])|(1[0-2]))[0-9]{2}$'
 	if re.search(expression, given_date) is None:
 		args['valide'] = False
-		args['info_to_contact'] = "Erreur. La date indiquee pour '"+args["date_meaning"]+"' n est pas valide. Verifier si vous avez mis chaque valeur dans sa place. Pour corriger, veuillez reenvoyer un message commencant par "+args['mot_cle']
+		#args['info_to_contact'] = "Erreur. La date indiquee pour '"+args["date_meaning"]+"' n est pas valide. Verifier si vous avez mis chaque valeur dans sa place. Pour corriger, veuillez reenvoyer un message commencant par "+args['mot_cle']
+		args['info_to_contact'] = "Ikosa. '"+args["date_meaning"]+"' watanze siryo. Mu gukosora, subira urungike iyo mesaje itangurwa na '"+args['mot_cle']+"' yanditse neza"
 		return
 
 
@@ -182,14 +192,16 @@ def check_is_past_date(args):
 		date_sent = datetime.datetime.strptime(sent_date_without_dash, "%d%m%Y").date()
 	except:
 		args['valide'] = False
-		args['info_to_contact'] = "Erreur. La date indiquee pour '"+args["date_meaning"]+"' n est pas valide. Verifier si vous avez mis chaque valeur dans sa place. Pour corriger, veuillez reenvoyer un message commencant par "+args['mot_cle']
+		#args['info_to_contact'] = "Erreur. La date indiquee pour '"+args["date_meaning"]+"' n est pas valide. Verifier si vous avez mis chaque valeur dans sa place. Pour corriger, veuillez reenvoyer un message commencant par "+args['mot_cle']
+		args['info_to_contact'] = "Ikosa. '"+args["date_meaning"]+"' watanze siryo. Mu gukosora, subira urungike iyo mesaje itangurwa na '"+args['mot_cle']+"' yanditse neza"
 		return
 
 
 	if date_sent > datetime.datetime.now().date():
 		#The reporter can not report for a past date
 		args['valide'] = False
-		args['info_to_contact'] = "Erreur. Vous avez indiquez une date non acceptable pour '"+args["date_meaning"]+"'. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		#args['info_to_contact'] = "Erreur. Vous avez indiquez une date non acceptable pour '"+args["date_meaning"]+"'. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		args['info_to_contact'] = "Ikosa. '"+args["date_meaning"]+"' watanze ntiribaho. Mu gukosora, subira urungike iyo mesaje itangurwa na '"+args['mot_cle']+"' yanditse neza"
 		return
 	args['date_well_written'] = date_sent
 	args['valide'] = True
@@ -208,7 +220,8 @@ def check_date_is_previous_or_today(args):
 	expression = r'^((0[1-9])|([1-2][0-9])|(3[01]))((0[1-9])|(1[0-2]))[0-9]{2}$'
 	if re.search(expression, given_date) is None:
 		args['valide'] = False
-		args['info_to_contact'] = "Erreur. La date indiquee pour '"+args["date_meaning"]+"' n est pas valide. Verifier si vous avez mis chaque valeur dans sa place. Pour corriger, veuillez reenvoyer un message commencant par "+args['mot_cle']
+		#args['info_to_contact'] = "Erreur. La date indiquee pour '"+args["date_meaning"]+"' n est pas valide. Verifier si vous avez mis chaque valeur dans sa place. Pour corriger, veuillez reenvoyer un message commencant par "+args['mot_cle']
+		args['info_to_contact'] = "Ikosa. '"+args["date_meaning"]+"' watanze ntiribaho. Mu gukosora, subira urungike iyo mesaje itangurwa na '"+args['mot_cle']+"' yanditse neza"
 		return
 
 
@@ -219,14 +232,16 @@ def check_date_is_previous_or_today(args):
 		date_sent = datetime.datetime.strptime(sent_date_without_dash, "%d%m%Y").date()
 	except:
 		args['valide'] = False
-		args['info_to_contact'] = "Erreur. La date indiquee pour '"+args["date_meaning"]+"' n est pas valide. Verifier si vous avez mis chaque valeur dans sa place. Pour corriger, veuillez reenvoyer un message commencant par "+args['mot_cle']
+		#args['info_to_contact'] = "Erreur. La date indiquee pour '"+args["date_meaning"]+"' n est pas valide. Verifier si vous avez mis chaque valeur dans sa place. Pour corriger, veuillez reenvoyer un message commencant par "+args['mot_cle']
+		args['info_to_contact'] = "Ikosa. '"+args["date_meaning"]+"' watanze ntiribaho. Mu gukosora, subira urungike iyo mesaje itangurwa na '"+args['mot_cle']+"' yanditse neza"
 		return
 
 
 	if date_sent > datetime.datetime.now().date():
 		#The reporter can not report for a past date
 		args['valide'] = False
-		args['info_to_contact'] = "Erreur. Vous avez indiquez une date qui n est pas encore arrivee pour '"+args["date_meaning"]+"'. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		#args['info_to_contact'] = "Erreur. Vous avez indiquez une date qui n est pas encore arrivee pour '"+args["date_meaning"]+"'. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		args['info_to_contact'] = "Ikosa. '"+args["date_meaning"]+"' watanze ntirirabaho. Mu gukosora, subira urungike iyo mesaje itangurwa na '"+args['mot_cle']+"' yanditse neza"
 		return
 	args['date_well_written'] = date_sent
 	args['valide'] = True
@@ -240,7 +255,8 @@ def check_risk_level(args):
 	risk_levels = RiskLevel.objects.filter(risk_designation__iexact = sent_risk_level)
 	if(len(risk_levels) < 1):
 		args['valide'] = False
-		args['info_to_contact'] = "Erreur. Le niveau de risque indique n est pas reconnu par le systeme. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		#args['info_to_contact'] = "Erreur. Le niveau de risque indique n est pas reconnu par le systeme. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		args['info_to_contact'] = "Ikosa. Ico watanze cerekana uko umuvyeyi amerewe ntikizwi. Mu gukosora, subira urungike iyo mesaje itangurwa na '"+args['mot_cle']+"' yanditse neza"
 	else:
 		args["risklevel"] = risk_levels[0]
 		args['valide'] = True
@@ -254,7 +270,8 @@ def check_location(args):
 	locations = Lieu.objects.filter(location_category_designation__iexact = location_to_check)
 	if(len(locations) < 1):
 		args['valide'] = False
-		args['info_to_contact'] = "Erreur. La valeur envoyee pour '"+args["date_meaning"]+"' n est pas valide. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		#args['info_to_contact'] = "Erreur. La valeur envoyee pour '"+args["date_meaning"]+"' n est pas valide. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		args['info_to_contact'] = "Ikosa. Ico wanditse kuvyerekeye '"+args["date_meaning"]+"' sico. Mu gukosora, subira urungike iyo mesaje itangurwa na '"+args['mot_cle']+"' yanditse neza"
 	else:
 		args['location'] = locations[0]
 		args['valide'] = True
@@ -268,7 +285,8 @@ def check_death_code(args):
 	
 	if(len(death_code_set) < 1):
 		args['valide'] = False
-		args['info_to_contact'] = "Erreur. La valeur envoyee pour '"+args["death_code_meaning"]+"' n est pas valide. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		#args['info_to_contact'] = "Erreur. La valeur envoyee pour '"+args["death_code_meaning"]+"' n est pas valide. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		args['info_to_contact'] = "Ikosa. Ico wanditse kuvyerekeye '"+args["death_code_meaning"]+"' sico. Mu gukosora, subira urungike iyo mesaje itangurwa na '"+args['mot_cle']+"' yanditse neza"
 	else:
 		args['death_code'] = death_code_set[0]
 		args['valide'] = True
@@ -282,7 +300,8 @@ def check_phone_number(args):
 	if re.search(expression, phone_number_to_check_no_space) is None:
 		#The phone number is not well written
 		args['valide'] = False
-		args['info_to_contact'] = "Erreur. Le numero de telephone n est pas bien ecrit. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		#args['info_to_contact'] = "Erreur. Le numero de telephone n est pas bien ecrit. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		args['info_to_contact'] = "Ikosa. Inomero ya telefone ntiyanditse neza. Mu gukosora, subira urungike iyo mesaje itangurwa na '"+args['mot_cle']+"' yanditse neza"
 	else:
 		args["phone_number"] = phone_number_to_check_no_space
 		args['valide'] = True
@@ -295,7 +314,8 @@ def check_if_is_reporter(args):
 	if len(concerned_chw) < 1:
 		#This person is not in the list of community health workers
 		args['valide'] = False
-		args['info_to_contact'] = "Erreur. Vous ne vous etes pas enregistre pour pouvoir donner des rapports. Veuillez vous enregistrer en envoyant le message d enregistrement commencant par REG"
+		#args['info_to_contact'] = "Erreur. Vous ne vous etes pas enregistre pour pouvoir donner des rapports. Veuillez vous enregistrer en envoyant le message d enregistrement commencant par REG"
+		args['info_to_contact'] = "Ikosa. Ntiwiyandikishije kugira ushobora gutanga ama raporo. Usabwe kubanza kwiyandikisha mu kurungika ya mesaje itangurwa na 'REG'"
 		return 
 
 	one_concerned_chw = concerned_chw[0]
@@ -320,7 +340,8 @@ def check_mother_id_is_valid(args):
 	filtered_mother = Mother.objects.filter(id_mother = the_sent_mother_id)
 	if(len(filtered_mother) < 1):
 		args['valide'] = False
-		args['info_to_contact'] = "Erreur. Une maman avec cet identifiant n existe pas dans le systeme. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		#args['info_to_contact'] = "Erreur. Une maman avec cet identifiant n existe pas dans le systeme. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		args['info_to_contact'] = "Ikosa. Nta muvyeyi abaho afise iyo numero wanditse. Mu gukosora, subira urungike iyo mesaje itangurwa na '"+args['mot_cle']+"' yanditse neza"
 	else:
 		args['concerned_mother'] = filtered_mother[0]
 		args['valide'] = True
@@ -334,7 +355,8 @@ def check_mother_has_ris_report(args):
 
 	if len(mother_set) < 1:
 		args['valide'] = False
-		args['info_to_contact'] = "Erreur. Il n y a pas de risque rapportee pour la maman '"+args['concerned_mother'].id_mother+"'"
+		#args['info_to_contact'] = "Erreur. Il n y a pas de risque rapportee pour la maman '"+args['concerned_mother'].id_mother+"'"
+		args['info_to_contact'] = "Ikosa. Nta mesaje irigire irungikwa ivuga ukutamererwa neza kw umuvyeyi nomero '"+args['concerned_mother'].id_mother+"'"
 	else:
 		args['valide'] = True
 		the_concerned_ris = ReportRIS.objects.filter(report__mother = args['concerned_mother']).order_by('-id')[0]
@@ -347,7 +369,8 @@ def check_cpn_name_exists(args):
 	filtered_cpn = CPN.objects.filter(cpn_designation__iexact = the_sent_cpn_name)
 	if(len(filtered_cpn) < 1):
 		args['valide'] = False
-		args['info_to_contact'] = "Erreur. Le nom du CPN indique n existe pas dans le systeme. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		#args['info_to_contact'] = "Erreur. Le nom du CPN indique n existe pas dans le systeme. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		args['info_to_contact'] = "Ikosa. Ibiranga CPN wanditse ntibibaho. Mu gukosora, subira urungike iyo mesaje itangurwa na '"+args['mot_cle']+"' yanditse neza"
 	else:
 		args['specified_cpn'] =  filtered_cpn[0]
 		args['valide'] = True
@@ -363,7 +386,8 @@ def check_is_float(args):
 
 	if re.search(expression, value_to_check) is None:
 		args['valide'] = False
-		args['info_to_contact'] = "Erreur. La valeur envoyee pour '"+args["date_meaning"]+"' n est pas valide. Pour corriger,  veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		#args['info_to_contact'] = "Erreur. La valeur envoyee pour '"+args["date_meaning"]+"' n est pas valide. Pour corriger,  veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		args['info_to_contact'] = "Ikosa. Ico wanditse kuvyerekeye '"+args["date_meaning"]+"' ntikibaho. Mu gukosora, subira urungike iyo mesaje itangurwa na '"+args['mot_cle']+"' yanditse neza"
 	else:
 		args['checked_float'] = value_to_check
 		args['valide'] = True
@@ -379,7 +403,8 @@ def check_child_code(args):
 
 	if(len(child_numbers) < 1):
 		args['valide'] = False
-		args['info_to_contact'] = "Erreur. Le numero de l enfant envoye n existe pas. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		#args['info_to_contact'] = "Erreur. Le numero de l enfant envoye n existe pas. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		args['info_to_contact'] = "Ikosa. Wanditse inomero yumwana itabaho. Mu gukosora, subira urungike iyo mesaje itangurwa na '"+args['mot_cle']+"' yanditse neza"
 	else:
 		args['child_number'] = child_numbers[0]
 		args['valide'] = True
@@ -394,7 +419,8 @@ def check_allaitement_maternel(args):
 	allaitements = BreastFeed.objects.filter(breast_feed_option_name__iexact = the_sent_value)
 	if(len(allaitements) < 1):
 		args['valide'] = False
-		args['info_to_contact'] = "Erreur. La valeur envoye pour 'Allaitement maternel' n est pas valide. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		#args['info_to_contact'] = "Erreur. La valeur envoye pour 'Allaitement maternel' n est pas valide. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		args['info_to_contact'] = "Ikosa. Ico wanditse kuvyerekeye 'Igihe umwana yonkerejweko ubwa mbere' ntikibaho. Mu gukosora, subira urungike iyo mesaje itangurwa na '"+args['mot_cle']+"' yanditse neza"
 	else:
 		args['code_allaitement'] = allaitements[0]
 		args['valide'] = True
@@ -410,7 +436,8 @@ def check_gender(args):
 
 	if(len(genders) < 1):
 		args['valide'] = False
-		args['info_to_contact'] = "Erreur. La valeur envoyee pour le genre du nouveau nee n est pas valide. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		#args['info_to_contact'] = "Erreur. La valeur envoyee pour le genre du nouveau nee n est pas valide. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		args['info_to_contact'] = "Ikosa. Ico wanditse kuvyerekeye 'Igitsina c umwana' sivyo. Mu gukosora, subira urungike iyo mesaje itangurwa na '"+args['mot_cle']+"' yanditse neza"
 	else:
 		args['gender'] = genders[0]
 		args['valide'] = True
@@ -426,7 +453,8 @@ def check_child_exists(args):
 	
 	if(len(child_numbers) < 1):
 		args['valide'] = False
-		args['info_to_contact'] = "Erreur. Le numero de l enfant envoye n existe pas dans le systeme. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		#args['info_to_contact'] = "Erreur. Le numero de l enfant envoye n existe pas dans le systeme. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		args['info_to_contact'] = "Ikosa. Inomero y umwana wanditse ntibaho. Mu gukosora, subira urungike iyo mesaje itangurwa na '"+args['mot_cle']+"' yanditse neza"
 		return
 	
 	child_number = child_numbers[0]
@@ -435,7 +463,8 @@ def check_child_exists(args):
 
 	if(len(birth_reports_with_this_mother_and_childcode) < 1):
 		args['valide'] = False
-		args['info_to_contact'] = "Erreur. La dame '"+args['concerned_mother'].id_mother+"' n a pas de naissance '"+the_sent_child_number+"'. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		#args['info_to_contact'] = "Erreur. La dame '"+args['concerned_mother'].id_mother+"' n a pas de naissance '"+the_sent_child_number+"'. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		args['info_to_contact'] = "Ikosa. Umupfasoni nomero '"+args['concerned_mother'].id_mother+"' nta mwana nomero '"+the_sent_child_number+"' afise. Mu gukosora, subira urungike iyo mesaje itangurwa na '"+args['mot_cle']+"' yanditse neza"
 	else:
 		args['concerned_child'] = birth_reports_with_this_mother_and_childcode[0]
 		args['child_number'] = child_number
@@ -452,7 +481,8 @@ def check_con_code(args):
 
 	if(len(con_codes) < 1):
 		args['valide'] = False
-		args['info_to_contact'] = "Erreur. La valeur envoyee pour 'CON effectuee' n est pas valide. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		#args['info_to_contact'] = "Erreur. La valeur envoyee pour 'CON effectuee' n est pas valide. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		args['info_to_contact'] = "Ikosa. Ico wanditse ku vyerekeye 'incuro umuvyeyi yagiriye kw ivuriro inyuma yo kwibaruka' sico. Mu gukosora, subira urungike iyo mesaje itangurwa na '"+args['mot_cle']+"' yanditse neza"
 	else:
 		args['concerned_con'] = con_codes[0]
 		args['valide'] = True
@@ -482,7 +512,8 @@ def check_symptoms(args):
 				valid = False
 				not_valid_symptom = current_symptom
 				args['valide'] = False
-				args['info_to_contact'] = "Erreur. Le symptome '"+not_valid_symptom+"' n existe pas dans le systeme. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+				#args['info_to_contact'] = "Erreur. Le symptome '"+not_valid_symptom+"' n existe pas dans le systeme. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+				args['info_to_contact'] = "Ikosa. Ikimenyetso '"+not_valid_symptom+"' ntikibaho. Mu gukosora, subira urungike iyo mesaje itangurwa na '"+args['mot_cle']+"' yanditse neza"
 
 	if(valid == True):
 		#All sent symptoms are known in the system
@@ -500,7 +531,8 @@ def check_health_status(args):
 
 	if(len(health_status_group) < 1):
 		args['valide'] = False
-		args['info_to_contact'] = "Erreur. La valeur envoyee pour '"+args["health_status_meaning"]+"' n est pas valide. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		#args['info_to_contact'] = "Erreur. La valeur envoyee pour '"+args["health_status_meaning"]+"' n est pas valide. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		args['info_to_contact'] = "Ikosa. Ico warungitse kuvyerekeye '"+args["health_status_meaning"]+"' ntikibaho. Mu gukosora, subira urungike iyo mesaje itangurwa na '"+args['mot_cle']+"' yanditse neza"
 	else:
 		args['concerned_health_status'] = health_status_group[0]
 		args['valide'] = True
@@ -515,7 +547,8 @@ def check_rescue_received(args):
 
 	if(len(rescue_received_set) < 1):
 		args['valide'] = False
-		args['info_to_contact'] = "Erreur. La valeur envoyee pour '"+args["rescue_received_meaning"]+"' n est pas valide. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		#args['info_to_contact'] = "Erreur. La valeur envoyee pour '"+args["rescue_received_meaning"]+"' n est pas valide. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		args['info_to_contact'] = "Ikosa. Ico warungitse kuvyerekeye '"+args["rescue_received_meaning"]+"' ntikibaho. Mu gukosora, subira urungike iyo mesaje itangurwa na '"+args['mot_cle']+"' yanditse neza"
 	else:
 		args['concerned_rescue_received'] = rescue_received_set[0]
 		args['valide'] = True
@@ -529,7 +562,8 @@ def check_vac_code(args):
 
 	if(len(concerned_vac_code_objects) < 1):
 		args['valide'] = False
-		args['info_to_contact'] = "Erreur. Le code envoye pour la vaccination effectuee n est pas valide. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		#args['info_to_contact'] = "Erreur. Le code envoye pour la vaccination effectuee n est pas valide. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		args['info_to_contact'] = "Ikosa. Ico warungitse kuvyerekeye 'urucanco rwagizwe' ntikibaho. Mu gukosora, subira urungike iyo mesaje itangurwa na '"+args['mot_cle']+"' yanditse neza"
 	else:
 		args['concerned_vac'] = concerned_vac_code_objects[0]
 		args['valide'] = True
@@ -543,7 +577,8 @@ def check_mother_id_is_valide(args):
 	concerned_mother = Mother.objects.filter(id_mother = sent_mother_id)
 	if len(concerned_mother) < 1:
 		args['valide'] = False
-		args['info_to_contact'] = "Erreur. Une maman avec cet identifiant n existe pas dans le systeme. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		#args['info_to_contact'] = "Erreur. Une maman avec cet identifiant n existe pas dans le systeme. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		args['info_to_contact'] = "Ikosa. Umuvyeyi afise iyo numero uhejeje gutanga ntabaho. Mu gukosora, subira urungike iyo mesaje itangurwa na '"+args['mot_cle']+"' yanditse neza"
 	else:
 		args['concerned_mother'] = concerned_mother[0]
 		args['valide'] = True
@@ -560,7 +595,8 @@ def check_facility(args):
 		args['info_to_contact'] = "Le code CDS envoye est reconnu."
 	else:
 		args['valide'] = False
-		args['info_to_contact'] = "Erreur. Le code envoye n est pas associe a un CDS. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		#args['info_to_contact'] = "Erreur. Le code envoye n est pas associe a un CDS. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		args['info_to_contact'] = "Ikosa. Wanditse inomero y ivuriro itabaho. Mu gukosora, subira urungike iyo mesaje itangurwa na '"+args['mot_cle']+"' yanditse neza"
 
 def check_supervisor_phone_number(args):
 	''' This function checks if the phone number of the supervisor is well written '''
@@ -572,7 +608,8 @@ def check_supervisor_phone_number(args):
 	if re.search(expression, the_supervisor_phone_number_no_space) is None:
 		#The phone number is not well written
 		args['valide'] = False
-		args['info_to_contact'] = "Erreur. Le numero de telephone du superviseur n est pas bien ecrit. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle REG"
+		#args['info_to_contact'] = "Erreur. Le numero de telephone du superviseur n est pas bien ecrit. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle REG"
+		args['info_to_contact'] = "Ikosa. Wanditse nabi inomero ya telefone yuwugukurikirana. Mu gukosora, subira urungike iyo mesaje itangurwa na '"+args['mot_cle']+"' yanditse neza"
 	else:
 		args['valide'] = True
 		args['info_to_contact'] = "Le numero de telephone du superviseur est bien ecrit."
@@ -585,7 +622,8 @@ def save_temporary_the_reporter(args):
 		same_existing_temp = same_existing_temp[0]
 		same_existing_temp.delete()
 		args['valide'] = False
-		args['info_to_contact'] = "Erreur. Vous devriez envoyer le numero de telephone de votre superviseur seulement. Pour corriger, veuillez recommencer l enregistrement."
+		#args['info_to_contact'] = "Erreur. Vous devriez envoyer le numero de telephone de votre superviseur seulement. Pour corriger, veuillez recommencer l enregistrement."
+		args['info_to_contact'] = "Ikosa. Wari wasabwe kurungika inomero ya telefone yuwugukurikirana gusa. Mu gukosora subira utangure kwiyandikisha"
 	else:
 		the_phone_number = args['phone']
 
@@ -618,7 +656,8 @@ def save_temporary_the_reporter(args):
 				print("The hill name ==>"+the_hill_name)
 				print("The sub hill name ==>"+the_sub_hill_name)
 				args['valide'] = False
-				args['info_to_contact'] = "Erreur. Le nom de la colline envoye n est pas valide. Pour corriger, reenvoyer le message bien ecrit commencant par REG"
+				#args['info_to_contact'] = "Erreur. Le nom de la colline envoye n est pas valide. Pour corriger, reenvoyer le message bien ecrit commencant par REG"
+				args['info_to_contact'] = "Ikosa. Izina ryumusozi wanditse ntiribaho. Mu gukosora, subira urungike iyo mesaje itangurwa na 'REG' yanditse neza"
 				return
 			
 			the_concerned_hill = the_hill[0]
@@ -627,7 +666,8 @@ def save_temporary_the_reporter(args):
 			the_sub_hill0 = SousColline.objects.filter(name__iexact = the_sub_hill_name)
 			if len(the_sub_hill0) < 1:
 				args['valide'] = False
-				args['info_to_contact'] = "Erreur. Le nom de la sous colline envoye n est pas valide. Pour corriger, reenvoyer le message bien ecrit commencant par REG"
+				#args['info_to_contact'] = "Erreur. Le nom de la sous colline envoye n est pas valide. Pour corriger, reenvoyer le message bien ecrit commencant par REG"
+				args['info_to_contact'] = "Ikosa. Izina ryagacimbiri wanditse niribaho . Mu gukosora, subira urungike iyo mesaje itangurwa na 'REG' yanditse neza"
 				return
 			
 			
@@ -635,7 +675,8 @@ def save_temporary_the_reporter(args):
 			the_sub_hill1 = SousColline.objects.filter(name__iexact = the_sub_hill_name, colline = the_concerned_hill)
 			if len(the_sub_hill1) < 1:
 				args['valide'] = False
-				args['info_to_contact'] = "Erreur. Il n y a pas de sous colline '"+args['text'].split(' ')[3].title()+"' dans la colline '"+args['text'].split(' ')[2].title()+"'."
+				#args['info_to_contact'] = "Erreur. Il n y a pas de sous colline '"+args['text'].split(' ')[3].title()+"' dans la colline '"+args['text'].split(' ')[2].title()+"'."
+				args['info_to_contact'] = "Ikosa. Nta gacimbiri kabaho kitwa '"+args['text'].split(' ')[3].title()+"' ku mutumba '"+args['text'].split(' ')[2].title()+"'. Mu gukosora, subira urungike iyo mesaje itangurwa na 'REG' yanditse neza"
 				return
 
 
@@ -654,7 +695,8 @@ def check_has_already_session(args):
 		same_existing_temp = same_existing_temp[0]
 		same_existing_temp.delete()
 		args['valide'] = False
-		args['info_to_contact'] = "Erreur. Vous devriez envoyer le numero de telephone de votre superviseur seulement. Pour corriger, veuillez recommencer l enregistrement."
+		#args['info_to_contact'] = "Erreur. Vous devriez envoyer le numero de telephone de votre superviseur seulement. Pour corriger, veuillez recommencer l enregistrement."
+		args['info_to_contact'] = "Ikosa. Wari wasabwe kurungika numero ya telefone yuwugukurikirana gusa. Mu gukosora, subira urungike iyo mesaje itangurwa na '"+args['mot_cle']+"' yanditse neza"
 	else:
 		args['valide'] = True
 		args['info_to_contact'] = "Ok."
@@ -670,7 +712,8 @@ def temporary_record_reporter(args):
 		if(args['valide'] == True):
 			#This contact is already a reporter and can't do the registration the second time
 			args['valide'] = False
-			args['info_to_contact'] = "Erreur. Vous vous etes deja enregistre. Si vous voulez modifier votre enregistrement, envoyer le message commencant par le mot cle 'REGM'"
+			#args['info_to_contact'] = "Erreur. Vous vous etes deja enregistre. Si vous voulez modifier votre enregistrement, envoyer le message commencant par le mot cle 'REGM'"
+			args['info_to_contact'] = "Ikosa. Warahejeje kwiyandikisha. Nimba harico ushaka guhindira kukuntu wiyandikishije, rungika mesaje yo guhubura itangurwa na 'REGM'"
 			return
 	
 	if(args['text'].split(' ')[0].upper() == 'REGM'):
@@ -807,7 +850,8 @@ def complete_registration(args):
 			#This contact is doing a first registration. Let's record him/her
 			if is_first_registration:
 				CHW.objects.create(phone_number = the_one_existing_temp.phone_number, cds = the_one_existing_temp.facility, supervisor_phone_number = the_one_existing_temp.supervisor_phone_number, sub_colline = the_one_existing_temp.sub_hill)
-				args['info_to_contact'] = "Enregistrement reussi. [CDS : '"+the_one_existing_temp.facility.name+"', Colline :  '"+the_one_existing_temp.sub_hill.colline.name+"', sous colline : '"+the_one_existing_temp.sub_hill.name+"', Numero du superviseur :  '"+the_one_existing_temp.supervisor_phone_number+"']. Si vous voulez modifier votre enregistrent, veuillez utiliser le mot cle REGM"
+				#args['info_to_contact'] = "Enregistrement reussi. [CDS : '"+the_one_existing_temp.facility.name+"', Colline :  '"+the_one_existing_temp.sub_hill.colline.name+"', sous colline : '"+the_one_existing_temp.sub_hill.name+"', Numero du superviseur :  '"+the_one_existing_temp.supervisor_phone_number+"']. Si vous voulez modifier votre enregistrent, veuillez utiliser le mot cle REGM"
+				args['info_to_contact'] = "Mesaje warungitse yashitse. [Ivuriro : '"+the_one_existing_temp.facility.name+"', Umutumba :  '"+the_one_existing_temp.sub_hill.colline.name+"', Agacimbiri : '"+the_one_existing_temp.sub_hill.name+"', Terefone y uwugukurikirana :  '"+the_one_existing_temp.supervisor_phone_number+"']. Nimba hari ico wihenze, kosora mu kurungika mesaje yanditse neza itangurwa na 'REGM'"
 			else:
 				#The contact is doing an update
 				the_existing_contact.phone_number = the_one_existing_temp.phone_number
@@ -815,7 +859,8 @@ def complete_registration(args):
 				the_existing_contact.supervisor_phone_number = the_one_existing_temp.supervisor_phone_number
 				the_existing_contact.sub_colline = the_one_existing_temp.sub_hill
 				the_existing_contact.save()
-				args['info_to_contact'] = "Modification reussie. [CDS : '"+the_one_existing_temp.facility.name+"', Colline :  '"+the_one_existing_temp.sub_hill.colline.name+"', sous colline : '"+the_one_existing_temp.sub_hill.name+"', Numero du superviseur :  '"+the_one_existing_temp.supervisor_phone_number+"']. Si vous voulez modifier votre enregistrent, veuillez utiliser le mot cle REGM"
+				#args['info_to_contact'] = "Modification reussie. [CDS : '"+the_one_existing_temp.facility.name+"', Colline :  '"+the_one_existing_temp.sub_hill.colline.name+"', sous colline : '"+the_one_existing_temp.sub_hill.name+"', Numero du superviseur :  '"+the_one_existing_temp.supervisor_phone_number+"']. Si vous voulez modifier votre enregistrent, veuillez utiliser le mot cle REGM"
+				args['info_to_contact'] = "Gukosora vyakunze. [Ivuriro : '"+the_one_existing_temp.facility.name+"', Umutumba :  '"+the_one_existing_temp.sub_hill.colline.name+"', Agacimbiri : '"+the_one_existing_temp.sub_hill.name+"', Terefone yuwugukurikirana :  '"+the_one_existing_temp.supervisor_phone_number+"']. Nimba hari ico wihenze, kosora mu kurungika mesaje yanditse neza itangurwa na 'REGM'"
 
 			the_one_existing_temp.delete()
 			args['valide'] = True
@@ -823,7 +868,8 @@ def complete_registration(args):
 		else:
 			the_one_existing_temp.delete()
 			args['valide'] = False
-			args['info_to_contact'] = "Erreur. Vous avez envoye le numero de telephone de votre superviseur de differentes manieres. Pour corriger, veuillez reenvoyer le message commencant par le mot cle REG"
+			#args['info_to_contact'] = "Erreur. Vous avez envoye le numero de telephone de votre superviseur de differentes manieres. Pour corriger, veuillez reenvoyer le message commencant par le mot cle REG"
+			args['info_to_contact'] = "Ikosa. Warungitse inomero ya telefone yuwugukurikirana ukuntu kubiri gutandukanye. Mu gukosora subira urungike mesaje itangurwa na 'REG' yanditse neza"
 
 
 #-----------------------------------------------------------------
@@ -858,7 +904,8 @@ def record_pregnant_case(args):
 
 	#Let's check if the expected giving birth date is a future date
 	args["future_date"] = args['text'].split(' ')[1]
-	args["date_meaning"] = "date probable d accouchement"
+	#args["date_meaning"] = "date probable d accouchement"
+	args["date_meaning"] = "Igenekerezo umuvyeyi ashobora kuzibarukirako"
 	check_is_future_date(args)
 	if not args['valide']:
 		return
@@ -866,7 +913,8 @@ def record_pregnant_case(args):
 
 	#Let's check if the next appointment date is a future date
 	args["future_date"] = args['text'].split(' ')[2]
-	args["date_meaning"] = "date du prochain rendez-vous"
+	#args["date_meaning"] = "date du prochain rendez-vous"
+	args["date_meaning"] = "Igenekerezo umuvyeyi azosubirira kwivuriro"
 	check_is_future_date(args)
 	if not args['valide']:
 		return
@@ -880,7 +928,8 @@ def record_pregnant_case(args):
 
 	#Let's check if the location sent is valid
 	args["location"] = args['text'].split(' ')[4]
-	args["date_meaning"] = "lieu de consultation"
+	#args["date_meaning"] = "lieu de consultation"
+	args["date_meaning"] = "Aho umuvyeyi yapimishirije imbanyi"
 	check_location(args)
 	if not args['valide']:
 		return
@@ -1105,7 +1154,8 @@ def record_pregnant_case(args):
 
 
 	args['valide'] = True
-	args['info_to_contact'] = "La femme enceinte est bien enregistree. Son numero est "+mother_id
+	#args['info_to_contact'] = "La femme enceinte est bien enregistree. Son numero est "+mother_id
+	args['info_to_contact'] = "Mesaje warungitse yashitse. Inomero yuwo mupfasoni yibungenze ni "+mother_id
 
 
 
@@ -1135,7 +1185,8 @@ def modify_record_pregnant_case(args):
 
 	#Let's check if the expected giving birth date is a future date
 	args["future_date"] = args['text'].split(' ')[2]
-	args["date_meaning"] = "date probable d accouchement"
+	#args["date_meaning"] = "date probable d accouchement"
+	args["date_meaning"] = "Igenekerezo umuvyeyi ashobora kuzibarukirako"
 	check_is_future_date(args)
 	if not args['valide']:
 		return
@@ -1143,7 +1194,8 @@ def modify_record_pregnant_case(args):
 
 	#Let's check if the next appointment date is a future date
 	args["future_date"] = args['text'].split(' ')[3]
-	args["date_meaning"] = "date du prochain rendez-vous"
+	#args["date_meaning"] = "date du prochain rendez-vous"
+	args["date_meaning"] = "Igenekerezo umuvyeyi azosubirira kw ivuriro"
 	check_is_future_date(args)
 	if not args['valide']:
 		return
@@ -1157,7 +1209,8 @@ def modify_record_pregnant_case(args):
 
 	#Let's check if the location sent is valid
 	args["location"] = args['text'].split(' ')[5]
-	args["date_meaning"] = "lieu de consultation"
+	#args["date_meaning"] = "lieu de consultation"
+	args["date_meaning"] = "Aho umuvyeyi yapimishirije imbanyi"
 	check_location(args)
 	if not args['valide']:
 		return
@@ -1200,7 +1253,8 @@ def modify_record_pregnant_case(args):
 	the_one_corresponding_gro_report.save()
 	
 	args['valide'] = True
-	args['info_to_contact'] = "Mise a jour du rapport de confirmation de grossesse de la femme '"+args['concerned_mother'].id_mother+"' a reussie."
+	#args['info_to_contact'] = "Mise a jour du rapport de confirmation de grossesse de la femme '"+args['concerned_mother'].id_mother+"' a reussie."
+	args['info_to_contact'] = "Mesaje yo gukosora iyari yatanzwe ivuga ko umupfasoni nomero '"+args['concerned_mother'].id_mother+"' yibungenze yashitse neza."
 
 #-----------------------------------------------------------------
 
@@ -1239,7 +1293,8 @@ def record_prenatal_consultation_report(args):
 	#Let's check if the consultation date is valid
 	#It must be a previous date or today's date
 	args["previous_days_or_today_date"] = args['text'].split(' ')[3]
-	args["date_meaning"] = "Date de consultation prenatale"
+	#args["date_meaning"] = "Date de consultation prenatale"
+	args["date_meaning"] = "Igenekerezo umuvyeyi yapimishirijeko imbanyi"
 	check_date_is_previous_or_today(args)
 	if not args['valide']:
 		return
@@ -1247,7 +1302,8 @@ def record_prenatal_consultation_report(args):
 
 	#Let's check if the next appointment date is valid
 	args["future_date"] = args['text'].split(' ')[4]
-	args["date_meaning"] = "date du prochain rendez-vous"
+	#args["date_meaning"] = "date du prochain rendez-vous"
+	args["date_meaning"] = "Igenekerezo umuvyeyi azosubirira kw ivuriro"
 	check_is_future_date(args)
 	if not args['valide']:
 		return
@@ -1255,14 +1311,16 @@ def record_prenatal_consultation_report(args):
 
 	#Let's check if the consultation location is valid
 	args["location"] = args['text'].split(' ')[5]
-	args["date_meaning"] = "lieu de consultation"
+	#args["date_meaning"] = "lieu de consultation"
+	args["date_meaning"] = "Aho umuvyeyi yipimishirije"
 	check_location(args)
 	if not args['valide']:
 		return
 
 	#Let's check if the indicated woman weight is valid
 	args["float_value"] = args['text'].split(' ')[6]
-	args["date_meaning"] = "Poids de la mere"
+	#args["date_meaning"] = "Poids de la mere"
+	args["date_meaning"] = "Ibiro vy umuvyeyi"
 	check_is_float(args)
 	if not args['valide']:
 		return
@@ -1270,7 +1328,8 @@ def record_prenatal_consultation_report(args):
 		checked_value = float(args['checked_float'])
 	except:
 		args['valide'] = False
-		args['info_to_contact'] = "Erreur. La valeur envoyee pour '"+args["date_meaning"]+"' n est pas valide. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		#args['info_to_contact'] = "Erreur. La valeur envoyee pour '"+args["date_meaning"]+"' n est pas valide. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		args['info_to_contact'] = "Ikosa. Ico wanditse kuvyerekeye '"+args["date_meaning"]+"' ntikibaho. Mu gukosora, subira urungike iyo mesaje itangurwa na '"+args['mot_cle']+"' yanditse neza"
 		return
 
 
@@ -1279,7 +1338,8 @@ def record_prenatal_consultation_report(args):
 	created_cpn_report = ReportCPN.objects.create(report = the_created_report, concerned_cpn = args["concerned_cpn"], consultation_date = args["cpn_consultation_date"], consultation_location = args['location'], mother_weight = checked_value, next_appointment_date = args["next_appointment_date"])
 	
 	args['valide'] = True
-	args['info_to_contact'] = "Le rapport '"+args["concerned_cpn"].cpn_designation+"' de la maman '"+args['concerned_woman'].id_mother+"' est bien enregistre."
+	#args['info_to_contact'] = "Le rapport '"+args["concerned_cpn"].cpn_designation+"' de la maman '"+args['concerned_woman'].id_mother+"' est bien enregistre."
+	args['info_to_contact'] = "Mesaje '"+args["concerned_cpn"].cpn_designation+"' warungitse yerekeye umupfasoni '"+args['concerned_woman'].id_mother+"' yashitse."
 
 
 
@@ -1316,7 +1376,8 @@ def modify_record_prenatal_consultation_report(args):
 	#Let's check if the consultation date is valid
 	#It must be a previous date or today's date
 	args["previous_days_or_today_date"] = args['text'].split(' ')[3]
-	args["date_meaning"] = "Date de consultation prenatale"
+	#args["date_meaning"] = "Date de consultation prenatale"
+	args["date_meaning"] = "Igenekerezo umuvyeyi yapimishirijeko imbanyi"
 	check_date_is_previous_or_today(args)
 	if not args['valide']:
 		return
@@ -1324,7 +1385,8 @@ def modify_record_prenatal_consultation_report(args):
 
 	#Let's check if the next appointment date is valid
 	args["future_date"] = args['text'].split(' ')[4]
-	args["date_meaning"] = "date du prochain rendez-vous"
+	#args["date_meaning"] = "date du prochain rendez-vous"
+	args["date_meaning"] = "Igenekerezo umuvyeyi azosubirira kw ivuriro"
 	check_is_future_date(args)
 	if not args['valide']:
 		return
@@ -1332,14 +1394,16 @@ def modify_record_prenatal_consultation_report(args):
 
 	#Let's check if the consultation location is valid
 	args["location"] = args['text'].split(' ')[5]
-	args["date_meaning"] = "lieu de consultation"
+	#args["date_meaning"] = "lieu de consultation"
+	args["date_meaning"] = "Aho umuvyeyi yapimishirije imbanyi"
 	check_location(args)
 	if not args['valide']:
 		return
 
 	#Let's check if the indicated woman weight is valid
 	args["float_value"] = args['text'].split(' ')[6]
-	args["date_meaning"] = "Poids de la mere"
+	#args["date_meaning"] = "Poids de la mere"
+	args["date_meaning"] = "Ibiro vy umuvyeyi"
 	check_is_float(args)
 	if not args['valide']:
 		return
@@ -1347,7 +1411,8 @@ def modify_record_prenatal_consultation_report(args):
 		checked_value = float(args['checked_float'])
 	except:
 		args['valide'] = False
-		args['info_to_contact'] = "Erreur. La valeur envoyee pour '"+args["date_meaning"]+"' n est pas valide. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		#args['info_to_contact'] = "Erreur. La valeur envoyee pour '"+args["date_meaning"]+"' n est pas valide. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		args['info_to_contact'] = "Ikosa. Ico wanditse kuvyerekeye '"+args["date_meaning"]+"' ntikibaho. Mu gukosora, subira urungike iyo mesaje itangurwa na '"+args['mot_cle']+"' yanditse neza"
 		return
 
 
@@ -1355,7 +1420,8 @@ def modify_record_prenatal_consultation_report(args):
 	the_existing_cpn_report = Report.objects.filter(mother = args['concerned_mother'], category = args['mot_cle'][0:3])
 	if len(the_existing_cpn_report) < 1:
 		args['valide'] = False
-		args['info_to_contact'] = "Erreur. Aucun rapport 'CPN' trouve de la maman '"+args['concerned_mother'].id_mother+"'. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		#args['info_to_contact'] = "Erreur. Aucun rapport 'CPN' trouve de la maman '"+args['concerned_mother'].id_mother+"'. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		args['info_to_contact'] = "Ikosa. Nta raporo 'CPN' iratangwa yerekeye umupfasoni '"+args['concerned_mother'].id_mother+"'. Mu gukosora, subira urungike iyo mesaje itangurwa na '"+args['mot_cle']+"' yanditse neza"
 		return
 
 	the_only_one_corresponding_report = Report.objects.filter(mother = args['concerned_mother'], category = args['mot_cle'][0:3]).order_by('-id')[0]
@@ -1390,7 +1456,8 @@ def modify_record_prenatal_consultation_report(args):
 	the_one_corresponding_cpnreport.save()
 
 	args['valide'] = True
-	args['info_to_contact'] = "Mise a jour du rapport de consultation prenatale de la femme '"+args['concerned_mother'].id_mother+"' a reussie."
+	#args['info_to_contact'] = "Mise a jour du rapport de consultation prenatale de la femme '"+args['concerned_mother'].id_mother+"' a reussie."
+	args['info_to_contact'] = "Mesaje ikosora iyari yarungitswe yerekeye ukuja gupimisha imbanyi kwumupfasoni '"+args['concerned_mother'].id_mother+"' yashitse."
 
 
 	
@@ -1432,7 +1499,8 @@ def record_birth_case_report(args):
 	#Let check if the birth date is not a future date
 	#It must be a previous date or today's date
 	args["previous_days_or_today_date"] = args['text'].split(' ')[3]
-	args["date_meaning"] = "Date de naissance"
+	#args["date_meaning"] = "Date de naissance"
+	args["date_meaning"] = "Igenekerezo umuvyeyi yibarukiyeko"
 	check_date_is_previous_or_today(args)
 	if not args['valide']:
 		return
@@ -1441,7 +1509,8 @@ def record_birth_case_report(args):
 
 	#Let's check if the next CPoN date is a future date
 	args["future_date"] = args['text'].split(' ')[4]
-	args["date_meaning"] = "Prochaine date pour les soins postnatals"
+	#args["date_meaning"] = "Prochaine date pour les soins postnatals"
+	args["date_meaning"] = "Igenekerezo umuvyeyi azosubirira kw ivuriro"
 	check_is_future_date(args)
 	if not args['valide']:
 		return
@@ -1450,7 +1519,8 @@ def record_birth_case_report(args):
 	
 	#Let's check if the location of birth is valid
 	args["location"] = args['text'].split(' ')[5]
-	args["date_meaning"] = "lieu de naissance"
+	#args["date_meaning"] = "lieu de naissance"
+	args["date_meaning"] = "Aho umupfasoni azibarukira"
 	check_location(args)
 	if not args['valide']:
 		return
@@ -1469,7 +1539,8 @@ def record_birth_case_report(args):
 
 	#Let's check if the indicated child weight is valid
 	args["float_value"] = args['text'].split(' ')[8]
-	args["date_meaning"] = "Poids du nouveau ne"
+	#args["date_meaning"] = "Poids du nouveau ne"
+	args["date_meaning"] = "Ibiro vyumwana"
 	check_is_float(args)
 	if not args['valide']:
 		return
@@ -1477,7 +1548,8 @@ def record_birth_case_report(args):
 		checked_value = float(args['checked_float'])
 	except:
 		args['valide'] = False
-		args['info_to_contact'] = "Erreur. La valeur envoyee pour '"+args["date_meaning"]+"' n est pas valide. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		#args['info_to_contact'] = "Erreur. La valeur envoyee pour '"+args["date_meaning"]+"' n est pas valide. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		args['info_to_contact'] = "Ikosa. Ico wanditse kuvyerekeye '"+args["date_meaning"]+"' sico. Mu gukosora, subira urungike iyo mesaje itangurwa na '"+args['mot_cle']+"' yanditse neza"
 		return
 	
 	
@@ -1486,7 +1558,8 @@ def record_birth_case_report(args):
 	created_nsc_report = ReportNSC.objects.create(report = the_created_report, child_number = args['child_number'], birth_date = args["birth_date"], birth_location = args['location'], gender = args['gender'], weight = checked_value, next_appointment_date = args["next_cpon_appointment_date"], breast_feading = args['code_allaitement'])
 	
 	args['valide'] = True
-	args['info_to_contact'] = "Le rapport de naissance du bebe '" +args['child_number'].child_code_designation+"' de la maman '"+args['concerned_woman'].id_mother+"' est bien enregistre."
+	#args['info_to_contact'] = "Le rapport de naissance du bebe '" +args['child_number'].child_code_designation+"' de la maman '"+args['concerned_woman'].id_mother+"' est bien enregistre."
+	args['info_to_contact'] = "Mesaje ivuga ivuka ry umwana '" +args['child_number'].child_code_designation+"' w umupfasoni '"+args['concerned_woman'].id_mother+"' yashitse"
 
 
 
@@ -1523,7 +1596,8 @@ def modify_record_birth_case_report(args):
 	#Let check if the birth date is not a future date
 	#It must be a previous date or today's date
 	args["previous_days_or_today_date"] = args['text'].split(' ')[3]
-	args["date_meaning"] = "Date de naissance"
+	#args["date_meaning"] = "Date de naissance"
+	args["date_meaning"] = "Igenekerezo umwana yavukiyeko"
 	check_date_is_previous_or_today(args)
 	if not args['valide']:
 		return
@@ -1532,7 +1606,8 @@ def modify_record_birth_case_report(args):
 
 	#Let's check if the next CPoN date is a future date
 	args["future_date"] = args['text'].split(' ')[4]
-	args["date_meaning"] = "Prochaine date pour les soins postnatals"
+	#args["date_meaning"] = "Prochaine date pour les soins postnatals"
+	args["date_meaning"] = "Igenekerezo umuvyeyi azosubirirako kw ivuriro"
 	check_is_future_date(args)
 	if not args['valide']:
 		return
@@ -1541,7 +1616,8 @@ def modify_record_birth_case_report(args):
 	
 	#Let's check if the location of birth is valid
 	args["location"] = args['text'].split(' ')[5]
-	args["date_meaning"] = "lieu de naissance"
+	#args["date_meaning"] = "lieu de naissance"
+	args["date_meaning"] = "Ikibanza umuvyeyi yavukiyemwo"
 	check_location(args)
 	if not args['valide']:
 		return
@@ -1560,7 +1636,8 @@ def modify_record_birth_case_report(args):
 
 	#Let's check if the indicated child weight is valid
 	args["float_value"] = args['text'].split(' ')[8]
-	args["date_meaning"] = "Poids du nouveau ne"
+	#args["date_meaning"] = "Poids du nouveau ne"
+	args["date_meaning"] = "Ibiro umwana yavukanye"
 	check_is_float(args)
 	if not args['valide']:
 		return
@@ -1568,7 +1645,8 @@ def modify_record_birth_case_report(args):
 		checked_value = float(args['checked_float'])
 	except:
 		args['valide'] = False
-		args['info_to_contact'] = "Erreur. La valeur envoyee pour '"+args["date_meaning"]+"' n est pas valide. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		#args['info_to_contact'] = "Erreur. La valeur envoyee pour '"+args["date_meaning"]+"' n est pas valide. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		args['info_to_contact'] = "Ikosa. Ico wanditse kuvyerekeye '"+args["date_meaning"]+"' sico. Mu gukosora, subira urungike iyo mesaje itangurwa na '"+args['mot_cle']+"' yanditse neza"
 		return
 
 
@@ -1578,7 +1656,8 @@ def modify_record_birth_case_report(args):
 	the_existing_nsc_report = Report.objects.filter(mother = args['concerned_mother'], category = args['mot_cle'][0:3])
 	if len(the_existing_nsc_report) < 1:
 		args['valide'] = False
-		args['info_to_contact'] = "Erreur. Aucun rapport 'NSC' trouve de la maman '"+args['concerned_mother'].id_mother+"'. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		#args['info_to_contact'] = "Erreur. Aucun rapport 'NSC' trouve de la maman '"+args['concerned_mother'].id_mother+"'. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		args['info_to_contact'] = "Ikosa. Nta raporo yigeze itangwa ivuga ko umuvyeyi nomero '"+args['concerned_mother'].id_mother+"' yibarutse. Mu gukosora, subira urungike iyo mesaje itangurwa na '"+args['mot_cle']+"' yanditse neza"
 		return
 
 	the_only_one_corresponding_report = Report.objects.filter(mother = args['concerned_mother'], category = args['mot_cle'][0:3]).order_by('-id')[0]
@@ -1614,7 +1693,8 @@ def modify_record_birth_case_report(args):
 	the_one_corresponding_nscreport.save()
 	
 	args['valide'] = True
-	args['info_to_contact'] = "Mise a jour du rapport de naissance du bebe '" +args['child_number'].child_code_designation+"' de la maman '"+args['concerned_woman'].id_mother+"' a reussie."
+	#args['info_to_contact'] = "Mise a jour du rapport de naissance du bebe '" +args['child_number'].child_code_designation+"' de la maman '"+args['concerned_woman'].id_mother+"' a reussie."
+	args['info_to_contact'] = "Mesaje ikosora iyari yatanzwe yerekeye umwana '" +args['child_number'].child_code_designation+"' w umupfasoni '"+args['concerned_woman'].id_mother+"' yashitse"
 
 #-----------------------------------------------------------------
 
@@ -1657,7 +1737,8 @@ def record_postnatal_care_report(args):
 
 	#Let's check if the next appointment date is a future date
 	args["future_date"] = args['text'].split(' ')[4]
-	args["date_meaning"] = "Date du prochain rendez-vous"
+	#args["date_meaning"] = "Date du prochain rendez-vous"
+	args["date_meaning"] = "Igenekerezo umuvyeyi azosubirirako kw ivuriro"
 	check_is_future_date(args)
 	if not args['valide']:
 		return
@@ -1671,7 +1752,8 @@ def record_postnatal_care_report(args):
 
 	#Let's check mother health status value
 	args["health_status_value"] = args['text'].split(' ')[6]
-	args["health_status_meaning"] = "etat de sante de la mere"
+	#args["health_status_meaning"] = "etat de sante de la mere"
+	args["health_status_meaning"] = "Ingene amagara y umuvyeyi yifashe"
 	check_health_status(args)
 	if not args['valide']:
 		return
@@ -1679,7 +1761,8 @@ def record_postnatal_care_report(args):
 
 	#Let's check child health status value
 	args["health_status_value"] = args['text'].split(' ')[7]
-	args["health_status_meaning"] = "etat de sante de l enfant"
+	#args["health_status_meaning"] = "etat de sante de l enfant"
+	args["health_status_meaning"] = "Ingene amagara y umuvyeyi yifashe"
 	check_health_status(args)
 	if not args['valide']:
 		return
@@ -1696,7 +1779,8 @@ def record_postnatal_care_report(args):
 		created_report_symptom_connection = CON_Report_Symptom.objects.create(con_report = created_con_report, symptom = one_symptom)
 
 	args['valide'] = True
-	args['info_to_contact'] = "Le rapport de soins postnatals pour le bebe '" +args['child_number'].child_code_designation+"' de la maman '"+args['concerned_mother'].id_mother+"' est bien enregistre."
+	#args['info_to_contact'] = "Le rapport de soins postnatals pour le bebe '" +args['child_number'].child_code_designation+"' de la maman '"+args['concerned_mother'].id_mother+"' est bien enregistre."
+	args['info_to_contact'] = "Mesaje warungitse yerekeye ukuja kwivuriro kw umwana '" +args['child_number'].child_code_designation+"' w umupfasoni '"+args['concerned_mother'].id_mother+"' yashitse"
 
 
 
@@ -1737,7 +1821,8 @@ def modify_record_postnatal_care_report(args):
 
 	#Let's check if the next appointment date is a future date
 	args["future_date"] = args['text'].split(' ')[4]
-	args["date_meaning"] = "Date du prochain rendez-vous"
+	#args["date_meaning"] = "Date du prochain rendez-vous"
+	args["date_meaning"] = "Igenekerezo umuvyeyi azosubirirako kw ivuriro"
 	check_is_future_date(args)
 	if not args['valide']:
 		return
@@ -1772,7 +1857,8 @@ def modify_record_postnatal_care_report(args):
 	the_existing_con_report = Report.objects.filter(mother = args['concerned_mother'], category = args['mot_cle'][0:3])
 	if len(the_existing_con_report) < 1:
 		args['valide'] = False
-		args['info_to_contact'] = "Erreur. Aucun rapport 'CON' trouve de la maman '"+args['concerned_mother'].id_mother+"'. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		#args['info_to_contact'] = "Erreur. Aucun rapport 'CON' trouve de la maman '"+args['concerned_mother'].id_mother+"'. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		args['info_to_contact'] = "Ikosa. Nta raporo 'CON' yumuvyeyi nomero '"+args['concerned_mother'].id_mother+"' irabaho. Mu gukosora, subira urungike iyo mesaje itangurwa na '"+args['mot_cle']+"' yanditse neza"
 		return
 
 	the_only_one_corresponding_report = Report.objects.filter(mother = args['concerned_mother'], category = args['mot_cle'][0:3]).order_by('-id')[0]
@@ -1815,7 +1901,8 @@ def modify_record_postnatal_care_report(args):
 		created_report_symptom_connection = CON_Report_Symptom.objects.create(con_report = the_one_corresponding_conreport, symptom = one_symptom)
 
 	args['valide'] = True
-	args['info_to_contact'] = "Mise a jour du rapport de soins postnatals pour le bebe '" +args['child_number'].child_code_designation+"' de la maman '"+args['concerned_mother'].id_mother+"' a reussie."
+	#args['info_to_contact'] = "Mise a jour du rapport de soins postnatals pour le bebe '" +args['child_number'].child_code_designation+"' de la maman '"+args['concerned_mother'].id_mother+"' a reussie."
+	args['info_to_contact'] = "Mesaje ikosora iyari yatanzwe yerekeye ukuja kw ivuriro kw umwana '" +args['child_number'].child_code_designation+"' w umupfasoni '"+args['concerned_mother'].id_mother+"' yashitse"
 
 #-----------------------------------------------------------------
 
@@ -1858,7 +1945,8 @@ def record_child_follow_up_report(args):
 
 	#Let's check if the location sent is valid
 	args["location"] = args['text'].split(' ')[4]
-	args["date_meaning"] = "lieu de vaccination"
+	#args["date_meaning"] = "lieu de vaccination"
+	args["date_meaning"] = "Ikibanza icandagwa ryabereyemwo"
 	check_location(args)
 	if not args['valide']:
 		return
@@ -1869,7 +1957,8 @@ def record_child_follow_up_report(args):
 	created_vac_report = ReportVAC.objects.create(report = the_created_report, child = args['concerned_child'], vac = args['concerned_vac'], location = args['location'])
 	
 	args['valide'] = True
-	args['info_to_contact'] = "Le rapport de suivi du bebe '" +args['child_number'].child_code_designation+"' de la maman '"+args['concerned_mother'].id_mother+"' est bien enregistre."
+	#args['info_to_contact'] = "Le rapport de suivi du bebe '" +args['child_number'].child_code_designation+"' de la maman '"+args['concerned_mother'].id_mother+"' est bien enregistre."
+	args['info_to_contact'] = "Mesaje yerekeye ikurikiranwa ry umwana '" +args['child_number'].child_code_designation+"' w umupfasoni '"+args['concerned_mother'].id_mother+"' yashitse neza"
 
 
 
@@ -1911,7 +2000,8 @@ def modify_record_child_follow_up_report(args):
 
 	#Let's check if the location sent is valid
 	args["location"] = args['text'].split(' ')[4]
-	args["date_meaning"] = "lieu de vaccination"
+	#args["date_meaning"] = "lieu de vaccination"
+	args["date_meaning"] = "Ikibanza icandagwa ryabereyemwo"
 	check_location(args)
 	if not args['valide']:
 		return
@@ -1922,7 +2012,8 @@ def modify_record_child_follow_up_report(args):
 	the_existing_vac_report = Report.objects.filter(mother = args['concerned_mother'], category = args['mot_cle'][0:3])
 	if len(the_existing_vac_report) < 1:
 		args['valide'] = False
-		args['info_to_contact'] = "Erreur. Aucun rapport 'VAC' trouve de la maman '"+args['concerned_mother'].id_mother+"'. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		#args['info_to_contact'] = "Erreur. Aucun rapport 'VAC' trouve de la maman '"+args['concerned_mother'].id_mother+"'. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		args['info_to_contact'] = "Ikosa. Nta raporo 'VAC' yumuvyeyi numero '"+args['concerned_mother'].id_mother+"' irabaho. Mu gukosora, subira urungike iyo mesaje itangurwa na '"+args['mot_cle']+"' yanditse neza"
 		return
 
 	the_only_one_corresponding_report = Report.objects.filter(mother = args['concerned_mother'], category = args['mot_cle'][0:3]).order_by('-id')[0]
@@ -1953,7 +2044,8 @@ def modify_record_child_follow_up_report(args):
 	the_one_corresponding_vacreport.save()
 	
 	args['valide'] = True
-	args['info_to_contact'] = "Mise a jour du rapport de suivi du bebe '" +args['child_number'].child_code_designation+"' de la maman '"+args['concerned_mother'].id_mother+"' a reussie."
+	#args['info_to_contact'] = "Mise a jour du rapport de suivi du bebe '" +args['child_number'].child_code_designation+"' de la maman '"+args['concerned_mother'].id_mother+"' a reussie."
+	args['info_to_contact'] = "Mesaje ikosora iyari yatanzwe yerekeye ikurikiranwa ry umwana '" +args['child_number'].child_code_designation+"' w umupfasoni '"+args['concerned_mother'].id_mother+"' yashitse neza"
 
 #-----------------------------------------------------------------
 
@@ -2032,12 +2124,16 @@ def record_risk_report(args):
 	args['valide'] = True
 	
 	if(args['ris_type'] == "RIS_CHILD"):
-		args['info_to_contact'] = "Le rapport de risque pour le bebe '" +args['child_number'].child_code_designation+"' de la maman '"+args['concerned_mother'].id_mother+"' est bien enregistre."
-		args['info_to_supervisors'] = "L enfant '" +args['child_number'].child_code_designation+"' de la maman '"+args['concerned_mother'].id_mother+"' presente les symptomes suivants : "+string_of_symptoms
+		#args['info_to_contact'] = "Le rapport de risque pour le bebe '" +args['child_number'].child_code_designation+"' de la maman '"+args['concerned_mother'].id_mother+"' est bien enregistre."
+		args['info_to_contact'] = "Mesaje warungitse yerekeye ibimenyetse vy indwara kumwana '" +args['child_number'].child_code_designation+"' w umupfasoni '"+args['concerned_mother'].id_mother+"' yashitse neza"
+		#args['info_to_supervisors'] = "L enfant '" +args['child_number'].child_code_designation+"' de la maman '"+args['concerned_mother'].id_mother+"' presente les symptomes suivants : "+string_of_symptoms
+		args['info_to_supervisors'] = "Umwana '" +args['child_number'].child_code_designation+"' w umupfasoni '"+args['concerned_mother'].id_mother+"' afise ibimenyetso bikurikira : "+string_of_symptoms
 
 	if(args['ris_type'] == "RIS_WOMAN"):
-		args['info_to_contact'] = "Le rapport de risque de la maman '"+args['concerned_mother'].id_mother+"' est bien enregistre."
-		args['info_to_supervisors'] = "La maman '"+args['concerned_mother'].id_mother+"' presente les symptomes suivants : "+string_of_symptoms
+		#args['info_to_contact'] = "Le rapport de risque de la maman '"+args['concerned_mother'].id_mother+"' est bien enregistre."
+		args['info_to_contact'] = "Mesaje warungitse yerekeye ibimenyetso vy indwara ku mupfasoni '"+args['concerned_mother'].id_mother+"' yashitse neza"
+		#args['info_to_supervisors'] = "La maman '"+args['concerned_mother'].id_mother+"' presente les symptomes suivants : "+string_of_symptoms
+		args['info_to_supervisors'] = "Umupfasoni '"+args['concerned_mother'].id_mother+"' afise ibimenyetso vy indwara bikurikira : "+string_of_symptoms
 
 	print("args['info_to_supervisors']")
 	print(args['info_to_supervisors'])
@@ -2091,7 +2187,8 @@ def modify_record_risk_report(args):
 	the_existing_ris_report = Report.objects.filter(mother = args['concerned_mother'], category = args['mot_cle'][0:3])
 	if len(the_existing_ris_report) < 1:
 		args['valide'] = False
-		args['info_to_contact'] = "Erreur. Aucun rapport 'RIS' trouve de la maman '"+args['concerned_mother'].id_mother+"'. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		#args['info_to_contact'] = "Erreur. Aucun rapport 'RIS' trouve de la maman '"+args['concerned_mother'].id_mother+"'. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		args['info_to_contact'] = "Ikosa. Nta raporo 'RIS' yumuvyeyi '"+args['concerned_mother'].id_mother+"' irabaho. Mu gukosora, subira urungike iyo mesaje itangurwa na '"+args['mot_cle']+"' yanditse neza"
 		return
 
 	the_only_one_corresponding_report = Report.objects.filter(mother = args['concerned_mother'], category = args['mot_cle'][0:3]).order_by('-id')[0]
@@ -2133,9 +2230,11 @@ def modify_record_risk_report(args):
 	args['valide'] = True
 	
 	if(args['ris_type'] == "RIS_CHILD"):
-		args['info_to_contact'] = "Mise a jour du rapport de risque pour le bebe '" +args['child_number'].child_code_designation+"' de la maman '"+args['concerned_mother'].id_mother+"' a reussie."
+		#args['info_to_contact'] = "Mise a jour du rapport de risque pour le bebe '" +args['child_number'].child_code_designation+"' de la maman '"+args['concerned_mother'].id_mother+"' a reussie."
+		args['info_to_contact'] = "Mesaje ikosora iyari yarungitswe yerekeye ibimenyetso vy indwara kumwana '" +args['child_number'].child_code_designation+"' w umupfasoni '"+args['concerned_mother'].id_mother+"' yashitse neza"
 	if(args['ris_type'] == "RIS_WOMAN"):
-		args['info_to_contact'] = "Mise a jour du rapport de risque de la maman '"+args['concerned_mother'].id_mother+"' a reussie."
+		#args['info_to_contact'] = "Mise a jour du rapport de risque de la maman '"+args['concerned_mother'].id_mother+"' a reussie."
+		args['info_to_contact'] = "Mesaje ikosora iyari yarungitswe yerekeye ibimenyetso vy indwara ku mupfasoni '"+args['concerned_mother'].id_mother+"' yashitse neza"
 
 #-----------------------------------------------------------------
 
@@ -2190,7 +2289,8 @@ def record_response_to_risk_report(args):
 	created_rer_report = ReportRER.objects.create(report = the_created_report, ris = args['the_concerned_ris'], rescue = args['concerned_rescue_received'], current_state = args['concerned_health_status'])
 	
 	args['valide'] = True
-	args['info_to_contact'] = "Le rapport envoye de reponse au risque de la maman '"+args['concerned_mother'].id_mother+"' est bien enregistre."
+	#args['info_to_contact'] = "Le rapport envoye de reponse au risque de la maman '"+args['concerned_mother'].id_mother+"' est bien enregistre."
+	args['info_to_contact'] = "Mesaje ivuga icakozwe ku vyerekeye ibimenyetso vy indwara vyabonetse ku mupfasoni '"+args['concerned_mother'].id_mother+"' yashitse neza"
 
 
 
@@ -2241,7 +2341,8 @@ def modify_record_response_to_risk_report(args):
 	the_existing_rer_report = Report.objects.filter(mother = args['concerned_mother'], category = args['mot_cle'][0:3])
 	if len(the_existing_rer_report) < 1:
 		args['valide'] = False
-		args['info_to_contact'] = "Erreur. Aucun rapport 'RER' trouve de la maman '"+args['concerned_mother'].id_mother+"'. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		#args['info_to_contact'] = "Erreur. Aucun rapport 'RER' trouve de la maman '"+args['concerned_mother'].id_mother+"'. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		args['info_to_contact'] = "Ikosa. Nta raporo 'RER' yumuvyeyi '"+args['concerned_mother'].id_mother+"' irabaho. Mu gukosora, subira urungike iyo mesaje itangurwa na '"+args['mot_cle']+"' yanditse neza"
 		return
 
 	the_only_one_corresponding_report = Report.objects.filter(mother = args['concerned_mother'], category = args['mot_cle'][0:3]).order_by('-id')[0]
@@ -2270,7 +2371,8 @@ def modify_record_response_to_risk_report(args):
 
 
 	args['valide'] = True
-	args['info_to_contact'] = "Mise a jour du rapport envoye en rapport avec la reponse au risque concernant la maman '"+args['concerned_mother'].id_mother+"' a reussie."
+	#args['info_to_contact'] = "Mise a jour du rapport envoye en rapport avec la reponse au risque concernant la maman '"+args['concerned_mother'].id_mother+"' a reussie."
+	args['info_to_contact'] = "Mesaje ikosora iyari yatanzwe ivuga icakozwe ku vyerekeye ibimenyetso vy indwara vy abonetse ku mupfasoni '"+args['concerned_mother'].id_mother+"' yashitse neza"
 #-----------------------------------------------------------------
 
 
@@ -2308,7 +2410,8 @@ def record_death_report(args):
 	#Let's check if the location is valid
 	args["location"] = args['text'].split(' ')[2]
 	#date_meaning should be change to location_meaning
-	args["date_meaning"] = "lieu de deces"
+	#args["date_meaning"] = "lieu de deces"
+	args["date_meaning"] = "Ikibanza umuntu yapfiriyemwo"
 	check_location(args)
 	if not args['valide']:
 		return
@@ -2346,9 +2449,11 @@ def record_death_report(args):
 	args['valide'] = True
 	
 	if(args['dec_type'] == "DEC_CHILD"):
-		args['info_to_contact'] = "Le rapport de deces du bebe '" +args['child_number'].child_code_designation+"' de la maman '"+args['concerned_mother'].id_mother+"' est bien enregistre."
+		#args['info_to_contact'] = "Le rapport de deces du bebe '" +args['child_number'].child_code_designation+"' de la maman '"+args['concerned_mother'].id_mother+"' est bien enregistre."
+		args['info_to_contact'] = "Mesaje ivuga urupfu rw umwana '" +args['child_number'].child_code_designation+"' w umupfasoni '"+args['concerned_mother'].id_mother+"' yashitse"
 	if(args['dec_type'] == "DEC_WOMAN"):
-		args['info_to_contact'] = "Le rapport de deces de la maman '"+args['concerned_mother'].id_mother+"' est bien enregistre."
+		#args['info_to_contact'] = "Le rapport de deces de la maman '"+args['concerned_mother'].id_mother+"' est bien enregistre."
+		args['info_to_contact'] = "Mesaje ivuga urupfu rw umupfasoni '"+args['concerned_mother'].id_mother+"' yashitse"
 
 
 
@@ -2384,7 +2489,7 @@ def modify_record_death_report(args):
 	#Let's check if the location is valid
 	args["location"] = args['text'].split(' ')[2]
 	#date_meaning should be change to location_meaning
-	args["date_meaning"] = "lieu de deces"
+	args["date_meaning"] = "Ikibanza umuntu yapfiriyemwo"
 	check_location(args)
 	if not args['valide']:
 		return
@@ -2413,7 +2518,8 @@ def modify_record_death_report(args):
 	the_existing_dec_report = Report.objects.filter(mother = args['concerned_mother'], category = args['mot_cle'][0:3])
 	if len(the_existing_dec_report) < 1:
 		args['valide'] = False
-		args['info_to_contact'] = "Erreur. Aucun rapport 'DEC' trouve de la maman '"+args['concerned_mother'].id_mother+"'. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		#args['info_to_contact'] = "Erreur. Aucun rapport 'DEC' trouve de la maman '"+args['concerned_mother'].id_mother+"'. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		args['info_to_contact'] = "Ikosa. Nta raporo 'DEC' yumuvyeyi numero '"+args['concerned_mother'].id_mother+"' irabaho. Mu gukosora, subira urungike iyo mesaje itangurwa na '"+args['mot_cle']+"' yanditse neza"
 		return
 
 	the_only_one_corresponding_report = Report.objects.filter(mother = args['concerned_mother'], category = args['mot_cle'][0:3]).order_by('-id')[0]
@@ -2454,9 +2560,11 @@ def modify_record_death_report(args):
 	args['valide'] = True
 	
 	if(args['dec_type'] == "DEC_CHILD"):
-		args['info_to_contact'] = "Mise a jour du rapport de deces du bebe '" +args['child_number'].child_code_designation+"' de la maman '"+args['concerned_mother'].id_mother+"' a reussie."
+		#args['info_to_contact'] = "Mise a jour du rapport de deces du bebe '" +args['child_number'].child_code_designation+"' de la maman '"+args['concerned_mother'].id_mother+"' a reussie."
+		args['info_to_contact'] = "Mesaje ikosora iyari yatanzwe yerekeye urupfu rw umwana '" +args['child_number'].child_code_designation+"' w umupfasoni '"+args['concerned_mother'].id_mother+"' yashitse"
 	if(args['dec_type'] == "DEC_WOMAN"):
-		args['info_to_contact'] = "Mise a jour du rapport de deces de la maman '"+args['concerned_mother'].id_mother+"' a reussie."
+		#args['info_to_contact'] = "Mise a jour du rapport de deces de la maman '"+args['concerned_mother'].id_mother+"' a reussie."
+		args['info_to_contact'] = "Mesaje ikosora iyari yatanzwe yerekeye urupfu rw umupfasoni '"+args['concerned_mother'].id_mother+"' yashitse"
 
 
 #-----------------------------------------------------------------
@@ -2493,7 +2601,8 @@ def record_leave_report(args):
 	created_dep_report = ReportDEP.objects.create(report = the_created_report)
 	
 	args['valide'] = True
-	args['info_to_contact'] = "Le rapport du depart de la maman '"+args['concerned_mother'].id_mother+"' est bien enregistre."
+	#args['info_to_contact'] = "Le rapport du depart de la maman '"+args['concerned_mother'].id_mother+"' est bien enregistre."
+	args['info_to_contact'] = "Mesaje ivuga ko umupfasoni '"+args['concerned_mother'].id_mother+"' yimutse yashitse neza"
 
 
 def modify_record_leave_report(args):
@@ -2524,6 +2633,7 @@ def modify_record_leave_report(args):
 	the_existing_dep_report = Report.objects.filter(mother = args['concerned_mother'])
 	if len(the_existing_dep_report) < 1:
 		args['valide'] = False
+		#args['info_to_contact'] = "Erreur. Aucun rapport trouve concernant la maman '"+args['concerned_mother'].id_mother+"'. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
 		args['info_to_contact'] = "Erreur. Aucun rapport trouve concernant la maman '"+args['concerned_mother'].id_mother+"'. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
 		return
 
@@ -2531,7 +2641,8 @@ def modify_record_leave_report(args):
 
 	if(the_only_one_corresponding_report.sub_hill != args['the_sender'].sub_colline):
 		args['valide'] = False
-		args['info_to_contact'] = "Erreur. Le dernier rapport de la maman '"+args['concerned_mother'].id_mother+"' n est pas venu de votre sous colline. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		#args['info_to_contact'] = "Erreur. Le dernier rapport de la maman '"+args['concerned_mother'].id_mother+"' n est pas venu de votre sous colline. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+		args['info_to_contact'] = "Ikosa. Raporo yanyuma yumuvyeyi nomero '"+args['concerned_mother'].id_mother+"' ntiyavuye aho usanzwe ukorera. Mu gukosora, subira urungike iyo mesaje itangurwa na '"+args['mot_cle']+"' yanditse neza"
 		return
 
 	the_corresponding_dep_report = ReportDEP.objects.filter(report = the_only_one_corresponding_report)
@@ -2558,5 +2669,6 @@ def modify_record_leave_report(args):
 
 	
 	args['valide'] = True
-	args['info_to_contact'] = "Mise a jour du rapport de depart de la maman '"+args['concerned_mother'].id_mother+"' a reussie."
+	#args['info_to_contact'] = "Mise a jour du rapport de depart de la maman '"+args['concerned_mother'].id_mother+"' a reussie."
+	args['info_to_contact'] = "Mesaje ikosora iyari yatenzwe ivuga iyimuka ry umupfasoni '"+args['concerned_mother'].id_mother+"' yashitse neza"
 #-----------------------------------------------------------------
