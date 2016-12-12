@@ -667,7 +667,7 @@ def save_temporary_the_reporter(args):
 			if len(the_sub_hill0) < 1:
 				args['valide'] = False
 				#args['info_to_contact'] = "Erreur. Le nom de la sous colline envoye n est pas valide. Pour corriger, reenvoyer le message bien ecrit commencant par REG"
-				args['info_to_contact'] = "Ikosa. Izina ryagacimbiri wanditse niribaho . Mu gukosora, subira urungike iyo mesaje itangurwa na 'REG' yanditse neza"
+				args['info_to_contact'] = "Ikosa. Izina ryagacimbiri wanditse ntiribaho . Mu gukosora, subira urungike iyo mesaje itangurwa na 'REG' yanditse neza"
 				return
 			
 			
@@ -685,7 +685,8 @@ def save_temporary_the_reporter(args):
 
 			Temporary.objects.create(phone_number = the_phone_number, facility = the_concerned_facility, supervisor_phone_number = the_supervisor_phone_number_no_space, sub_hill = the_concerned_sub_hill)
 			args['valide'] = True
-			args['info_to_contact'] = "Veuillez reenvoyer seulement le numero de telephone de votre superviseur s il vous plait."
+			#args['info_to_contact'] = "Veuillez reenvoyer seulement le numero de telephone de votre superviseur s il vous plait."
+			args['info_to_contact'] = "Rungika inomero ya terefone y uwugukurikirana yonyene atakindi ugeretseko kugira iyandikwa ryawe riherahezwe."
 
 
 def check_has_already_session(args):
@@ -851,7 +852,7 @@ def complete_registration(args):
 			if is_first_registration:
 				CHW.objects.create(phone_number = the_one_existing_temp.phone_number, cds = the_one_existing_temp.facility, supervisor_phone_number = the_one_existing_temp.supervisor_phone_number, sub_colline = the_one_existing_temp.sub_hill)
 				#args['info_to_contact'] = "Enregistrement reussi. [CDS : '"+the_one_existing_temp.facility.name+"', Colline :  '"+the_one_existing_temp.sub_hill.colline.name+"', sous colline : '"+the_one_existing_temp.sub_hill.name+"', Numero du superviseur :  '"+the_one_existing_temp.supervisor_phone_number+"']. Si vous voulez modifier votre enregistrent, veuillez utiliser le mot cle REGM"
-				args['info_to_contact'] = "Mesaje warungitse yashitse. [Ivuriro : '"+the_one_existing_temp.facility.name+"', Umutumba :  '"+the_one_existing_temp.sub_hill.colline.name+"', Agacimbiri : '"+the_one_existing_temp.sub_hill.name+"', Terefone y uwugukurikirana :  '"+the_one_existing_temp.supervisor_phone_number+"']. Nimba hari ico wihenze, kosora mu kurungika mesaje yanditse neza itangurwa na 'REGM'"
+				args['info_to_contact'] = "Iyandikwa ryawe rigenze neza. [Ivuriro : '"+the_one_existing_temp.facility.name+"', Umutumba :  '"+the_one_existing_temp.sub_hill.colline.name+"', Agacimbiri : '"+the_one_existing_temp.sub_hill.name+"', Terefone y uwugukurikirana :  '"+the_one_existing_temp.supervisor_phone_number+"']. Nimba hari ico wihenze, kosora mu kurungika mesaje yanditse neza itangurwa na 'REGM'"
 			else:
 				#The contact is doing an update
 				the_existing_contact.phone_number = the_one_existing_temp.phone_number
