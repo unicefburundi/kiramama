@@ -999,11 +999,12 @@ def record_pregnant_case(args):
 	print(mother_id)
 
 	#Let's check if there is no mother with that id
-	check_mother_exists = Mother.objects.filter(id_mother = mother_id)
+	'''check_mother_exists = Mother.objects.filter(id_mother = mother_id)
 	if len(check_mother_exists) > 0:
 		args['valide'] = False
+		#Something need to be changed. When we delete a CHW who have already reported one or more pregnant cases, we will have the message below because a woman created by that reporter is not deleted and we have problem of woman id conflict when an other pregnant woman is being reported from that cds.
 		args['info_to_contact'] = "Exception. Consulter l equipe de maintenance du systeme."
-		return
+		return'''
 
 
 
@@ -1012,7 +1013,8 @@ def record_pregnant_case(args):
 
 	#All cheks passes. Let's record the pregnant women
 	#the_created_mother_record, created = Mother.objects.get_or_create(phone_number = args["phone_number"])
-	the_created_mother_record = Mother.objects.create(id_mother = mother_id, phone_number = args["phone_number"])
+	#the_created_mother_record = Mother.objects.create(id_mother = mother_id, phone_number = args["phone_number"])
+	the_created_mother_record, created = Mother.objects.get_or_create(id_mother = mother_id, phone_number = args["phone_number"])
 	the_created_report = Report.objects.create(chw = args['the_sender'], sub_hill = args['sub_colline'], cds = args['facility'], mother = the_created_mother_record, reporting_date = datetime.datetime.now().date(), text = args['text'], category = args['mot_cle'])
 	created_gro_report = ReportGRO.objects.create(report = the_created_report, expected_delivery_date = args["expected_birth_date"], next_appointment_date = args["next_appointment_date"], risk_level = args["risklevel"], consultation_location = args['location'])
 
