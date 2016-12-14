@@ -172,7 +172,7 @@ def check_is_future_date(args):
 		#The reporter can not report for a past date
 		args['valide'] = False
 		#args['info_to_contact'] = "Erreur. Vous n avez pas indiquez une date du futur pour '"+args["date_meaning"]+"'. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
-		args['info_to_contact'] = "Ikosa. '"+args["date_meaning"]+"' watanze ntirirashika. Mu gukosora, subira urungike iyo mesaje itangurwa na '"+args['mot_cle']+"' yanditse neza"
+		args['info_to_contact'] = "Ikosa. '"+args["date_meaning"]+"' ryararenganye. Mu gukosora, subira urungike iyo mesaje itangurwa na '"+args['mot_cle']+"' yanditse neza"
 		return
 	args['date_well_written'] = date_sent
 	args['valide'] = True
@@ -862,7 +862,7 @@ def complete_registration(args):
 			if is_first_registration:
 				CHW.objects.create(phone_number = the_one_existing_temp.phone_number, cds = the_one_existing_temp.facility, supervisor_phone_number = the_one_existing_temp.supervisor_phone_number, sub_colline = the_one_existing_temp.sub_hill)
 				#args['info_to_contact'] = "Enregistrement reussi. [CDS : '"+the_one_existing_temp.facility.name+"', Colline :  '"+the_one_existing_temp.sub_hill.colline.name+"', sous colline : '"+the_one_existing_temp.sub_hill.name+"', Numero du superviseur :  '"+the_one_existing_temp.supervisor_phone_number+"']. Si vous voulez modifier votre enregistrent, veuillez utiliser le mot cle REGM"
-				args['info_to_contact'] = "Iyandikwa ryawe rigenze neza. [Ivuriro : '"+the_one_existing_temp.facility.name+"', Umutumba :  '"+the_one_existing_temp.sub_hill.colline.name+"', Agacimbiri : '"+the_one_existing_temp.sub_hill.name+"', Terefone y uwugukurikirana :  '"+the_one_existing_temp.supervisor_phone_number+"']. Nimba hari ico wihenze, kosora mu kurungika mesaje yanditse neza itangurwa na 'REGM'"
+				args['info_to_contact'] = "Iyandikwa ryawe rigenze neza. [Ivuriro : '"+the_one_existing_temp.facility.name+"', Umutumba :  '"+the_one_existing_temp.sub_hill.colline.name+"', Agacimbiri : '"+the_one_existing_temp.sub_hill.name+"']. Wihenze, kosora urungitse mesaje yanditse neza itangurwa na 'REGM'"
 			else:
 				#The contact is doing an update
 				the_existing_contact.phone_number = the_one_existing_temp.phone_number
@@ -871,7 +871,7 @@ def complete_registration(args):
 				the_existing_contact.sub_colline = the_one_existing_temp.sub_hill
 				the_existing_contact.save()
 				#args['info_to_contact'] = "Modification reussie. [CDS : '"+the_one_existing_temp.facility.name+"', Colline :  '"+the_one_existing_temp.sub_hill.colline.name+"', sous colline : '"+the_one_existing_temp.sub_hill.name+"', Numero du superviseur :  '"+the_one_existing_temp.supervisor_phone_number+"']. Si vous voulez modifier votre enregistrent, veuillez utiliser le mot cle REGM"
-				args['info_to_contact'] = "Gukosora vyakunze. [Ivuriro : '"+the_one_existing_temp.facility.name+"', Umutumba :  '"+the_one_existing_temp.sub_hill.colline.name+"', Agacimbiri : '"+the_one_existing_temp.sub_hill.name+"', Terefone yuwugukurikirana :  '"+the_one_existing_temp.supervisor_phone_number+"']. Nimba hari ico wihenze, kosora mu kurungika mesaje yanditse neza itangurwa na 'REGM'"
+				args['info_to_contact'] = "Gukosora vyakunze. [Ivuriro : '"+the_one_existing_temp.facility.name+"', Umutumba :  '"+the_one_existing_temp.sub_hill.colline.name+"', Agacimbiri : '"+the_one_existing_temp.sub_hill.name+"']. Wihenze, kosora urungitse mesaje yanditse neza itangurwa na 'REGM'"
 
 			the_one_existing_temp.delete()
 			args['valide'] = True
