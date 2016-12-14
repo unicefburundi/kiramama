@@ -2238,9 +2238,18 @@ def modify_record_risk_report(args):
 		for one_ris_report_symptom_connection in all_ris_report_symptom_connections:
 			one_ris_report_symptom_connection.delete()
 
+	string_of_symptoms = ""
+	first_symptom = True
+
 	for one_symbol in args['checked_symptoms_list']:
 		one_symptom = Symptom.objects.filter(symtom_designation__iexact = one_symbol)[0]
 		created_report_symptom_connection = RIS_Report_Symptom.objects.create(ris_report = the_one_corresponding_risreport, symptom = one_symptom)
+		if first_symptom:
+			string_of_symptoms = string_of_symptoms+one_symptom.symtom_designation
+			first_symptom = False
+		else:
+			string_of_symptoms = string_of_symptoms+", "+one_symptom.symtom_designation
+
 
 	
 	if(args['ris_type'] == "RIS_CHILD"):
@@ -2253,10 +2262,17 @@ def modify_record_risk_report(args):
 	if(args['ris_type'] == "RIS_CHILD"):
 		#args['info_to_contact'] = "Mise a jour du rapport de risque pour le bebe '" +args['child_number'].child_code_designation+"' de la maman '"+args['concerned_mother'].id_mother+"' a reussie."
 		args['info_to_contact'] = "Mesaje ikosora iyari yarungitswe yerekeye ibimenyetso vy indwara kumwana '" +args['child_number'].child_code_designation+"' w umupfasoni '"+args['concerned_mother'].id_mother+"' yashitse neza"
+		args['info_to_supervisors'] = "Mesaje yo gukosora. Umwana '" +args['child_number'].child_code_designation+"' w umupfasoni '"+args['concerned_mother'].id_mother+"' afise ibimenyetso bikurikira : "+string_of_symptoms
 	if(args['ris_type'] == "RIS_WOMAN"):
 		#args['info_to_contact'] = "Mise a jour du rapport de risque de la maman '"+args['concerned_mother'].id_mother+"' a reussie."
 		args['info_to_contact'] = "Mesaje ikosora iyari yarungitswe yerekeye ibimenyetso vy indwara ku mupfasoni '"+args['concerned_mother'].id_mother+"' yashitse neza"
+		args['info_to_supervisors'] = "Mesaje yo gukosora. Umupfasoni '"+args['concerned_mother'].id_mother+"' afise ibimenyetso vy indwara bikurikira : "+string_of_symptoms
 
+
+	the_contact_phone_number = "tel:"+args['supervisor_phone_number']
+	data = {"urns": [the_contact_phone_number],"text": args['info_to_supervisors']}
+	args['data'] = data
+	send_sms_through_rapidpro(args)
 #-----------------------------------------------------------------
 
 
