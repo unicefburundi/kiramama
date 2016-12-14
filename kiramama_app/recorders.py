@@ -10,6 +10,16 @@ import json
 from django.conf import settings
 
 
+def send_sms_through_rapidpro(args):
+    ''' This function sends messages through rapidpro. Contact(s) and the message to send to them must be in args['data'] '''
+    url = 'https://api.rapidpro.io/api/v1/broadcasts.json'
+    token = getattr(settings,'TOKEN','')
+
+    data = args['data']
+
+    response = requests.post(url, headers={'Content-type': 'application/json', 'Authorization': 'Token %s' % token}, data = json.dumps(data))
+
+
 def check_supervisor_phone_number_not_for_this_contact(args):
 	'''This function checks if the contact didn't send his/her phone number in the place of the supervisor phone number'''
 
@@ -2125,6 +2135,8 @@ def record_risk_report(args):
 	args['info_to_supervisors'] = ""
 
 	args['valide'] = True
+
+
 	
 	if(args['ris_type'] == "RIS_CHILD"):
 		#args['info_to_contact'] = "Le rapport de risque pour le bebe '" +args['child_number'].child_code_designation+"' de la maman '"+args['concerned_mother'].id_mother+"' est bien enregistre."
@@ -2138,6 +2150,12 @@ def record_risk_report(args):
 		#args['info_to_supervisors'] = "La maman '"+args['concerned_mother'].id_mother+"' presente les symptomes suivants : "+string_of_symptoms
 		args['info_to_supervisors'] = "Umupfasoni '"+args['concerned_mother'].id_mother+"' afise ibimenyetso vy indwara bikurikira : "+string_of_symptoms
 
+
+	the_contact_phone_number = "tel:"+args['supervisor_phone_number']
+	data = {"urns": [the_contact_phone_number],"text": args['info_to_supervisors']}
+	args['data'] = data
+	send_sms_through_rapidpro(args)
+	
 	print("args['info_to_supervisors']")
 	print(args['info_to_supervisors'])
 
