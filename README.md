@@ -1,10 +1,11 @@
-Cholera
+Kiramama
 ========================
 App to monitor the Kiramama project for UNICEF Burundi
 
 Installation instructions
 -------------------------
 
+First clone the project under ``project_name``
 Below you will find basic setup instructions for the ``project_name``
 project. To begin you should have the following applications installed on your
 local development system:
