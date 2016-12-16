@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 """
 
 import os
+from datetime import timedelta
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -61,8 +62,9 @@ ROOT_URLCONF = 'kiramama.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates'),
-				],
+        'DIRS': [
+            os.path.join(BASE_DIR, 'templates'),
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -122,7 +124,6 @@ USE_L10N = True
 USE_TZ = True
 
 
-
 STATIC_URL = '/static/'
 
 MEDIA_ROOT = os.path.join(PROJECT_PATH,  'media')
@@ -137,51 +138,50 @@ STATICFILES_DIRS = (
 
 
 KNOWN_PREFIXES = {
-    'REG':'SELF_REGISTRATION',
-	'GRO':'PREGNANT_CASE_REGISTRATION',
-	'CPN':'PRENATAL_CONSULTATION_REGISTRATION',
-	'NSC':'BIRTH_REGISTRATION',
-	'CON':'POSTNATAL_CARE_REPORT',
-	'VAC':'CHILD_FOLLOW_UP_REPORT',
-	'RIS':'RISK_REPORT',
-	'RER':'RESPONSE_TO_RISK_REPORT',
-	'DEC':'DEATH_REPORT',
-	'DEP':'LEAVE_REPORT',
-	'REGM':'SELF_REGISTRATION_M',
-	'GROM':'PREGNANT_CASE_REGISTRATION_M',
-	'CPNM':'PRENATAL_CONSULTATION_REGISTRATION_M',
-	'NSCM':'BIRTH_REGISTRATION_M',
-	'CONM':'POSTNATAL_CARE_REPORT_M',
-	'VACM':'CHILD_FOLLOW_UP_REPORT_M',
-	'RISM':'RISK_REPORT_M',
-	'RERM':'RESPONSE_TO_RISK_REPORT_M',
-	'DECM':'DEATH_REPORT_M',
-	'DEPM':'LEAVE_REPORT_M',
+    'REG': 'SELF_REGISTRATION',
+    'GRO': 'PREGNANT_CASE_REGISTRATION',
+    'CPN': 'PRENATAL_CONSULTATION_REGISTRATION',
+    'NSC': 'BIRTH_REGISTRATION',
+    'CON': 'POSTNATAL_CARE_REPORT',
+    'VAC': 'CHILD_FOLLOW_UP_REPORT',
+    'RIS': 'RISK_REPORT',
+    'RER': 'RESPONSE_TO_RISK_REPORT',
+    'DEC': 'DEATH_REPORT',
+    'DEP': 'LEAVE_REPORT',
+    'REGM': 'SELF_REGISTRATION_M',
+    'GROM': 'PREGNANT_CASE_REGISTRATION_M',
+    'CPNM': 'PRENATAL_CONSULTATION_REGISTRATION_M',
+    'NSCM': 'BIRTH_REGISTRATION_M',
+    'CONM': 'POSTNATAL_CARE_REPORT_M',
+    'VACM': 'CHILD_FOLLOW_UP_REPORT_M',
+    'RISM': 'RISK_REPORT_M',
+    'RERM': 'RESPONSE_TO_RISK_REPORT_M',
+    'DECM': 'DEATH_REPORT_M',
+    'DEPM': 'LEAVE_REPORT_M',
 }
 
 EXPECTED_NUMBER_OF_VALUES = {
-	'SELF_REGISTRATION' : '5',
-	'PREGNANT_CASE_REGISTRATION' : '6',
-	'PRENATAL_CONSULTATION_REGISTRATION' : '7',
-	'BIRTH_REGISTRATION' : '9',
-	'POSTNATAL_CARE_REPORT' : '8',
-	'CHILD_FOLLOW_UP_REPORT' : '5',
-	'RISK_REPORT' : '4',
-	'RESPONSE_TO_RISK_REPORT' : '4',
-	'DEATH_REPORT' : '5',
-	'LEAVE_REPORT' : '2',
-	'SELF_REGISTRATION_M' : 5,
-	'PREGNANT_CASE_REGISTRATION_M' : 7,
-	'PRENATAL_CONSULTATION_REGISTRATION_M' : 7,
-	'BIRTH_REGISTRATION_M' : 9,
-	'POSTNATAL_CARE_REPORT_M' : 8,
-	'CHILD_FOLLOW_UP_REPORT_M' : 5,
-	'RISK_REPORT_M' : 4,
-	'RESPONSE_TO_RISK_REPORT_M' : 4,
-	'DEATH_REPORT_M' : 5,
-	'LEAVE_REPORT_M' : 2,
+    'SELF_REGISTRATION': '5',
+    'PREGNANT_CASE_REGISTRATION': '6',
+    'PRENATAL_CONSULTATION_REGISTRATION': '7',
+    'BIRTH_REGISTRATION': '9',
+    'POSTNATAL_CARE_REPORT': '8',
+    'CHILD_FOLLOW_UP_REPORT': '5',
+    'RISK_REPORT': '4',
+    'RESPONSE_TO_RISK_REPORT': '4',
+    'DEATH_REPORT': '5',
+    'LEAVE_REPORT': '2',
+    'SELF_REGISTRATION_M': 5,
+    'PREGNANT_CASE_REGISTRATION_M': 7,
+    'PRENATAL_CONSULTATION_REGISTRATION_M': 7,
+    'BIRTH_REGISTRATION_M': 9,
+    'POSTNATAL_CARE_REPORT_M': 8,
+    'CHILD_FOLLOW_UP_REPORT_M': 5,
+    'RISK_REPORT_M': 4,
+    'RESPONSE_TO_RISK_REPORT_M': 4,
+    'DEATH_REPORT_M': 5,
+    'LEAVE_REPORT_M': 2,
 }
-
 
 
 # Static files (CSS, JavaScript, Images)
@@ -189,7 +189,16 @@ EXPECTED_NUMBER_OF_VALUES = {
 
 STATIC_URL = '/static/'
 
+CELERYBEAT_SCHEDULE = {
+    'every-second': {
+        'task': 'tasks.send_scheduled_messages',
+        'schedule': timedelta(seconds=60),
+    },
+}
+
+RAPIDPRO_BROADCAST_URL = 'https://api.rapidpro.io/api/v1/broadcasts.json'
+
 try:
-    from localsettings import *
+    from local_settings import *
 except ImportError:
     pass
