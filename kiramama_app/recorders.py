@@ -2709,3 +2709,37 @@ def modify_record_leave_report(args):
 	#args['info_to_contact'] = "Mise a jour du rapport de depart de la maman '"+args['concerned_mother'].id_mother+"' a reussie."
 	args['info_to_contact'] = "Mesaje ikosora iyari yatenzwe ivuga iyimuka ry umupfasoni '"+args['concerned_mother'].id_mother+"' yashitse neza"
 #-----------------------------------------------------------------
+
+
+#-----------------------------------------------------------------
+
+def record_mother_reception_report(args):
+
+	args['mot_cle'] = "REC"
+
+	#Let's check if the person who send this message is a reporter
+	check_if_is_reporter(args)
+	print(args['valide'])
+	if not args['valide']:
+		return
+	
+	#Let's check if the message sent is composed by an expected number of values
+	args["expected_number_of_values"] = getattr(settings,'EXPECTED_NUMBER_OF_VALUES','')[args['message_type']]
+	check_number_of_values(args)
+	if not args['valide']:
+		return
+
+	#Let's check if the mother id sent is valid
+	args["sent_mother_id"] = args['text'].split(' ')[1]
+	check_mother_id_is_valid(args)
+	if not args['valide']:
+		return
+
+	#Let's record the report
+	the_created_report = Report.objects.create(chw = args['the_sender'], sub_hill = args['sub_colline'], cds = args['facility'], mother = args['concerned_mother'], reporting_date = datetime.datetime.now().date(), text = args['text'], category = args['mot_cle'])
+
+	created_rec_report = ReportDEP.objects.create(report = the_created_report)
+	
+	args['valide'] = True
+	#args['info_to_contact'] = "Le rapport de reception de la maman '"+args['concerned_mother'].id_mother+"' est bien enregistre."
+	args['info_to_contact'] = "Mesaje ivuga ko umupfasoni '"+args['concerned_mother'].id_mother+"' yimukiye aho ukorera yashitse neza"
