@@ -2738,8 +2738,9 @@ def record_mother_reception_report(args):
 	#Let's record the report
 	the_created_report = Report.objects.create(chw = args['the_sender'], sub_hill = args['sub_colline'], cds = args['facility'], mother = args['concerned_mother'], reporting_date = datetime.datetime.now().date(), text = args['text'], category = args['mot_cle'])
 
-	created_rec_report = ReportDEP.objects.create(report = the_created_report)
-	
+	created_rec_report = ReportREC.objects.create(report = the_created_report)
+
 	args['valide'] = True
 	#args['info_to_contact'] = "Le rapport de reception de la maman '"+args['concerned_mother'].id_mother+"' est bien enregistre."
 	args['info_to_contact'] = "Mesaje ivuga ko umupfasoni '"+args['concerned_mother'].id_mother+"' yimukiye aho ukorera yashitse neza"
+
