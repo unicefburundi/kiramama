@@ -2744,6 +2744,10 @@ def record_mother_reception_report(args):
 
 	created_rec_report = ReportREC.objects.create(report = the_created_report)
 
+	#Let's change the status of this mother. Now is affected somewhere
+	args['concerned_mother'].is_affected_somewhere = True
+	args['concerned_mother'].save()
+
 	args['valide'] = True
 	#args['info_to_contact'] = "Le rapport de reception de la maman '"+args['concerned_mother'].id_mother+"' est bien enregistre."
 	args['info_to_contact'] = "Mesaje ivuga ko umupfasoni '"+args['concerned_mother'].id_mother+"' yimukiye aho ukorera yashitse neza"
