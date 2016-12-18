@@ -246,6 +246,15 @@ class ReportDEP(models.Model):
 
 	def __unicode__(self):
 		return self.report.text
+
+
+class ReportREC(models.Model):
+	''' In this model will be stored reports about mothers (mothers from other areas) receptions. '''
+	report = models.ForeignKey(Report)
+
+	def __unicode__(self):
+		return self.report.text
+
 '''
 class CONSymptom(models.Model):
 	In this model will be stored all options of CON symptoms
