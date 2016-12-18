@@ -1702,6 +1702,12 @@ def modify_record_birth_case_report(args):
 	if not args['valide']:
 		return
 
+	#Let's check if the chw is respecting the order of child codes
+	args["child_code"] = args['text'].split(' ')[2]
+	check_child_code_order(args)
+	if not args['valide']:
+		return
+
 	#Let check if the birth date is not a future date
 	#It must be a previous date or today's date
 	args["previous_days_or_today_date"] = args['text'].split(' ')[3]
