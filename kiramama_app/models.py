@@ -281,6 +281,14 @@ class CON_Report_Symptom(models.Model):
 	def __unicode__(self):
 		return "{0} - {1}".format(self.con_report, self.symptom)
 
+class CPN_Report_Symptom(models.Model):
+	''' This model is for CPN reports and Symptoms association '''
+	cpn_report = models.ForeignKey(ReportCPN)
+	symptom = models.ForeignKey(Symptom)
+
+	def __unicode__(self):
+		return "{0} - {1}".format(self.cpn_report, self.symptom)
+
 class RIS_Report_Symptom(models.Model):
 	''' This model is for RIS reports and Symptoms association '''
 	ris_report = models.ForeignKey(ReportRIS)

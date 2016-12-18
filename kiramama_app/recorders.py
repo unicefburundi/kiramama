@@ -1366,10 +1366,22 @@ def record_prenatal_consultation_report(args):
 		return
 
 
+	#Let's check if the symptom(s) is/are valid
+	args["symptoms"] = args['text'].split(' ')[7]
+	check_symptoms(args)
+	if not args['valide']:
+		return
+
+
 	#Now, everything is checked. Let's record the report
 	the_created_report = Report.objects.create(chw = args['the_sender'], sub_hill = args['sub_colline'], cds = args['facility'], mother = args['concerned_woman'], reporting_date = datetime.datetime.now().date(), text = args['text'], category = args['mot_cle'])
 	created_cpn_report = ReportCPN.objects.create(report = the_created_report, concerned_cpn = args["concerned_cpn"], consultation_date = args["cpn_consultation_date"], consultation_location = args['location'], mother_weight = checked_value, next_appointment_date = args["next_appointment_date"])
-	
+
+
+	for one_symbol in args['checked_symptoms_list']:
+		one_symptom = Symptom.objects.filter(symtom_designation__iexact = one_symbol)[0]
+		created_report_symptom_connection = CPN_Report_Symptom.objects.create(cpn_report = created_cpn_report, symptom = one_symptom)
+
 	args['valide'] = True
 	#args['info_to_contact'] = "Le rapport '"+args["concerned_cpn"].cpn_designation+"' de la maman '"+args['concerned_woman'].id_mother+"' est bien enregistre."
 	args['info_to_contact'] = "Mesaje '"+args["concerned_cpn"].cpn_designation+"' warungitse yerekeye umupfasoni '"+args['concerned_woman'].id_mother+"' yashitse."
