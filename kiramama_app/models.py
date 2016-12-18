@@ -89,6 +89,7 @@ class ChildNumber(models.Model):
 	''' In this model will be stored codes which will be used to number children '''
 	child_code_designation = models.CharField(max_length=10)
 	child_code_meaning = models.CharField(max_length=50)
+	child_number = models.IntegerField(default=1)
 
 	def __unicode__(self):
 		return "{0} - {1}".format(self.child_code_designation, self.child_code_meaning)

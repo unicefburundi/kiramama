@@ -431,6 +431,33 @@ def check_child_code(args):
 		args['info_to_contact'] = "Le numero de l enfant envoye est valide."
 
 
+def check_child_code_order(args):
+	''' This function is used to check if the order of child codes is respected '''
+	if args["child_code"] != '01':
+		#Let's check if child numbers which comes before this one have been used
+		
+		current_child_number = args['child_number'].child_number
+		previous_child_number = current_child_number-1
+
+		previous_child_numbers = ChildNumber.objects.filter(child_number = previous_child_number)
+		if len(previous_child_numbers) < 1:
+			args['valide'] = False
+			args['info_to_contact'] = "Exception. Un 'ChildNumber' qui precede le courant n est pas trouve"
+			return
+		one_concerned_previous_child_number = previous_child_numbers[0]
+		
+		#Let check if this mother has a ReportNSC with this ChildNumber 
+		nsc_with_the_previous_child_number = ReportNSC.objects.filter(report__mother = args['concerned_woman'],child_number = one_concerned_previous_child_number)
+		
+		if len(nsc_with_the_previous_child_number) < 1:
+			#The previous child number not used
+			args['valide'] = False
+			args['info_to_contact'] = "Ikosa. Inomero z abana zitegerezwa gukoreshwa ku murongo. Inomero '"+one_concerned_previous_child_number.child_code_designation+"' iza imbere ya '"+args["child_code"]+"'"
+		else:
+			args['valide'] = True
+			args['info_to_contact'] = "Inomero yakoreshejwe iranga umwana niyo"
+
+
 def check_allaitement_maternel(args):
 	''' This function is used to check if the value sent for "Allaitement maternel" is valid '''
 	
@@ -1564,6 +1591,12 @@ def record_birth_case_report(args):
 	#Let's check if the child code is valid
 	args["child_code"] = args['text'].split(' ')[2]
 	check_child_code(args)
+	if not args['valide']:
+		return
+
+	#Let's check if the chw is respecting the order of child codes
+	args["child_code"] = args['text'].split(' ')[2]
+	check_child_code_order(args)
 	if not args['valide']:
 		return
 
