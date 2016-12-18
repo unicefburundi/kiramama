@@ -1465,6 +1465,11 @@ def modify_record_prenatal_consultation_report(args):
 		args['info_to_contact'] = "Ikosa. Ico wanditse kuvyerekeye '"+args["date_meaning"]+"' ntikibaho. Mu gukosora, subira urungike iyo mesaje itangurwa na '"+args['mot_cle']+"' yanditse neza"
 		return
 
+	#Let's check if the symptom(s) is/are valid
+	args["symptoms"] = args['text'].split(' ')[7]
+	check_symptoms(args)
+	if not args['valide']:
+		return
 
 	#Let's check if the mother with this id has an already registered CPN report
 	the_existing_cpn_report = Report.objects.filter(mother = args['concerned_mother'], category = args['mot_cle'][0:3])
@@ -1479,7 +1484,7 @@ def modify_record_prenatal_consultation_report(args):
 	the_corresponding_cpn_report = ReportCPN.objects.filter(report = the_only_one_corresponding_report)
 	if len(the_corresponding_cpn_report) < 1:
 		args['valide'] = False
-		args['info_to_contact'] = "Exception. Un rapport 'CON' correspondant a la maman indiquee n est pas trouve. Veuillez contacter l administrateur du systeme"
+		args['info_to_contact'] = "Exception. Un rapport 'CPN' correspondant a la maman indiquee n est pas trouve. Veuillez contacter l administrateur du systeme"
 		return
 	the_one_corresponding_cpnreport = the_corresponding_cpn_report[0]
 		
@@ -1504,6 +1509,17 @@ def modify_record_prenatal_consultation_report(args):
 	the_one_corresponding_cpnreport.mother_weight = checked_value
 	the_one_corresponding_cpnreport.next_appointment_date = args["next_appointment_date"]
 	the_one_corresponding_cpnreport.save()
+
+
+	#Let's update 'CPN_Report_Symptom' connections
+	concerned_cpn_report_symptom_connections = CPN_Report_Symptom.objects.filter(cpn_report = the_one_corresponding_cpnreport)
+	if len(concerned_cpn_report_symptom_connections) > 0:
+		for one_connection in concerned_cpn_report_symptom_connections:
+			one_connection.delete()
+
+	for one_symbol in args['checked_symptoms_list']:
+		one_symptom = Symptom.objects.filter(symtom_designation__iexact = one_symbol)[0]
+		created_report_symptom_connection = CPN_Report_Symptom.objects.create(cpn_report = the_one_corresponding_cpnreport, symptom = one_symptom)
 
 	args['valide'] = True
 	#args['info_to_contact'] = "Mise a jour du rapport de consultation prenatale de la femme '"+args['concerned_mother'].id_mother+"' a reussie."
