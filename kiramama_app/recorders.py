@@ -2636,6 +2636,10 @@ def record_leave_report(args):
 	the_created_report = Report.objects.create(chw = args['the_sender'], sub_hill = args['sub_colline'], cds = args['facility'], mother = args['concerned_mother'], reporting_date = datetime.datetime.now().date(), text = args['text'], category = args['mot_cle'])
 
 	created_dep_report = ReportDEP.objects.create(report = the_created_report)
+
+	#Let's change the status of this mother. Now is not affected anywhere
+	args['concerned_mother'].is_affected_somewhere = False
+	args['concerned_mother'].save()
 	
 	args['valide'] = True
 	#args['info_to_contact'] = "Le rapport du depart de la maman '"+args['concerned_mother'].id_mother+"' est bien enregistre."
@@ -2643,7 +2647,7 @@ def record_leave_report(args):
 
 
 def modify_record_leave_report(args):
-
+	#This function needs to be rewritten
 	args['mot_cle'] = "DEPM"
 
 	#Let's check if the person who send this message is a reporter
