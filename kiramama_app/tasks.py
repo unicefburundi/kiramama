@@ -1,31 +1,28 @@
-from celery import Celery
-import os
-from django.core.wsgi import get_wsgi_application
+from celery.task.schedules import crontab
+from celery.decorators import task, periodic_task
+from celery.utils.log import get_task_logger
 import pytz
 from django.conf import settings
 import requests
 import json
 from kiramama_app.models import *
-from django.conf.settings import RAPIDPRO_BROADCAST_URL
 
-application = get_wsgi_application()
-os.environ['DJANGO_SETTINGS_MODULE'] = 'kiramama.settings'
-
-
-celery = Celery(__name__)
-celery.config_from_object(__name__)
+logger = get_task_logger(__name__)
 
 
 def send_sms_through_rapidpro(args):
-    ''' This function sends messages through rapidpro. Contact(s) and the message to send to them must be in args['data'] '''
+    ''' 
+    This function sends messages through rapidpro. Contact(s) and the
+    message to send to them must be in args['data']
+    '''
     token = getattr(settings, 'TOKEN', '')
     data = args['data']
-    response = requests.post(RAPIDPRO_BROADCAST_URL, headers={'Content-type': 'application/json', 'Authorization': 'Token %s' % token}, data = json.dumps(data))
+    response = requests.post(settings.RAPIDPRO_BROADCAST_URL, headers={'Content-type': 'application/json', 'Authorization': 'Token %s' % token}, data=json.dumps(data))
 
 
-@celery.task
+@periodic_task(run_every=(crontab(minute='*/15')), name="send_scheduled_messages", ignore_result=True)
 def send_scheduled_messages():
-    print('***BIGIN - Here is in the task****')
+    logger.info('***BIGIN - Here is in the task****')
     # Let's filter all mother notifications which are ready to be sent and which are not already sent
     # ready_to_send_mother_messages = NotificationsMother.objects.filter(date_time_for_sending__lte = datetime.now(), is_sent = False)
     ready_to_send_mother_messages = NotificationsMother.objects.filter(
@@ -59,7 +56,7 @@ def send_scheduled_messages():
         # There is one or more messages to be sent to one or more mothers
         for chw_message in ready_to_send_chw_messages:
             if(chw_message.chw.phone_number):
-                print(chw_message.chw.phone_number)
+                logger.info(chw_message.chw.phone_number)
                 print chw_message.message_to_send
                 the_contact_phone_number = "tel:"+chw_message.chw.phone_number
                 data = {
@@ -72,4 +69,4 @@ def send_scheduled_messages():
                 send_sms_through_rapidpro(args)
                 # chw_message.is_sent = True
                 # chw_message.save()
-                print('***END - Here is in the task****')
+                logger.info('***END - Here is in the task****')

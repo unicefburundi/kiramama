@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/1.9/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.9/ref/settings/
 """
-
+# from __future__ import absolute_import
 import os
 from datetime import timedelta
 
@@ -40,10 +40,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'redis',
     'kiramama_app',
     'health_administration_structure_app',
     'public_administration_structure_app',
-	'django_celery_beat'
+    'djcelery'
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -58,6 +59,9 @@ MIDDLEWARE_CLASSES = [
 ]
 
 ROOT_URLCONF = 'kiramama.urls'
+
+SECRET_KEY = 'ch25angeth23i@ssecr1!!$)(etke@%/32y'
+
 
 TEMPLATES = [
     {
@@ -163,28 +167,28 @@ KNOWN_PREFIXES = {
 }
 
 EXPECTED_NUMBER_OF_VALUES = {
-	'SELF_REGISTRATION' : '5',
-	'PREGNANT_CASE_REGISTRATION' : '6',
-	'PRENATAL_CONSULTATION_REGISTRATION' : '7',
-	'BIRTH_REGISTRATION' : '9',
-	'POSTNATAL_CARE_REPORT' : '8',
-	'CHILD_FOLLOW_UP_REPORT' : '5',
-	'RISK_REPORT' : '4',
-	'RESPONSE_TO_RISK_REPORT' : '4',
-	'DEATH_REPORT' : '5',
-	'LEAVE_REPORT' : '2',
-	'RECEPTION_REPORT' : '2',
-	'SELF_REGISTRATION_M' : 5,
-	'PREGNANT_CASE_REGISTRATION_M' : 7,
-	'PRENATAL_CONSULTATION_REGISTRATION_M' : 7,
-	'BIRTH_REGISTRATION_M' : 9,
-	'POSTNATAL_CARE_REPORT_M' : 8,
-	'CHILD_FOLLOW_UP_REPORT_M' : 5,
-	'RISK_REPORT_M' : 4,
-	'RESPONSE_TO_RISK_REPORT_M' : 4,
-	'DEATH_REPORT_M' : 5,
-	'LEAVE_REPORT_M' : 2,
-	'RECEPTION_REPORT_M' : 2,
+    'SELF_REGISTRATION': '5',
+    'PREGNANT_CASE_REGISTRATION': '6',
+    'PRENATAL_CONSULTATION_REGISTRATION': '7',
+    'BIRTH_REGISTRATION': '9',
+    'POSTNATAL_CARE_REPORT': '8',
+    'CHILD_FOLLOW_UP_REPORT': '5',
+    'RISK_REPORT': '4',
+    'RESPONSE_TO_RISK_REPORT': '4',
+    'DEATH_REPORT': '5',
+    'LEAVE_REPORT': '2',
+    'RECEPTION_REPORT': '2',
+    'SELF_REGISTRATION_M': 5,
+    'PREGNANT_CASE_REGISTRATION_M': 7,
+    'PRENATAL_CONSULTATION_REGISTRATION_M': 7,
+    'BIRTH_REGISTRATION_M': 9,
+    'POSTNATAL_CARE_REPORT_M': 8,
+    'CHILD_FOLLOW_UP_REPORT_M': 5,
+    'RISK_REPORT_M': 4,
+    'RESPONSE_TO_RISK_REPORT_M': 4,
+    'DEATH_REPORT_M': 5,
+    'LEAVE_REPORT_M': 2,
+    'RECEPTION_REPORT_M': 2,
 }
 
 
@@ -193,8 +197,17 @@ EXPECTED_NUMBER_OF_VALUES = {
 
 STATIC_URL = '/static/'
 
+# CELERY STUFF
+BROKER_URL = 'redis://localhost:6379'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'Africa/Bujumbura'
+CELERY_ALWAYS_EAGER = True
+CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
 CELERYBEAT_SCHEDULE = {
-    'every-second': {
+    'every-60-second': {
         'task': 'tasks.send_scheduled_messages',
         'schedule': timedelta(seconds=60),
     },
@@ -202,7 +215,11 @@ CELERYBEAT_SCHEDULE = {
 
 RAPIDPRO_BROADCAST_URL = 'https://api.rapidpro.io/api/v1/broadcasts.json'
 
+
 try:
     from local_settings import *
 except ImportError:
     pass
+
+import djcelery
+djcelery.setup_loader()
