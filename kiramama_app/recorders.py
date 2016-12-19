@@ -358,6 +358,16 @@ def check_mother_id_is_valid(args):
 		args['info_to_contact'] = "L identifiant de la maman est valide"
 
 
+def check_mother_is_affected_somewhere(args):
+	''' This function checks if a given mother is affected somewhere '''
+	if not args['concerned_mother'].is_affected_somewhere:
+		args['valide'] = False
+		args['info_to_contact'] = "Ikosa. Umupfasoni '"+args['concerned_mother'].id_mother+"' ntituzi aho ubu aba. Nimba aba aho ukorera, banza ubimenyeshe mu kurungika mesaje itangurwa nakajambo 'REC' yanditse neza"
+	else:
+		args['valide'] = True
+		args['info_to_contact'] = "Aho umupfasoni '"+args['concerned_mother'].id_mother+"' aba harazwi"
+	
+
 def check_mother_has_ris_report(args):
 	''' This function checks if the current mother has a RIS report recorded '''
 	
@@ -419,6 +429,33 @@ def check_child_code(args):
 		args['child_number'] = child_numbers[0]
 		args['valide'] = True
 		args['info_to_contact'] = "Le numero de l enfant envoye est valide."
+
+
+def check_child_code_order(args):
+	''' This function is used to check if the order of child codes is respected '''
+	if args["child_code"] != '01':
+		#Let's check if child numbers which comes before this one have been used
+		
+		current_child_number = args['child_number'].child_number
+		previous_child_number = current_child_number-1
+
+		previous_child_numbers = ChildNumber.objects.filter(child_number = previous_child_number)
+		if len(previous_child_numbers) < 1:
+			args['valide'] = False
+			args['info_to_contact'] = "Exception. Un 'ChildNumber' qui precede le courant n est pas trouve"
+			return
+		one_concerned_previous_child_number = previous_child_numbers[0]
+		
+		#Let check if this mother has a ReportNSC with this ChildNumber 
+		nsc_with_the_previous_child_number = ReportNSC.objects.filter(report__mother = args['concerned_woman'],child_number = one_concerned_previous_child_number)
+		
+		if len(nsc_with_the_previous_child_number) < 1:
+			#The previous child number not used
+			args['valide'] = False
+			args['info_to_contact'] = "Ikosa. Inomero z abana zitegerezwa gukoreshwa ku murongo. Inomero '"+one_concerned_previous_child_number.child_code_designation+"' iza imbere ya '"+args["child_code"]+"'"
+		else:
+			args['valide'] = True
+			args['info_to_contact'] = "Inomero yakoreshejwe iranga umwana niyo"
 
 
 def check_allaitement_maternel(args):
@@ -1196,6 +1233,11 @@ def modify_record_pregnant_case(args):
 	if not args['valide']:
 		return
 
+	#Let's check if this mother is affected somewhere
+	check_mother_is_affected_somewhere(args)
+	if not args['valide']:
+		return
+
 	#Let's check if the expected giving birth date is a future date
 	args["future_date"] = args['text'].split(' ')[2]
 	#args["date_meaning"] = "date probable d accouchement"
@@ -1295,6 +1337,11 @@ def record_prenatal_consultation_report(args):
 	if not args['valide']:
 		return
 	args['concerned_woman'] = args['concerned_mother']
+
+	#Let's check if this mother is affected somewhere
+	check_mother_is_affected_somewhere(args)
+	if not args['valide']:
+		return
 	
 	#Let's check if the CPN name sent exists
 	args["sent_cpn_name"] =  args['text'].split(' ')[2]
@@ -1346,10 +1393,22 @@ def record_prenatal_consultation_report(args):
 		return
 
 
+	#Let's check if the symptom(s) is/are valid
+	args["symptoms"] = args['text'].split(' ')[7]
+	check_symptoms(args)
+	if not args['valide']:
+		return
+
+
 	#Now, everything is checked. Let's record the report
 	the_created_report = Report.objects.create(chw = args['the_sender'], sub_hill = args['sub_colline'], cds = args['facility'], mother = args['concerned_woman'], reporting_date = datetime.datetime.now().date(), text = args['text'], category = args['mot_cle'])
 	created_cpn_report = ReportCPN.objects.create(report = the_created_report, concerned_cpn = args["concerned_cpn"], consultation_date = args["cpn_consultation_date"], consultation_location = args['location'], mother_weight = checked_value, next_appointment_date = args["next_appointment_date"])
-	
+
+
+	for one_symbol in args['checked_symptoms_list']:
+		one_symptom = Symptom.objects.filter(symtom_designation__iexact = one_symbol)[0]
+		created_report_symptom_connection = CPN_Report_Symptom.objects.create(cpn_report = created_cpn_report, symptom = one_symptom)
+
 	args['valide'] = True
 	#args['info_to_contact'] = "Le rapport '"+args["concerned_cpn"].cpn_designation+"' de la maman '"+args['concerned_woman'].id_mother+"' est bien enregistre."
 	args['info_to_contact'] = "Mesaje '"+args["concerned_cpn"].cpn_designation+"' warungitse yerekeye umupfasoni '"+args['concerned_woman'].id_mother+"' yashitse."
@@ -1378,6 +1437,11 @@ def modify_record_prenatal_consultation_report(args):
 	if not args['valide']:
 		return
 	args['concerned_woman'] = args['concerned_mother']
+
+	#Let's check if this mother is affected somewhere
+	check_mother_is_affected_somewhere(args)
+	if not args['valide']:
+		return
 	
 	#Let's check if the CPN name sent exists
 	args["sent_cpn_name"] =  args['text'].split(' ')[2]
@@ -1428,6 +1492,11 @@ def modify_record_prenatal_consultation_report(args):
 		args['info_to_contact'] = "Ikosa. Ico wanditse kuvyerekeye '"+args["date_meaning"]+"' ntikibaho. Mu gukosora, subira urungike iyo mesaje itangurwa na '"+args['mot_cle']+"' yanditse neza"
 		return
 
+	#Let's check if the symptom(s) is/are valid
+	args["symptoms"] = args['text'].split(' ')[7]
+	check_symptoms(args)
+	if not args['valide']:
+		return
 
 	#Let's check if the mother with this id has an already registered CPN report
 	the_existing_cpn_report = Report.objects.filter(mother = args['concerned_mother'], category = args['mot_cle'][0:3])
@@ -1442,7 +1511,7 @@ def modify_record_prenatal_consultation_report(args):
 	the_corresponding_cpn_report = ReportCPN.objects.filter(report = the_only_one_corresponding_report)
 	if len(the_corresponding_cpn_report) < 1:
 		args['valide'] = False
-		args['info_to_contact'] = "Exception. Un rapport 'CON' correspondant a la maman indiquee n est pas trouve. Veuillez contacter l administrateur du systeme"
+		args['info_to_contact'] = "Exception. Un rapport 'CPN' correspondant a la maman indiquee n est pas trouve. Veuillez contacter l administrateur du systeme"
 		return
 	the_one_corresponding_cpnreport = the_corresponding_cpn_report[0]
 		
@@ -1467,6 +1536,17 @@ def modify_record_prenatal_consultation_report(args):
 	the_one_corresponding_cpnreport.mother_weight = checked_value
 	the_one_corresponding_cpnreport.next_appointment_date = args["next_appointment_date"]
 	the_one_corresponding_cpnreport.save()
+
+
+	#Let's update 'CPN_Report_Symptom' connections
+	concerned_cpn_report_symptom_connections = CPN_Report_Symptom.objects.filter(cpn_report = the_one_corresponding_cpnreport)
+	if len(concerned_cpn_report_symptom_connections) > 0:
+		for one_connection in concerned_cpn_report_symptom_connections:
+			one_connection.delete()
+
+	for one_symbol in args['checked_symptoms_list']:
+		one_symptom = Symptom.objects.filter(symtom_designation__iexact = one_symbol)[0]
+		created_report_symptom_connection = CPN_Report_Symptom.objects.create(cpn_report = the_one_corresponding_cpnreport, symptom = one_symptom)
 
 	args['valide'] = True
 	#args['info_to_contact'] = "Mise a jour du rapport de consultation prenatale de la femme '"+args['concerned_mother'].id_mother+"' a reussie."
@@ -1503,9 +1583,20 @@ def record_birth_case_report(args):
 		return
 	args['concerned_woman'] = args['concerned_mother']
 
+	#Let's check if this mother is affected somewhere
+	check_mother_is_affected_somewhere(args)
+	if not args['valide']:
+		return
+
 	#Let's check if the child code is valid
 	args["child_code"] = args['text'].split(' ')[2]
 	check_child_code(args)
+	if not args['valide']:
+		return
+
+	#Let's check if the chw is respecting the order of child codes
+	args["child_code"] = args['text'].split(' ')[2]
+	check_child_code_order(args)
 	if not args['valide']:
 		return
 
@@ -1600,9 +1691,20 @@ def modify_record_birth_case_report(args):
 		return
 	args['concerned_woman'] = args['concerned_mother']
 
+	#Let's check if this mother is affected somewhere
+	check_mother_is_affected_somewhere(args)
+	if not args['valide']:
+		return
+
 	#Let's check if the child code is valid
 	args["child_code"] = args['text'].split(' ')[2]
 	check_child_code(args)
+	if not args['valide']:
+		return
+
+	#Let's check if the chw is respecting the order of child codes
+	args["child_code"] = args['text'].split(' ')[2]
+	check_child_code_order(args)
 	if not args['valide']:
 		return
 
@@ -1736,6 +1838,11 @@ def record_postnatal_care_report(args):
 	if not args['valide']:
 		return
 
+	#Let's check if this mother is affected somewhere
+	check_mother_is_affected_somewhere(args)
+	if not args['valide']:
+		return
+
 	#Let's check if this mother has a child with the sent child number
 	args["child_id"] = args['text'].split(' ')[2]
 	check_child_exists(args)
@@ -1817,6 +1924,11 @@ def modify_record_postnatal_care_report(args):
 	#Let's check if the mother id sent is valid
 	args["sent_mother_id"] = args['text'].split(' ')[1]
 	check_mother_id_is_valid(args)
+	if not args['valide']:
+		return
+
+	#Let's check if this mother is affected somewhere
+	check_mother_is_affected_somewhere(args)
 	if not args['valide']:
 		return
 
@@ -1944,6 +2056,11 @@ def record_child_follow_up_report(args):
 	if not args['valide']:
 		return
 
+	#Let's check if this mother is affected somewhere
+	check_mother_is_affected_somewhere(args)
+	if not args['valide']:
+		return
+
 	#Let's check if this mother has a child with the sent child number
 	args["child_id"] = args['text'].split(' ')[2]
 	check_child_exists(args)
@@ -1996,6 +2113,11 @@ def modify_record_child_follow_up_report(args):
 	#Let's check if the mother id sent is valid
 	args["sent_mother_id"] = args['text'].split(' ')[1]
 	check_mother_id_is_valid(args)
+	if not args['valide']:
+		return
+
+	#Let's check if this mother is affected somewhere
+	check_mother_is_affected_somewhere(args)
 	if not args['valide']:
 		return
 
@@ -2090,6 +2212,11 @@ def record_risk_report(args):
 	check_mother_id_is_valid(args)
 	if not args['valide']:
 		return
+
+	#Let's check if this mother is affected somewhere
+	check_mother_is_affected_somewhere(args)
+	if not args['valide']:
+		return
 	
 	#Let's check if the symptom(s) is/are valid
 	args["symptoms"] = args['text'].split(' ')[2]
@@ -2181,6 +2308,11 @@ def modify_record_risk_report(args):
 	#Let's check if the mother id sent is valid
 	args["sent_mother_id"] = args['text'].split(' ')[1]
 	check_mother_id_is_valid(args)
+	if not args['valide']:
+		return
+
+	#Let's check if this mother is affected somewhere
+	check_mother_is_affected_somewhere(args)
 	if not args['valide']:
 		return
 	
@@ -2301,6 +2433,11 @@ def record_response_to_risk_report(args):
 	if not args['valide']:
 		return
 
+	#Let's check if this mother is affected somewhere
+	check_mother_is_affected_somewhere(args)
+	if not args['valide']:
+		return
+
 	#Let's check if there is a RIS report already recorded
 	check_mother_has_ris_report(args)
 	if not args['valide']:
@@ -2351,6 +2488,11 @@ def modify_record_response_to_risk_report(args):
 	#Let's check if the mother id sent is valid
 	args["sent_mother_id"] = args['text'].split(' ')[1]
 	check_mother_id_is_valid(args)
+	if not args['valide']:
+		return
+
+	#Let's check if this mother is affected somewhere
+	check_mother_is_affected_somewhere(args)
 	if not args['valide']:
 		return
 
@@ -2444,6 +2586,11 @@ def record_death_report(args):
 	if not args['valide']:
 		return
 
+	#Let's check if this mother is affected somewhere
+	check_mother_is_affected_somewhere(args)
+	if not args['valide']:
+		return
+
 	#Let's check if the location is valid
 	args["location"] = args['text'].split(' ')[2]
 	#date_meaning should be change to location_meaning
@@ -2520,6 +2667,11 @@ def modify_record_death_report(args):
 	#Let's check if the mother id sent is valid
 	args["sent_mother_id"] = args['text'].split(' ')[1]
 	check_mother_id_is_valid(args)
+	if not args['valide']:
+		return
+
+	#Let's check if this mother is affected somewhere
+	check_mother_is_affected_somewhere(args)
 	if not args['valide']:
 		return
 
@@ -2632,10 +2784,19 @@ def record_leave_report(args):
 	if not args['valide']:
 		return
 
+	#Let's check if this mother is affected somewhere
+	check_mother_is_affected_somewhere(args)
+	if not args['valide']:
+		return
+
 	#Let's record the report
 	the_created_report = Report.objects.create(chw = args['the_sender'], sub_hill = args['sub_colline'], cds = args['facility'], mother = args['concerned_mother'], reporting_date = datetime.datetime.now().date(), text = args['text'], category = args['mot_cle'])
 
 	created_dep_report = ReportDEP.objects.create(report = the_created_report)
+
+	#Let's change the status of this mother. Now is not affected anywhere
+	args['concerned_mother'].is_affected_somewhere = False
+	args['concerned_mother'].save()
 	
 	args['valide'] = True
 	#args['info_to_contact'] = "Le rapport du depart de la maman '"+args['concerned_mother'].id_mother+"' est bien enregistre."
@@ -2643,7 +2804,7 @@ def record_leave_report(args):
 
 
 def modify_record_leave_report(args):
-
+	#This function needs to be rewritten
 	args['mot_cle'] = "DEPM"
 
 	#Let's check if the person who send this message is a reporter
@@ -2664,7 +2825,10 @@ def modify_record_leave_report(args):
 	if not args['valide']:
 		return
 
-	
+	#Let's check if this mother is affected somewhere
+	check_mother_is_affected_somewhere(args)
+	if not args['valide']:
+		return
 
 	#Let's check if the last report of this mother comes from this colline
 	the_existing_dep_report = Report.objects.filter(mother = args['concerned_mother'])
@@ -2709,3 +2873,43 @@ def modify_record_leave_report(args):
 	#args['info_to_contact'] = "Mise a jour du rapport de depart de la maman '"+args['concerned_mother'].id_mother+"' a reussie."
 	args['info_to_contact'] = "Mesaje ikosora iyari yatenzwe ivuga iyimuka ry umupfasoni '"+args['concerned_mother'].id_mother+"' yashitse neza"
 #-----------------------------------------------------------------
+
+
+#-----------------------------------------------------------------
+
+def record_mother_reception_report(args):
+
+	args['mot_cle'] = "REC"
+
+	#Let's check if the person who send this message is a reporter
+	check_if_is_reporter(args)
+	print(args['valide'])
+	if not args['valide']:
+		return
+	
+	#Let's check if the message sent is composed by an expected number of values
+	args["expected_number_of_values"] = getattr(settings,'EXPECTED_NUMBER_OF_VALUES','')[args['message_type']]
+	check_number_of_values(args)
+	if not args['valide']:
+		return
+
+	#Let's check if the mother id sent is valid
+	args["sent_mother_id"] = args['text'].split(' ')[1]
+	check_mother_id_is_valid(args)
+	if not args['valide']:
+		return
+
+
+	#Let's record the report
+	the_created_report = Report.objects.create(chw = args['the_sender'], sub_hill = args['sub_colline'], cds = args['facility'], mother = args['concerned_mother'], reporting_date = datetime.datetime.now().date(), text = args['text'], category = args['mot_cle'])
+
+	created_rec_report = ReportREC.objects.create(report = the_created_report)
+
+	#Let's change the status of this mother. Now is affected somewhere
+	args['concerned_mother'].is_affected_somewhere = True
+	args['concerned_mother'].save()
+
+	args['valide'] = True
+	#args['info_to_contact'] = "Le rapport de reception de la maman '"+args['concerned_mother'].id_mother+"' est bien enregistre."
+	args['info_to_contact'] = "Mesaje ivuga ko umupfasoni '"+args['concerned_mother'].id_mother+"' yimukiye aho ukorera yashitse neza"
+

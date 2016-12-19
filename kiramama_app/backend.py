@@ -164,6 +164,9 @@ def handel_rapidpro_request(request):
 	if(incoming_data['message_type']=='LEAVE_REPORT'):
 		#This contact is reporting a pregnant mother who change where she live.
 		record_leave_report(incoming_data)
+	if(incoming_data['message_type']=='RECEPTION_REPORT'):
+		#This contact is reporting a pregnant mother who change where she live.
+		record_mother_reception_report(incoming_data)
 
 
 

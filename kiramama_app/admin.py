@@ -30,6 +30,7 @@ admin.site.register(ReportDEC)
 admin.site.register(ReportDECBebe)
 admin.site.register(ReportDEP)
 admin.site.register(CON_Report_Symptom)
+admin.site.register(CPN_Report_Symptom)
 admin.site.register(RIS_Report_Symptom)
 admin.site.register(Temporary)
 

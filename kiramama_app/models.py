@@ -24,6 +24,7 @@ class Mother(models.Model):
 	''' In this model, we will store mothers properties '''
 	id_mother = models.CharField(unique=True, max_length=10)
 	phone_number = models.CharField(max_length=20, blank=True)
+	is_affected_somewhere = models.BooleanField(default=True)
 
 	def __unicode__(self):
 		return "{0} - {1}".format(self.id_mother, self.phone_number)
@@ -88,6 +89,7 @@ class ChildNumber(models.Model):
 	''' In this model will be stored codes which will be used to number children '''
 	child_code_designation = models.CharField(max_length=10)
 	child_code_meaning = models.CharField(max_length=50)
+	child_number = models.IntegerField(default=1)
 
 	def __unicode__(self):
 		return "{0} - {1}".format(self.child_code_designation, self.child_code_meaning)
@@ -246,6 +248,15 @@ class ReportDEP(models.Model):
 
 	def __unicode__(self):
 		return self.report.text
+
+
+class ReportREC(models.Model):
+	''' In this model will be stored reports about mothers (mothers from other areas) receptions. '''
+	report = models.ForeignKey(Report)
+
+	def __unicode__(self):
+		return self.report.text
+
 '''
 class CONSymptom(models.Model):
 	In this model will be stored all options of CON symptoms
@@ -270,6 +281,14 @@ class CON_Report_Symptom(models.Model):
 
 	def __unicode__(self):
 		return "{0} - {1}".format(self.con_report, self.symptom)
+
+class CPN_Report_Symptom(models.Model):
+	''' This model is for CPN reports and Symptoms association '''
+	cpn_report = models.ForeignKey(ReportCPN)
+	symptom = models.ForeignKey(Symptom)
+
+	def __unicode__(self):
+		return "{0} - {1}".format(self.cpn_report, self.symptom)
 
 class RIS_Report_Symptom(models.Model):
 	''' This model is for RIS reports and Symptoms association '''
