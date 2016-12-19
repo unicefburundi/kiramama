@@ -45,8 +45,7 @@ def send_scheduled_messages():
                 mother_message.is_sent = True
                 mother_message.save()
                 send_sms_through_rapidpro(args)
-                # mother_message.is_sent = True
-                # mother_message.save()
+                logger.info('***Sent message trough rapidpro****')
 
     ready_to_send_chw_messages = NotificationsCHW.objects.filter(
         date_time_for_sending__lte=datetime.now(pytz.utc),
