@@ -1,5 +1,5 @@
 from celery.task.schedules import crontab
-from celery.decorators import task, periodic_task
+from celery.decorators import periodic_task
 from celery.utils.log import get_task_logger
 import pytz
 from django.conf import settings
@@ -20,7 +20,7 @@ def send_sms_through_rapidpro(args):
     response = requests.post(settings.RAPIDPRO_BROADCAST_URL, headers={'Content-type': 'application/json', 'Authorization': 'Token %s' % token}, data=json.dumps(data))
 
 
-@periodic_task(run_every=(crontab(minute='*/15')), name="send_scheduled_messages", ignore_result=True)
+@periodic_task(run_every=(crontab(minute='*/15')), name="tasks.send_scheduled_messages", ignore_result=True) # Name better be in the format of http://bit.ly/gLye1c
 def send_scheduled_messages():
     logger.info('***BIGIN - Here is in the task****')
     # Let's filter all mother notifications which are ready to be sent and which are not already sent

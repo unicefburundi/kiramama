@@ -204,14 +204,9 @@ CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'Africa/Bujumbura'
-CELERY_ALWAYS_EAGER = True
+# CELERY_ALWAYS_EAGER = True
 CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
-CELERYBEAT_SCHEDULE = {
-    'every-60-second': {
-        'task': 'tasks.send_scheduled_messages',
-        'schedule': timedelta(seconds=60),
-    },
-}
+
 
 RAPIDPRO_BROADCAST_URL = 'https://api.rapidpro.io/api/v1/broadcasts.json'
 
