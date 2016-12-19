@@ -203,6 +203,6 @@ CELERYBEAT_SCHEDULE = {
 RAPIDPRO_BROADCAST_URL = 'https://api.rapidpro.io/api/v1/broadcasts.json'
 
 try:
-    from local_settings import *
+    from localsettings import *
 except ImportError:
     pass
