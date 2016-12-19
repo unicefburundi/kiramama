@@ -1393,11 +1393,11 @@ def record_prenatal_consultation_report(args):
 		return
 
 
-	#Let's check if the symptom(s) is/are valid
+	'''#Let's check if the symptom(s) is/are valid
 	args["symptoms"] = args['text'].split(' ')[7]
 	check_symptoms(args)
 	if not args['valide']:
-		return
+		return'''
 
 
 	#Now, everything is checked. Let's record the report
@@ -1405,9 +1405,9 @@ def record_prenatal_consultation_report(args):
 	created_cpn_report = ReportCPN.objects.create(report = the_created_report, concerned_cpn = args["concerned_cpn"], consultation_date = args["cpn_consultation_date"], consultation_location = args['location'], mother_weight = checked_value, next_appointment_date = args["next_appointment_date"])
 
 
-	for one_symbol in args['checked_symptoms_list']:
+	'''for one_symbol in args['checked_symptoms_list']:
 		one_symptom = Symptom.objects.filter(symtom_designation__iexact = one_symbol)[0]
-		created_report_symptom_connection = CPN_Report_Symptom.objects.create(cpn_report = created_cpn_report, symptom = one_symptom)
+		created_report_symptom_connection = CPN_Report_Symptom.objects.create(cpn_report = created_cpn_report, symptom = one_symptom)'''
 
 	args['valide'] = True
 	#args['info_to_contact'] = "Le rapport '"+args["concerned_cpn"].cpn_designation+"' de la maman '"+args['concerned_woman'].id_mother+"' est bien enregistre."
@@ -1492,11 +1492,11 @@ def modify_record_prenatal_consultation_report(args):
 		args['info_to_contact'] = "Ikosa. Ico wanditse kuvyerekeye '"+args["date_meaning"]+"' ntikibaho. Mu gukosora, subira urungike iyo mesaje itangurwa na '"+args['mot_cle']+"' yanditse neza"
 		return
 
-	#Let's check if the symptom(s) is/are valid
+	'''#Let's check if the symptom(s) is/are valid
 	args["symptoms"] = args['text'].split(' ')[7]
 	check_symptoms(args)
 	if not args['valide']:
-		return
+		return'''
 
 	#Let's check if the mother with this id has an already registered CPN report
 	the_existing_cpn_report = Report.objects.filter(mother = args['concerned_mother'], category = args['mot_cle'][0:3])
@@ -1539,14 +1539,14 @@ def modify_record_prenatal_consultation_report(args):
 
 
 	#Let's update 'CPN_Report_Symptom' connections
-	concerned_cpn_report_symptom_connections = CPN_Report_Symptom.objects.filter(cpn_report = the_one_corresponding_cpnreport)
+	'''concerned_cpn_report_symptom_connections = CPN_Report_Symptom.objects.filter(cpn_report = the_one_corresponding_cpnreport)
 	if len(concerned_cpn_report_symptom_connections) > 0:
 		for one_connection in concerned_cpn_report_symptom_connections:
 			one_connection.delete()
 
 	for one_symbol in args['checked_symptoms_list']:
 		one_symptom = Symptom.objects.filter(symtom_designation__iexact = one_symbol)[0]
-		created_report_symptom_connection = CPN_Report_Symptom.objects.create(cpn_report = the_one_corresponding_cpnreport, symptom = one_symptom)
+		created_report_symptom_connection = CPN_Report_Symptom.objects.create(cpn_report = the_one_corresponding_cpnreport, symptom = one_symptom)'''
 
 	args['valide'] = True
 	#args['info_to_contact'] = "Mise a jour du rapport de consultation prenatale de la femme '"+args['concerned_mother'].id_mother+"' a reussie."
