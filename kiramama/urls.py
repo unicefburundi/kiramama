@@ -19,8 +19,9 @@ from django.contrib import admin
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
 ]'''
-urlpatterns = patterns('',
+urlpatterns = patterns(
+    '',
     url(r'^admin/', include(admin.site.urls)),
     url(r'^kiramama/', include('kiramama_app.urls')),
-	url(r'^$', include('kiramama_app.urls')),
+    url(r'^$', 'kiramama_app.views.landing', name='landing'),
     )
