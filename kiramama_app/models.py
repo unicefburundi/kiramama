@@ -330,6 +330,17 @@ class TimeMeasuringUnit(models.Model):
 
 	def __unicode__(self):
 		return "{0} - {1}".format(self.code, self.description)
+
+class Settings(models.Model):
+	'''
+	In this model we will put settings
+	'''
+	setting_name = models.CharField(max_length=200)
+	setting_value = models.CharField(max_length=100)
+	time_measuring_unit = models.ForeignKey(TimeMeasuringUnit, null=True)
+	
+	def __unicode__(self):
+		return "{0} - {1}".format(self.setting_name, self.setting_value)
 	
 class NotificationsForMother(models.Model):
 	''' 
