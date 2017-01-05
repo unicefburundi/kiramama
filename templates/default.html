@@ -1,0 +1,128 @@
+{% extends "base-default.html" %}
+{% load staticfiles %}
+
+{% block title %}
+	<title> {{ pagetitle }}</title>
+{% endblock %}
+
+{% block pagename %}pagename{% endblock %}
+
+{% block head %}
+	<script language="JavaScript">
+		var messimsg;
+		var messititle;
+		var titleanimation;
+		
+		$(document).ready(function() {
+			if ((".divmessage").length) {
+				$(".divmessage").fadeIn('slow').animate({opacity: 1.0}, 1500).effect("pulsate", { times: 2 }, 800).fadeOut('slow'); 
+			}
+			
+			if ((".diverror").length) {
+				$(".diverror").fadeIn('slow').animate({opacity: 1.0}, 1500).effect("pulsate", { times: 2 }, 800); 
+			}
+		});
+		
+	</script>
+{% endblock %}
+
+
+{% block container %}
+	<div>
+		{% if msg %}
+			<div class="divmessage"><p>{{ msg }}</p></div>
+		{% endif %}
+		{% if err %}
+			<div class="diverror"><p>{{ err }}</p></div>
+		{% endif %}
+	</div>
+	
+	<div>
+		<div class="kiramama-content container-fluid">
+			<div class="row">
+				<div class="col-md-6 sub-page-content">
+					<div class="row">
+						<div class="col-md-12">
+							<h3>About Kiramama</h3>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12 sub-page-content">
+							[ MINSTRY TEXT ]
+						</div>
+					</div>
+				</div>
+				<div class="col-md-6 sub-page-content verticallineseparator">
+					<img class="noborder size-full aligncenter" src="{% static 'images/kiramama-photo2.jpg' %}" scale="0">
+				</div>
+			</div>
+		</div>
+		<hr>
+
+		<div class="moh-content container-fluid">
+			<div class="row">
+				<div class="col-md-6 sub-page-content">
+					<img class="noborder size-full aligncenter" src="{% static 'images/moh.jpg' %}" scale="0">
+				</div>
+				<div class="col-md-6 sub-page-content verticallineseparator">
+					<div class="row">
+						<div class="col-md-12">
+							<h3>About the Ministry</h3>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12 sub-page-content">
+							[ MINSTRY TEXT ]
+						</div>
+					</div>
+				</div>
+				
+			</div>
+		</div>
+		<hr>
+
+		<div class="unicef-content container-fluid">
+			<div class="row">
+				
+				<div class="col-md-6 sub-page-content">
+					<div class="row">
+						<div class="col-md-12">
+							<h3>About UNICEF</h3>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12 sub-page-content">
+							[ UNICEF TEXT ]
+						</div>
+					</div>
+				</div>
+				<div class="col-md-6 sub-page-content verticallineseparator">
+					<img class="noborder size-full aligncenter" src="{% static 'images/unicef-cyan-logo.png' %}" scale="0">
+				</div>
+			</div>
+		</div>
+		<hr>
+
+		<div class="statistics-content container-fluid">
+			<div class="row">
+				<div class="col-md-6 sub-page-content">
+					<img class="noborder size-full aligncenter" src="{% static 'images/current-statistics1.jpg' %}" scale="0">
+				</div>
+				<div class="col-md-6 sub-page-content verticallineseparator">
+					<div class="row">
+						<div class="col-md-12">
+							<h3>Information About Current statistics</h3>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12 sub-page-content">
+							[ CURRENT STATISTICS TEXT ]
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		
+	</div>
+{% endblock %}

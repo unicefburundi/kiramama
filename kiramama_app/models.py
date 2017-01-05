@@ -25,7 +25,7 @@ class Mother(models.Model):
 	id_mother = models.CharField(unique=True, max_length=10)
 	phone_number = models.CharField(max_length=20, blank=True)
 	is_affected_somewhere = models.BooleanField(default=True)
-
+	
 	def __unicode__(self):
 		return "{0} - {1}".format(self.id_mother, self.phone_number)
 
