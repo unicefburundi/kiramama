@@ -6,6 +6,7 @@ from django.conf import settings
 import requests
 import json
 from kiramama_app.models import *
+import datetime
 
 logger = get_task_logger(__name__)
 
@@ -45,8 +46,7 @@ def send_scheduled_messages():
                 mother_message.is_sent = True
                 mother_message.save()
                 send_sms_through_rapidpro(args)
-                # mother_message.is_sent = True
-                # mother_message.save()
+                logger.info('***Sent message trough rapidpro****')
 
     ready_to_send_chw_messages = NotificationsCHW.objects.filter(
         date_time_for_sending__lte=datetime.now(pytz.utc),
@@ -70,3 +70,94 @@ def send_scheduled_messages():
                 # chw_message.is_sent = True
                 # chw_message.save()
                 logger.info('***END - Here is in the task****')
+
+
+
+
+
+
+
+#@periodic_task(run_every=(crontab(minute='*/15')), name="tasks.change_chw_status", ignore_result=True) 
+def change_chw_status():
+    ''' 
+        This function switch a CHW to the following status : active/inactive
+        A CHW is switched to inactive status if he spend long time without sending any message.
+    '''
+    print(" ====> BIGIN change_chw_status() ")
+    key_word_for_chwai_setting = getattr(settings,'KEY_WORD_FOR_CHW_ACTIVE_SETTING','')
+
+    if len(key_word_for_chwai_setting) < 1:
+        info = "Exception. Le parametre 'KEY_WORD_FOR_CHW_ACTIVE_SETTING' n est pas configure dans le fichiers settings"
+        return
+
+    settings_to_use = Settings.objects.filter(setting_code = key_word_for_chwai_setting)
+
+    if len(settings_to_use) < 1:
+        info = "Exception. Un parametre qui montre les criteres d inactivation d un agent de sante communautaire n est pas cree dans le model Settings"
+        return
+
+    one_setting_to_use = settings_to_use[0]
+
+    value_for_time = one_setting_to_use.setting_value
+
+    #Let's convert value_for_time to a number
+    try:
+        value_for_time = int(value_for_time)
+    except:
+        info = "Exception. The setting value in Settings model is not a number"
+        return
+
+    time_unit = one_setting_to_use.time_measuring_unit.code
+
+    limit_time = ""
+
+    print("=datetime.timedelta(minutes = value_for_time)=")
+    print(datetime.timedelta(minutes = value_for_time))
+    print("datetime.datetime.now().time()")
+    print(datetime.datetime.now().time())
+    print("datetime.datetime.now()")
+    print(datetime.datetime.now())
+
+    if(time_unit.startswith("m") or time_unit.startswith("M")):
+        #The time measuring unit used is minutes
+        limit_time = datetime.datetime.now() - datetime.timedelta(minutes = value_for_time)
+    if(time_unit.startswith("h") or time_unit.startswith("H")):
+        #The time measuring unit used is hours
+        limit_time = datetime.datetime.now() - datetime.timedelta(hours = value_for_time)
+
+    if not isinstance(limit_time, datetime.datetime):
+        info = "Something went wrong for limit time"
+        return
+
+    #Let's look for all CHW who didn't send any report for the time specified in settings
+    all_chws = CHW.objects.all()
+
+    if len(all_chws) < 1:
+        info = "No community health worker recorded in the system"
+        return
+
+    for chw in all_chws:
+        reports_given_by_the_current_chw = Report.objects.filter(chw = chw)
+        
+        if len(reports_given_by_the_current_chw) < 1:
+            #This community health work doesn't give any report
+            #We change his status if there is many days (based on limit_time variable) after his/her registration
+            #We will put here the code for changing his status if it is not already changed 
+            pass
+        else:
+            #Let's check if this CHW doesn't spend many days (based on limit_time variable) without sending any report
+            his_last_report = reports_given_by_the_current_chw.order_by('-id')[0]
+
+            print("111")
+            print("his_last_report.reporting_date")
+            print(his_last_report.reporting_date)
+            print("limit_time")
+            print(limit_time)
+            print("111")
+
+            #if(his_last_report.reporting_date < limit_time):
+            if(datetime.datetime.combine(his_last_report.reporting_date, datetime.datetime.now().time()) < limit_time):
+                #This CHW spend many days without giving any report. We change his status from active to inactive
+                chw.is_active = False
+                chw.save()
+
