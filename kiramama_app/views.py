@@ -1,8 +1,9 @@
 from django.shortcuts import render
 from kiramama_app.models import *
-
+import datetime
 
 # Create your views here.
+
 def default(request):
     return render(request, 'default.html')
 
@@ -70,3 +71,4 @@ def login(request):
 #require session
 def logout(request):
     return render(request, 'logout.html')
+
