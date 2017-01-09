@@ -140,8 +140,8 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'staticfiles'),
 )
 
-#The below setting is to identify the setting about active/not active for community health workers
-#It's value will be the setting_code of the corresponding setting
+#The below setting is to define the setting_code of the setting about active/not active for community health workers
+#It's value will be the setting_code of the corresponding setting in Settings model.
 KEY_WORD_FOR_CHW_ACTIVE_SETTING = 'CHWAI'
 
 
