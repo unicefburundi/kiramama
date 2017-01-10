@@ -77,7 +77,6 @@ def send_scheduled_messages():
 
 
 
-#@periodic_task(run_every=(crontab(minute='*/15')), name="tasks.change_chw_status", ignore_result=True) 
 def change_chw_status():
     ''' 
         This function switch a CHW to the following status : active/inactive
@@ -161,3 +160,30 @@ def change_chw_status():
                 chw.is_active = False
                 chw.save()
 
+
+
+
+#@periodic_task(run_every=(crontab(minute='*/15')), name="tasks.change_chw_status", ignore_result=True) 
+def inform_supersors_on_inactive_chw():
+    '''
+    This task inform the concerned supervisor if there is a community health work who is not active
+    '''
+
+    #Let's update CHW status
+    change_chw_status()
+
+    all_none_active_chws = CHW.objects.filter(is_active = False)
+
+    if len(all_none_active_chws) < 1:
+        return
+    args = {}
+    for inactive_chw in all_none_active_chws:
+        his_supervisor_phone_number = inactive_chw.supervisor_phone_number
+        supervisor_phone_number = "tel:"+his_supervisor_phone_number
+        message_to_send = "Umuremesha kiyago akoresha numero '"+inactive_chw.phone_number+"' ntaherutse gutanga ubutumwa"
+        data = {
+        "urns": [supervisor_phone_number],
+        "text": message_to_send
+        }
+        args['data'] = data
+        send_sms_through_rapidpro(args)
