@@ -1,7 +1,6 @@
 from __future__ import unicode_literals
 
 from django.db import models
-
 from health_administration_structure_app.models import CDS
 from public_administration_structure_app.models import SousColline
 from datetime import datetime
@@ -14,6 +13,7 @@ class CHW(models.Model):
 	phone_number = models.CharField(max_length=20)
 	supervisor_phone_number = models.CharField(max_length=20)
 	is_active = models.BooleanField(default=True)
+	reg_date = models.DateTimeField(auto_now_add=True)
 	
 	def __unicode__(self):
 		return self.phone_number

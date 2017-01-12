@@ -4,6 +4,7 @@
 <html lang="en">
 	<head>
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<meta name="csrf_token" content="{{ csrf_token }}">
 		
 		<title>UNICEF BURUNDI | {% if pagetitle %} | {{ pagetitle }}{% endif %}</title>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
@@ -43,12 +44,15 @@
 		<script type="text/javascript" src="{% static 'js/Messi-master/messi.min.js' %}"></script>
 		<script type="text/javascript" src="{% static 'js/moment.js' %}"></script>
 		<script type="text/javascript" src="{% static 'js/spin.js' %}"></script>
+		<script type="text/javascript" src="{% static 'js/sonic.js-master/src/sonic.js' %}"></script>
 
 		{% block head %}
 		
 		{% endblock %}
 		
 		<script language="JavaScript">
+			var csrftoken = getCookie('csrftoken');
+			
 			$(document).ready(function() {
 				
 				$("input:submit, a.button").button();
@@ -67,21 +71,34 @@
 			});*/
 			
 			
-			/*function repositionfooter() {
-				try {
-					if (($('body').outerHeight() + $('footer').outerHeight()) < $(window).outerHeight()) {
-						$('footer').css({"bottom": 0 });
-					} else {
-						$('footer').css({"top": $('body').outerHeight() });
-					}
-				}
-				
-				catch (err) {
-					messiprompt("An error has occured: " + err.message, "Error", "messierror");
-				}
-			}*/
+
+
+		    
+
+
+		    // using jQuery
+			function getCookie(name) {
+			    var cookieValue = null;
+			    if (document.cookie && document.cookie !== '') {
+			        var cookies = document.cookie.split(';');
+			        for (var i = 0; i < cookies.length; i++) {
+			            var cookie = jQuery.trim(cookies[i]);
+			            // Does this cookie string begin with the name we want?
+			            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+			                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+			                break;
+			            }
+			        }
+			    }
+			    return cookieValue;
+			}
+
+			function csrfSafeMethod(method) {
+			    // these HTTP methods do not require CSRF protection
+			    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+			}
 			
-			
+
 			function messiprompt(msg, title, titleanimation) {
 				var titleclass;
 
@@ -100,7 +117,77 @@
 
 				new Messi(msg, { title: title, titleClass: titleclass, modal: true });
 			}
+
+
+			function getajaxerrormessage(jqXHR, exception) {
+		        var msg = "An error has occured";
+		        if (jqXHR.status == 0) {
+		            msg = "0";
+		        } else if (jqXHR.status == 404) {
+		            msg = "404";
+		        } else if (jqXHR.status == 500) {
+		            msg = "500";
+		        } else if (exception == 'parsererror') {
+		            msg = "parsererror";
+		        } else if (exception == 'timeout') {
+		            msg = "timeout";
+		        } else if (exception == 'abort') {
+		            msg = "abort";
+		        } else {
+		            msg = "Error" + ": " + jqXHR.responseText;
+		        }
+		        return msg;
+		    }
 			
+
+			function initializesonic() {
+		        $('#overlay').remove();
+		        $("body").prepend("<div id='overlay' class='web_dialog'></div>");
+
+		        $("#overlay").css({
+		            "width": $(document).width(),
+		            "height": $(document).height(),
+		        }).fadeTo(0, 0.9);
+
+		        modal = $('#overlay').dialog({
+		            modal: true,
+		            closeOnEscape: false,
+		            beforeClose: function (event, ui) { return false; },
+		            dialogClass: "noClose",
+		            height: "auto",
+		            width: "auto"
+		        }).dialog("widget").find(".ui-dialog-titlebar").remove();
+
+		        playSonic();
+		    }
+
+
+		    function playSonic() {
+		        var circle = new Sonic({
+		            width: 100,
+		            height: 100,
+		            stepsPerFrame: 1,
+		            trailLength: 1,
+		            pointDistance: .02,
+		            fps: 30,
+		            fillColor: '#05E2FF',
+
+		            step: function (point, index) {
+		                this._.beginPath();
+		                this._.moveTo(point.x, point.y);
+		                this._.arc(point.x, point.y, index * 7, 0, Math.PI * 2, false);
+		                this._.closePath();
+		                this._.fill();
+		            },
+
+		            path: [
+		                ['arc', 50, 50, 30, 0, 360]
+		            ]
+		        });
+
+		        circle.play();
+		        $('#overlay').append(circle.canvas);
+		    }
 			
 			
 		</script>
@@ -123,7 +210,7 @@
 						<div id="navbar" class="navbar-collapse collapse" aria-expanded="false" style="width:100%; padding-top:10px;">
 							<ul class="nav navbar-nav navbar" style="width:50%">
 								<h1 class="bet-logo">
-									<a href="/">
+									<a href="#">
 										<div class="col-sm-1" style="padding-left:5px; padding-right:5px;">
 											<img class="noborder size-full aligncenter" src="{% static 'images/kiramama.png' %}" scale="0">
 										</div>

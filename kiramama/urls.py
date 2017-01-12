@@ -30,5 +30,8 @@ urlpatterns = [
     url(r'^childhealth', kiramama_app.views.childhealth, name='childhealth'),
     url(r'^login', kiramama_app.views.login, name='login'),
     url(r'^logout', kiramama_app.views.logout, name='logout'),
+    url(r'^getdistrictsinprovince', kiramama_app.views.getdistrictsinprovince, name='getdistrictsinprovince'),
+    url(r'^getcdsindistrict', kiramama_app.views.getcdsindistrict, name='getcdsindistrict'),
+    url(r'^getcdsdata', kiramama_app.views.getcdsdata, name='getcdsdata'),
     
     ]
