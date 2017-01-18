@@ -45,14 +45,20 @@
 	<div>
 		<h1>Registered Mothers: {{ registeredmothers }}</h1>
 	</div>
-	<div>
+	<div class="col-md-4">
 		<h1>CPN 1: {{ cpn1 }} %</h1>
 		<h1>CPN 2: {{ cpn2 }} %</h1>
 		<h1>CPN 3: {{ cpn3 }} %</h1>
 		<h1>CPN 4: {{ cpn4 }} %</h1>
+	</div>
+	<div class="col-md-4">
+		<h1>Number of CHWs : {{number_of_chw}} </h1>
+		<h1>Active CHWs : {{percentage_of_active_chw}} %</h1>
+		<h1>Inactive CHWs : {{percentage_of_not_active_chw}} %</h1>
+	</div>
+	<div class="col-md-4">
 		
 	</div>
-	<div>
 		
-	</div>
+	
 {% endblock %}

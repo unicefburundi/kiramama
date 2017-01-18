@@ -64,11 +64,12 @@ def home(request):
         d['number_of_chw'] = CHW.objects.count()
 
         if(CHW.objects.filter(is_active = True)):
-            d['percentage_of_active_chw'] = CHW.objects.filter(is_active = True).count() / d['number_of_chw'] * 100
+            d['percentage_of_active_chw'] = CHW.objects.filter(is_active = True).count() / float(d['number_of_chw']) * 100
+            
 
         if(CHW.objects.filter(is_active = False)):
-            d['percentage_of_not_active_chw'] = CHW.objects.filter(is_active = False).count() / d['number_of_chw'] * 100
-
+            d['percentage_of_not_active_chw'] = CHW.objects.filter(is_active = False).count() / float(d['number_of_chw']) * 100
+        
 
     return render(request, 'home.html', d)
 
