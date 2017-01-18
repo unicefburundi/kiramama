@@ -32,6 +32,11 @@ def home(request):
     cpn3 = None
     cpn4 = None
 
+    d['number_of_chw'] = 0.0
+    d['percentage_of_active_chw'] = 0.0
+    d['percentage_of_not_active_chw'] = 0.0
+
+
     if (CPN.objects.filter(cpn_designation = "CPN1")):
         cpn1 = CPN.objects.get(cpn_designation = "CPN1")
     if (CPN.objects.filter(cpn_designation = "CPN2")):
@@ -52,6 +57,18 @@ def home(request):
 
     if (cpn4):
         d['cpn4'] = float(ReportCPN.objects.filter(concerned_cpn = cpn4).count())/ float(cpntotal) * 100.0
+
+
+    #What is the percentage of active and inactive CHWs
+    if(CHW.objects.all()):
+        d['number_of_chw'] = CHW.objects.count()
+
+        if(CHW.objects.filter(is_active = True)):
+            d['percentage_of_active_chw'] = CHW.objects.filter(is_active = True).count() / d['number_of_chw'] * 100
+
+        if(CHW.objects.filter(is_active = False)):
+            d['percentage_of_not_active_chw'] = CHW.objects.filter(is_active = False).count() / d['number_of_chw'] * 100
+
 
     return render(request, 'home.html', d)
 
