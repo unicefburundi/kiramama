@@ -36,14 +36,21 @@ def home(request):
     d['percentage_of_active_chw'] = 0.0
     d['percentage_of_not_active_chw'] = 0.0
 
+    d['total_delivery'] = 0.0
+    d['percentage_delivery_at_home'] = 0.0
+    d['percentage_delivery_on_road'] = 0.0
+    d['percentage_delivery_at_HF'] = 0.0
+    d['percentage_delivery_at_hospital'] = 0.0
+    d['percentage_delivery_at_CDS'] = 0.0
+
 
     if (CPN.objects.filter(cpn_designation = "CPN1")):
         cpn1 = CPN.objects.get(cpn_designation = "CPN1")
-    if (CPN.objects.filter(cpn_designation = "CPN2")):
+    if(CPN.objects.filter(cpn_designation = "CPN2")):
         cpn2 = CPN.objects.get(cpn_designation = "CPN2")
-    if (CPN.objects.filter(cpn_designation = "CPN3")):
-        cpn3 = CPN.objects.get(cpn_designation = "CPN3")
-    if (CPN.objects.filter(cpn_designation = "CPN4")):
+    if(CPN.objects.filter(cpn_designation = "CPN3")):
+        cpn3 = CPN.objects.get(cpn_designation = "CPN3") 
+    if(CPN.objects.filter(cpn_designation = "CPN4")):
         cpn4 = CPN.objects.get(cpn_designation = "CPN4")
 
     if (cpn1):
@@ -69,7 +76,20 @@ def home(request):
 
         if(CHW.objects.filter(is_active = False)):
             d['percentage_of_not_active_chw'] = CHW.objects.filter(is_active = False).count() / float(d['number_of_chw']) * 100
-        
+
+
+    #Statistics about delivery
+    if(ReportNSC.objects.all()):
+        d['total_delivery'] = ReportNSC.objects.count()
+        if(ReportNSC.objects.filter(birth_location__location_category_designation__iexact = 'HP')):
+            d['percentage_delivery_at_hospital'] = ReportNSC.objects.filter(birth_location__location_category_designation__iexact = 'HP').count() / float(d['total_delivery']) * 100
+        if(ReportNSC.objects.filter(birth_location__location_category_designation__iexact = 'ME')):
+            d['percentage_delivery_at_home'] = ReportNSC.objects.filter(birth_location__location_category_designation__iexact = 'ME').count() / float(d['total_delivery']) * 100
+        if(ReportNSC.objects.filter(birth_location__location_category_designation__iexact = 'RT')):
+            d['percentage_delivery_on_road'] = ReportNSC.objects.filter(birth_location__location_category_designation__iexact = 'RT').count() / float(d['total_delivery']) * 100
+        if(ReportNSC.objects.filter(birth_location__location_category_designation__iexact = 'CS')):
+            d['percentage_delivery_at_CDS'] = ReportNSC.objects.filter(birth_location__location_category_designation__iexact = 'CS').count() / float(d['total_delivery']) * 100
+        d['percentage_delivery_at_HF'] = d['percentage_delivery_at_CDS'] + d['percentage_delivery_at_hospital']
 
     return render(request, 'home.html', d)
 
