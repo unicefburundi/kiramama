@@ -42,26 +42,33 @@
 		{% endif %}
 	</div>
 	
-	<div>
-		<h1>Registered Mothers: {{ registeredmothers }}</h1>
+	<div class="row">
+		<div>
+			<h1>Registered Mothers: {{ registeredmothers }}</h1>
+		</div>
+		<div class="col-md-4">
+			<h1>CPN 1: {{ cpn1 }} %</h1>
+			<h1>CPN 2: {{ cpn2 }} %</h1>
+			<h1>CPN 3: {{ cpn3 }} %</h1>
+			<h1>CPN 4: {{ cpn4 }} %</h1>
+		</div>
+		<div class="col-md-4">
+			<h1>Number of CHWs : {{number_of_chw}} </h1>
+			<h1>Active CHWs : {{percentage_of_active_chw}} %</h1>
+			<h1>Inactive CHWs : {{percentage_of_not_active_chw}} %</h1>
+		</div>
+		<div class="col-md-4">
+			<h1>Total Delivery : {{total_delivery}}</h1>
+			<h1>Delivery at home : {{percentage_delivery_at_home}}</h1>
+			<h1>Delivery on Road : {{percentage_delivery_on_road}}</h1>
+			<h1>Delivery on health facility : {{percentage_delivery_at_HF}}</h1>
+		</div>
 	</div>
-	<div class="col-md-4">
-		<h1>CPN 1: {{ cpn1 }} %</h1>
-		<h1>CPN 2: {{ cpn2 }} %</h1>
-		<h1>CPN 3: {{ cpn3 }} %</h1>
-		<h1>CPN 4: {{ cpn4 }} %</h1>
+
+	<div class="row">
+		{% for obj in vac_list %}
+			<h1> {{ obj }} </h1>
+		{% endfor %}
 	</div>
-	<div class="col-md-4">
-		<h1>Number of CHWs : {{number_of_chw}} </h1>
-		<h1>Active CHWs : {{percentage_of_active_chw}} %</h1>
-		<h1>Inactive CHWs : {{percentage_of_not_active_chw}} %</h1>
-	</div>
-	<div class="col-md-4">
-		<h1>Total Delivery : {{total_delivery}}</h1>
-		<h1>Delivery at home : {{percentage_delivery_at_home}}</h1>
-		<h1>Delivery on Road : {{percentage_delivery_on_road}}</h1>
-		<h1>Delivery on health facility : {{percentage_delivery_at_HF}}</h1>
-	</div>
-		
 	
 {% endblock %}
