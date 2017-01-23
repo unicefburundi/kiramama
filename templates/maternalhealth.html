@@ -20,6 +20,13 @@
 			if ((".diverror").length) {
 				$(".diverror").fadeIn('slow').animate({opacity: 1.0}, 1500).effect("pulsate", { times: 2 }, 800); 
 			}
+
+			if ("{{ provinces }}") {
+				{% for c in provinces %}
+					$('#cmbprovince').append('<option value="{{ c.code }}">{{ c.name }}</option>');
+				{% endfor %}
+			}
+
 		});
 		
 		/*$(window).load(function () {
@@ -43,9 +50,14 @@
 	</div>
 	
 	<div>
-		
-		<h1>KIRAMAMA</h1>
-		
-		
+		<div class="form-inline" style="padding-left :5px; padding-right :5px;">
+			<div class="form-group">
+				<label for="cmbprovince">Province:</label>
+				<select id="cmbprovince" class="form-control" style="width:140px" onchange="fetchdistricts(this.value)" required="required">
+					<option value="" selected="selected">[ Select Province ]</option>
+				</select>
+			</div>
+		</div>
+		{{provinces}}		
 	</div>
 {% endblock %}

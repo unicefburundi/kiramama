@@ -121,7 +121,11 @@ def communityhealthworker(request):
 
 #require session
 def maternalhealth(request):
-    return render(request, 'maternalhealth.html')
+    d = {}
+    d["pagetitle"] = "Maternal Health"
+    d['provinces'] = getprovinces()
+
+    return render(request, 'maternalhealth.html', d)
 
 
 #require session
