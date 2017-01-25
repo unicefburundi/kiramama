@@ -31,13 +31,27 @@ def home(request):
     cpn3 = None
     cpn4 = None
 
+    d['number_of_chw'] = 0.0
+    d['percentage_of_active_chw'] = 0.0
+    d['percentage_of_not_active_chw'] = 0.0
+
+    d['total_delivery'] = 0.0
+    d['percentage_delivery_at_home'] = 0.0
+    d['percentage_delivery_on_road'] = 0.0
+    d['percentage_delivery_at_HF'] = 0.0
+    d['percentage_delivery_at_hospital'] = 0.0
+    d['percentage_delivery_at_CDS'] = 0.0
+
+    d['vac_list'] = []
+
+
     if (CPN.objects.filter(cpn_designation = "CPN1")):
         cpn1 = CPN.objects.get(cpn_designation = "CPN1")
-    if (CPN.objects.filter(cpn_designation = "CPN2")):
+    if(CPN.objects.filter(cpn_designation = "CPN2")):
         cpn2 = CPN.objects.get(cpn_designation = "CPN2")
-    if (CPN.objects.filter(cpn_designation = "CPN3")):
-        cpn3 = CPN.objects.get(cpn_designation = "CPN3")
-    if (CPN.objects.filter(cpn_designation = "CPN4")):
+    if(CPN.objects.filter(cpn_designation = "CPN3")):
+        cpn3 = CPN.objects.get(cpn_designation = "CPN3") 
+    if(CPN.objects.filter(cpn_designation = "CPN4")):
         cpn4 = CPN.objects.get(cpn_designation = "CPN4")
 
     if (cpn1):
@@ -51,6 +65,46 @@ def home(request):
 
     if (cpn4):
         d['cpn4'] = float(ReportCPN.objects.filter(concerned_cpn = cpn4).count())/ float(cpntotal) * 100.0
+
+
+    #What is the percentage of active and inactive CHWs
+    if(CHW.objects.all()):
+        d['number_of_chw'] = CHW.objects.count()
+
+        if(CHW.objects.filter(is_active = True)):
+            d['percentage_of_active_chw'] = CHW.objects.filter(is_active = True).count() / float(d['number_of_chw']) * 100
+            
+
+        if(CHW.objects.filter(is_active = False)):
+            d['percentage_of_not_active_chw'] = CHW.objects.filter(is_active = False).count() / float(d['number_of_chw']) * 100
+
+
+    #Statistics about delivery
+    if(ReportNSC.objects.all()):
+        d['total_delivery'] = ReportNSC.objects.count()
+        if(ReportNSC.objects.filter(birth_location__location_category_designation__iexact = 'HP')):
+            d['percentage_delivery_at_hospital'] = ReportNSC.objects.filter(birth_location__location_category_designation__iexact = 'HP').count() / float(d['total_delivery']) * 100
+        if(ReportNSC.objects.filter(birth_location__location_category_designation__iexact = 'ME')):
+            d['percentage_delivery_at_home'] = ReportNSC.objects.filter(birth_location__location_category_designation__iexact = 'ME').count() / float(d['total_delivery']) * 100
+        if(ReportNSC.objects.filter(birth_location__location_category_designation__iexact = 'RT')):
+            d['percentage_delivery_on_road'] = ReportNSC.objects.filter(birth_location__location_category_designation__iexact = 'RT').count() / float(d['total_delivery']) * 100
+        if(ReportNSC.objects.filter(birth_location__location_category_designation__iexact = 'CS')):
+            d['percentage_delivery_at_CDS'] = ReportNSC.objects.filter(birth_location__location_category_designation__iexact = 'CS').count() / float(d['total_delivery']) * 100
+        d['percentage_delivery_at_HF'] = d['percentage_delivery_at_CDS'] + d['percentage_delivery_at_hospital']
+
+
+    #Statistics about VAC
+    if(VAC.objects.all()):
+        all_vac = VAC.objects.all()
+        for v in all_vac:
+            if(ReportVAC.objects.filter(vac = v)):
+                number_of_such_reports = ReportVAC.objects.filter(vac = v).count()
+                vac_designation = v.vac_designation
+                new_object = {}
+                new_object[vac_designation] = number_of_such_reports
+                d['vac_list'].append(new_object)
+
+    print(d['vac_list'])
 
     return render(request, 'home.html', d)
 
@@ -66,7 +120,11 @@ def communityhealthworker(request):
 
 #require session
 def maternalhealth(request):
-    return render(request, 'maternalhealth.html')
+    d = {}
+    d["pagetitle"] = "Maternal Health"
+    d['provinces'] = getprovinces()
+
+    return render(request, 'maternalhealth.html', d)
 
 
 #require session
