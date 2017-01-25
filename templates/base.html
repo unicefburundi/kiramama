@@ -1,0 +1,353 @@
+{% load staticfiles %}
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<meta name="csrf_token" content="{{ csrf_token }}">
+		
+		<title>UNICEF BURUNDI | {% if pagetitle %} | {{ pagetitle }}{% endif %}</title>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+		<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
+		<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Oxygen:300">
+		
+		<!-- Highcharts
+		<script src="https://github.highcharts.com/master/highcharts.src.js"></script>
+		<script src="https://github.highcharts.com/master/highcharts-more.js"></script>
+		<script src="https://github.highcharts.com/master/modules/exporting.src.js"></script> -->
+		<script src="http://code.highcharts.com/highcharts.js"></script>
+		<script src="http://code.highcharts.com/modules/highcharts-more.js"></script>
+		<script src="http://code.highcharts.com/modules/exporting.js"></script>
+
+		<!-- Bootstrap -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
+		<!-- dataTable CSS-->
+		<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.10/css/dataTables.bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.0.1/css/responsive.bootstrap.min.css">
+		
+		<!-- dataTable JS -->
+		<script src="https://cdn.datatables.net/1.10.10/js/jquery.dataTables.min.js"></script>
+		<script src="https://cdn.datatables.net/1.10.10/js/dataTables.bootstrap.min.js"></script>
+		<script src="https://cdn.datatables.net/responsive/2.0.1/js/dataTables.responsive.min.js"></script>
+		<script src="https://cdn.datatables.net/responsive/2.0.1/js/responsive.bootstrap.min.js"></script>
+		
+		<!-- Local css-->
+		<link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+		<link rel="stylesheet" type="text/css" href="{% static 'fonts/css/font-awesome.min.css' %}">
+		<link rel="stylesheet" type="text/css" href="{% static 'js/Messi-master/messi.min.css' %}">
+		
+		<!-- Local js -->
+		<script type="text/javascript" src="{% static 'js/Messi-master/messi.min.js' %}"></script>
+		<script type="text/javascript" src="{% static 'js/moment.js' %}"></script>
+		<script type="text/javascript" src="{% static 'js/spin.js' %}"></script>
+		<script type="text/javascript" src="{% static 'js/sonic.js-master/src/sonic.js' %}"></script>
+
+		{% block head %}
+		
+		{% endblock %}
+		
+		<script language="JavaScript">
+			var csrftoken = getCookie('csrftoken');
+			
+			$(document).ready(function() {
+				
+				$("input:submit, a.button").button();
+				{% if notification %}
+					showNotification("{{ notification }}");
+				{% endif %}
+				
+				if (!window.jQuery) {
+					messiprompt("Your internet connection is not reliable. Computations not possible.", "Internet Connection", "messierror");
+					return;
+				}
+			});
+			
+			/*$(window).load(function() {
+				repositionfooter();
+			});*/
+			
+			
+
+
+		    
+
+
+		    // using jQuery
+			function getCookie(name) {
+			    var cookieValue = null;
+			    if (document.cookie && document.cookie !== '') {
+			        var cookies = document.cookie.split(';');
+			        for (var i = 0; i < cookies.length; i++) {
+			            var cookie = jQuery.trim(cookies[i]);
+			            // Does this cookie string begin with the name we want?
+			            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+			                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+			                break;
+			            }
+			        }
+			    }
+			    return cookieValue;
+			}
+
+			function csrfSafeMethod(method) {
+			    // these HTTP methods do not require CSRF protection
+			    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+			}
+			
+
+			function messiprompt(msg, title, titleanimation) {
+				var titleclass;
+
+				if (titleanimation == "messisuccess") {
+					titleclass = 'success';
+
+				} else if (titleanimation == "messiinfo") {
+					titleclass = 'info';
+
+				} else if (titleanimation == "messiwarning") {
+					titleclass = 'anim warning';
+
+				} else if (titleanimation == "messierror") {
+					titleclass = 'anim error';
+				}
+
+				new Messi(msg, { title: title, titleClass: titleclass, modal: true });
+			}
+
+
+			function getajaxerrormessage(jqXHR, exception) {
+		        var msg = "An error has occured";
+		        if (jqXHR.status == 0) {
+		            msg = "0";
+		        } else if (jqXHR.status == 404) {
+		            msg = "404";
+		        } else if (jqXHR.status == 500) {
+		            msg = "500";
+		        } else if (exception == 'parsererror') {
+		            msg = "parsererror";
+		        } else if (exception == 'timeout') {
+		            msg = "timeout";
+		        } else if (exception == 'abort') {
+		            msg = "abort";
+		        } else {
+		            msg = "Error" + ": " + jqXHR.responseText;
+		        }
+		        return msg;
+		    }
+			
+
+			function initializesonic() {
+		        $('#overlay').remove();
+		        $("body").prepend("<div id='overlay' class='web_dialog'></div>");
+
+		        $("#overlay").css({
+		            "width": $(document).width(),
+		            "height": $(document).height(),
+		        }).fadeTo(0, 0.9);
+
+		        modal = $('#overlay').dialog({
+		            modal: true,
+		            closeOnEscape: false,
+		            beforeClose: function (event, ui) { return false; },
+		            dialogClass: "noClose",
+		            height: "auto",
+		            width: "auto"
+		        }).dialog("widget").find(".ui-dialog-titlebar").remove();
+
+		        playSonic();
+		    }
+
+
+		    function playSonic() {
+		        var circle = new Sonic({
+		            width: 100,
+		            height: 100,
+		            stepsPerFrame: 1,
+		            trailLength: 1,
+		            pointDistance: .02,
+		            fps: 30,
+		            fillColor: '#05E2FF',
+
+		            step: function (point, index) {
+		                this._.beginPath();
+		                this._.moveTo(point.x, point.y);
+		                this._.arc(point.x, point.y, index * 7, 0, Math.PI * 2, false);
+		                this._.closePath();
+		                this._.fill();
+		            },
+
+		            path: [
+		                ['arc', 50, 50, 30, 0, 360]
+		            ]
+		        });
+
+		        circle.play();
+		        $('#overlay').append(circle.canvas);
+		    }
+			
+			
+		</script>
+	</head>
+	
+	<body class="offsetfootermargin" {% block bodytag %}{% endblock %}>
+		{% block header %}
+			<div class="fitcontent" class="container" style="width:100%; padding: 0px">
+				<nav class="navbar navbar-default" style="width:100%;">
+					<div class="container-fluid" style="width:100%;">
+						<div class="navbar-header" style="width:100%;">
+							<button class="navbar-toggle collapsed" aria-controls="navbar" aria-expanded="false" data-target="#navbar" data-toggle="collapse" type="button">
+								<span class="sr-only">Toggle navigation</span>
+								<span class="icon-bar"></span>
+								<span class="icon-bar"></span>
+								<span class="icon-bar"></span>
+							</button>
+						</div>
+						
+						<div id="navbar" class="navbar-collapse collapse" aria-expanded="false" style="width:100%; padding-top:10px;">
+							<ul class="nav navbar-nav navbar" style="width:100%">
+								<h1 class="bet-logo">
+									<a href="#">
+										<div class="col-sm-1" style="padding-left:5px; padding-right:5px;">
+											<img class="noborder size-full aligncenter" src="{% static 'images/kiramama.png' %}" scale="0">
+										</div>
+										<div class="col-sm-11 verticallineseparator" style="padding-left:5px; padding-right:5px;">
+											<span class="brand-app" style="text-align:center;">Kiramama</span>
+											<span style="color:#000000; text-align:center;"> - Tracking The first 1000 Days of Life, Preventing unnecessary mother and newborn  deaths</span>
+										</div>
+									</a>
+								</h1>
+							</ul>
+							<ul class="nav navbar-nav navbar-right">
+								{% if sessionid %}
+									<li><a role="button" href="/changepassword">Change Password</a></li>
+									<li><a role="button" href="/logout">Logout</a></li>
+								{% else %}
+									{# <li><a role="button" href="{{ sbbroot }}index.php/login">Login</a></li> #}
+								{% endif %}
+							</ul>
+						</div>
+					</div>
+				</nav>
+			</div>
+		{% endblock %}
+		
+		{% block navbar %}
+			<div class="fitcontent" id="nav">
+				<ul id="menu-main_menu">
+					<li><a role="button" href="/home">Home</a></li>
+					<li><a role="button" href="/communityhealthworker">Community Health Workers</a></li>
+					<li><a role="button" href="/maternalhealth">Maternal Health</a></li>
+					<li><a role="button" href="/childhealth">Child Health</a></li>
+
+					{% if sessionid %}
+						{% if sessionadmin %}
+							<li>
+							  <a href="#">Administration <span class="caret"></span></a>
+							  <ul>
+									<li><a role="button" href="/manageusers">Manage Users</a></li>
+							  </ul>
+							</li>
+						{% endif %}
+					{% endif %}
+				</ul>
+			</div>
+		{% endblock %}
+		
+		<div class="fitcontent" id="divmain" class="container-fluid">
+			<div id="divinnermain" class="container-fluid">
+				{% block container %}
+					
+		
+				{% endblock %}
+			</div>
+		</div>
+	
+		{% block footer %}
+			<div class="fitcontent" id="footer-widgets" class="footer-widgets">
+				<div class="wrap">
+					<div class="row">
+						<div class="col-sm-4" style="overflow:auto;">
+							<div class="footer-widgets-2 widget-area">
+								<div class="widget-wrap">
+									<p style="text-align: center;">
+										<img class="noborder size-full aligncenter" src="{% static 'images/moh.jpg' %}" scale="0">
+									</p>
+									<p style="text-align: center;">
+										<a target="_blank" href="http://www.ministry.org">www.ministry.org</a>
+									</p>
+								</div>
+							</div>
+						</div>
+
+						<div class="col-sm-4 verticallineseparator" style="overflow:auto;">
+							<div class="footer-widgets-1 widget-area">
+								<div class="widget">
+									<div class="widget-wrap">
+										<h4 class="widget-title widgettitle">Contact Us</h4>
+										<p class="overview">
+											Ministry of health.....
+											<a href="www.ministry.org">Visit our website</a>
+											for more information.
+										</p>
+										<p class="overview">
+											Bujumbura Avenue.......,
+											
+											Bujumbura, Burundi.
+										</p>
+										<p>
+											<a href="mailto:ciat@cgiar.org">
+											<img class="alignleft" width="18" height="18" alt="Email-icon" src="{% static 'images/Email-icon-150x150.png' %}" scale="0">
+											  info@ministry.org 
+											<br>
+											</a>
+										</p>
+										<p>
+											<img class="alignleft" width="18" height="18" alt="telephone-icon-grey" src="{% static 'images/telephone-icon-grey-150x150.png' %}" scale="0">
+											<span class="skype_c2c_print_container notranslate">+257 00 000000</span>
+											<span id="skype_c2c_container" class="skype_c2c_container notranslate" data-ismobile="false" data-isrtl="false" data-isfreecall="false" data-numbertype="paid" data-numbertocall="+5724450000" onclick="SkypeClick2Call.MenuInjectionHandler.makeCall(this, event)" onmouseout="SkypeClick2Call.MenuInjectionHandler.hideMenu(this, event)" onmouseover="SkypeClick2Call.MenuInjectionHandler.showMenu(this, event)" tabindex="-1" dir="ltr">
+												<span class="skype_c2c_highlighting_inactive_common" skypeaction="skype_dropdown" dir="ltr">
+													<span id="non_free_num_ui" class="skype_c2c_textarea_span">
+														<img class="skype_c2c_logo_img" width="0" height="0" src="resource://skype_ff_extension-at-jetpack/skype_ff_extension/data/call_skype_logo.png" scale="0">
+														<span class="skype_c2c_text_span">+257 00 000000</span>
+														<span class="skype_c2c_free_text_span"></span>
+													</span>
+												</span>
+											</span>
+										</p>
+										
+										<p class="copyright text-muted small">
+											© 2017
+											<span class="separator">|</span>
+												Powered by Open-Source
+										</p>
+										<p class="copyright text-muted small">
+											© All Photos by
+											<a href="http://www.unicef.org"> UNICEF BURUNDI </a>
+										</p>
+									</div>
+								</div>
+							</div>
+						</div>
+						
+						<div class="col-sm-4 verticallineseparator" style="overflow:auto;">
+							<div class="footer-widgets-2 widget-area">
+								<div class="widget-wrap">
+									<p style="text-align: center;">
+										<img class="noborder size-full aligncenter" src="{% static 'images/unicef-cyan-logo.png' %}" scale="0">
+									</p>
+									<p style="text-align: center;">
+										<a target="_blank" href="http://www.unicef.org">www.unicef.org</a>
+									</p>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		{% endblock %}
+	</body>
+</html>

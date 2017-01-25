@@ -23,5 +23,15 @@ urlpatterns = [
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^kiramama/', include('kiramama_app.urls')),
-    url(r'^$', kiramama_app.views.landing, name='landing'),
+    url(r'^$', kiramama_app.views.default, name='default'),
+    url(r'^home', kiramama_app.views.home, name='home'),
+    url(r'^communityhealthworker', kiramama_app.views.communityhealthworker, name='communityhealthworker'),
+    url(r'^maternalhealth', kiramama_app.views.maternalhealth, name='maternalhealth'),
+    url(r'^childhealth', kiramama_app.views.childhealth, name='childhealth'),
+    url(r'^login', kiramama_app.views.login, name='login'),
+    url(r'^logout', kiramama_app.views.logout, name='logout'),
+    url(r'^getdistrictsinprovince', kiramama_app.views.getdistrictsinprovince, name='getdistrictsinprovince'),
+    url(r'^getcdsindistrict', kiramama_app.views.getcdsindistrict, name='getcdsindistrict'),
+    url(r'^getcdsdata', kiramama_app.views.getcdsdata, name='getcdsdata'),
+    
     ]

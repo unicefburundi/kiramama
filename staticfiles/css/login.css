@@ -1,0 +1,243 @@
+body {
+	background-color: #eeeaea;
+	height: 100%;
+
+}
+
+body .offsetfootermargin {
+	margin: 0 0 100px; /* bottom = footer height */
+}
+
+footer {
+	width: 100%;
+	bottom: 0;
+	margin: 0 auto;
+	height: 100px; /* same as body margin: 0 0 100px */
+}
+
+.navbar {
+    margin-bottom: 0;
+}
+
+#nav {
+    line-height:30px;
+    background-color:#eeeeee;
+    height:300px;
+    width:100px;
+    float:left;
+    padding:5px;
+}
+#section {
+    width:350px;
+    float:left;
+    padding:10px;
+}
+
+#divmain {
+	padding-top: 10px;
+	padding-bottom: 10px;
+	padding-left: 70px;
+	padding-right: 70px;
+	width: 100%;
+}
+
+#divinnermain {
+	padding-top: 20px;
+	padding-bottom: 10px;
+	padding-left: 30px;
+	padding-right: 30px;
+	width: 100%;
+	font-size:12px;
+	background-color: white;
+}
+
+.div-compute-table {
+	 width: 100%;
+	 overflow: auto;
+	 display: none;
+	 font-size: 12px;
+}
+
+.div-compute-chart {
+	 width: 100%;
+	 overflow: auto;
+	 display: none;
+	 margin: 0 auto;
+}
+
+.table-hover tbody tr:hover td {
+    color: red;
+}
+
+.content-wrapper {
+	width: 100%;
+	text-align: center;
+	display: block;
+}
+
+.float-left {
+	float: left;
+	overflow: auto;
+	display: inline-block; 
+	text-align: left;
+	vertical-align:top;
+}
+
+.float-right {
+	float: right;
+	display: inline-block; 
+	overflow: auto;
+	text-align: left;
+	vertical-align:top;
+}
+
+.panel-heading a:after {
+	font-family:'Glyphicons Halflings';
+	content:"\e114";
+	float: right;
+	color: grey;
+}
+
+.panel-heading a.collapsed:after {
+	content:"\e080";
+}
+
+.bs-docs-footer {
+	background-color: #EDF0D8;
+	display: block;
+	width: 100%;
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+
+.divspacer {
+	display: none;
+}
+
+.italicfont {
+	font-style: italic;
+	text-align: left;
+}
+
+.panel-title {
+	font-size: 14px;
+}
+
+.navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus {
+	background-color: #bfbfbf;
+    color: #777;
+	font-weight: bold;
+}
+
+.dropdown:hover .dropdown-menu {
+    display: block;
+    margin-top: 0;
+ }
+
+
+.img-responsive {
+	background: transparent;
+}
+
+.bet-logo span {
+	font-weight: 700;
+	font-size: 40px;
+	line-height: 1;
+	margin: 0px;
+	padding: 0px;
+}
+
+.sub-page-content p {
+    text-align: justify;
+    text-justify: inter-word;
+}
+
+.sub-page-content p {
+    font-weight: normal;
+    font-size: 18px;
+    line-height: 1.5;
+    text-rendering: optimizelegibility;
+    padding: 10px 0;
+}
+
+.sub-page-content b {
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 1.5;
+    text-rendering: optimizelegibility;
+    padding: 10px 0;
+}
+
+.sub-page-content h3 {
+    font-weight: normal;
+    font-size: 18px;
+    line-height: 1.5;
+    text-rendering: optimizelegibility;
+    padding: 10px 0;
+}
+
+.form-group, .form-control {
+	font-size: 12px;
+}
+
+.brand-ciat {
+	color: #5CB85C;
+}
+
+.brand-app {
+	color: #000;
+	font-size: 12px;
+	font-style: italic;
+}
+
+.cgiar-logo img {
+	padding: 23px 10px 0px 0px;
+}
+
+.ciat-logo {
+	padding: 23px 10px 0px 0px;
+}
+
+.pull-left {
+	float: left !important;
+}
+
+.cgiar-logo img{
+	width: 50px;
+	height: 59px;
+}
+
+.ciat-logo img{
+	width: 130px;
+	height: 36px;
+}
+
+.cgiar-logo {
+	padding: 0 25px 0 0;
+}
+
+.ciat-logo {
+	padding: 23px 10px 0 0;
+}
+
+section {
+  float: left;
+}
+
+aside {
+  float: right;
+}
+
+.perror {
+	color: red;
+}
+
+.diverror {
+	text-align: center;
+	color: red;
+	width: 100%;
+}
+
+
+
+

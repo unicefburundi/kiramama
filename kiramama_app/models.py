@@ -1,7 +1,6 @@
 from __future__ import unicode_literals
 
 from django.db import models
-
 from health_administration_structure_app.models import CDS
 from public_administration_structure_app.models import SousColline
 from datetime import datetime
@@ -13,6 +12,8 @@ class CHW(models.Model):
 	cds = models.ForeignKey(CDS)
 	phone_number = models.CharField(max_length=20)
 	supervisor_phone_number = models.CharField(max_length=20)
+	is_active = models.BooleanField(default=True)
+	reg_date = models.DateTimeField(auto_now_add=True)
 	
 	def __unicode__(self):
 		return self.phone_number
@@ -25,7 +26,7 @@ class Mother(models.Model):
 	id_mother = models.CharField(unique=True, max_length=10)
 	phone_number = models.CharField(max_length=20, blank=True)
 	is_affected_somewhere = models.BooleanField(default=True)
-
+	
 	def __unicode__(self):
 		return "{0} - {1}".format(self.id_mother, self.phone_number)
 
@@ -330,6 +331,19 @@ class TimeMeasuringUnit(models.Model):
 
 	def __unicode__(self):
 		return "{0} - {1}".format(self.code, self.description)
+
+class Settings(models.Model):
+	'''
+	In this model we will put settings
+	'''
+	setting_code = models.CharField(max_length=20)
+	setting_name = models.CharField(max_length=200)
+	setting_value = models.CharField(max_length=100)
+	time_measuring_unit = models.ForeignKey(TimeMeasuringUnit, null = True)
+	#Change the above line. It should accept null. It doesn't accept null values for the moment
+	
+	def __unicode__(self):
+		return "{0} - {1}".format(self.setting_name, self.setting_value)
 	
 class NotificationsForMother(models.Model):
 	''' 
