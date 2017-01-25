@@ -4,7 +4,6 @@ from health_administration_structure_app.models import *
 from django.http import HttpResponse
 import datetime
 import json
-#from django.http import JsonResponse
 from django.core import serializers
 from django.forms.models import model_to_dict
 
@@ -122,7 +121,7 @@ def getcdsdata(request):
         start_date = json_data['start_date']
         end_date = json_data['end_date']
         chwdata = ""
-
+        
         if (level):
             cdslist = None
             if (level == "cds"):
@@ -146,5 +145,3 @@ def getcdsdata(request):
             response_data = serializers.serialize('json', chwdata)
 
         return HttpResponse(response_data, content_type="application/json")
-
-        

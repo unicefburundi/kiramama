@@ -84,26 +84,39 @@
 						</div>
 						
 						<div id="navbar" class="navbar-collapse collapse" aria-expanded="false" style="width:100%; padding-top:10px;">
-							<ul class="nav navbar-nav navbar" style="width:50%">
+							<ul class="nav navbar-nav navbar" style="width:100%">
 								<h1 class="bet-logo">
-									<a href="/">
+									<a href="#">
 										<div class="col-sm-1" style="padding-left:5px; padding-right:5px;">
 											<img class="noborder size-full aligncenter" src="{% static 'images/kiramama.png' %}" scale="0">
 										</div>
-										<div class="col-sm-11 verticallineseparator" style="padding-left:5px; padding-right:5px;">
-											<span class="brand-app">Kiramama</span>
+										<div class="col-sm-9 verticallineseparator" style="padding-left:5px; padding-right:5px;">
+											<span class="brand-app" style="text-align:center;">Kiramama</span>
+											<span style="color:#000000; text-align:center;"> - Tracking The first 1000 Days of Life, Preventing unnecessary mother and newborn  deaths</span>
 										</div>
+										<div class="col-sm-1" style="padding-left:5px; padding-right:5px;">
+											<img class="noborder size-full aligncenter" src="{% static 'images/burundi.png' %}" scale="0">
+										</div>
+										<div class="col-sm-1" style="padding-left:5px; padding-right:5px;">
+											{% if sessionid %}
+												<li><a role="button" href="/changepassword">Change Password</a></li>
+												<li><a role="button" href="/logout">Logout</a></li>
+											{% else %}
+												<li><a role="button" href="/login">Login</a></li>
+											{% endif %}
+										</div>
+
 									</a>
 								</h1>
 							</ul>
-							<ul class="nav navbar-nav navbar-right">
+							<!--<ul class="nav navbar-nav navbar-right">
 								{% if sessionid %}
 									<li><a role="button" href="/changepassword">Change Password</a></li>
 									<li><a role="button" href="/logout">Logout</a></li>
 								{% else %}
 									<li><a role="button" href="/login">Login</a></li>
 								{% endif %}
-							</ul>
+							</ul>-->
 						</div>
 					</div>
 				</nav>
