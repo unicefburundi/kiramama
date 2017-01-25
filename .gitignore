@@ -16,3 +16,4 @@ fixtures/
 *.mo
 *.pid
 *.json
+*.sql

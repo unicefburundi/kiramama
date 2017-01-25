@@ -64,133 +64,115 @@
 					messiprompt("Your internet connection is not reliable. Computations not possible.", "Internet Connection", "messierror");
 					return;
 				}
-			});
-			
-			/*$(window).load(function() {
-				repositionfooter();
-			});*/
-			
-			
+			})
+    // using jQuery
+	function getCookie(name) {
+	    var cookieValue = null;
+	    if (document.cookie && document.cookie !== '') {
+	        var cookies = document.cookie.split(';');
+	        for (var i = 0; i < cookies.length; i++) {
+	            var cookie = jQuery.trim(cookies[i]);
+	            // Does this cookie string begin with the name we want?
+	            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+	                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+	                break;
+	            }
+	        }
+	    }
+	    return cookieValue;
+	}
 
+	function csrfSafeMethod(method) {
+	    // these HTTP methods do not require CSRF protection
+	    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+	}
+	
 
-		    
+	function messiprompt(msg, title, titleanimation) {
+		var titleclass;
 
+		if (titleanimation == "messisuccess") {
+			titleclass = 'success';
 
-		    // using jQuery
-			function getCookie(name) {
-			    var cookieValue = null;
-			    if (document.cookie && document.cookie !== '') {
-			        var cookies = document.cookie.split(';');
-			        for (var i = 0; i < cookies.length; i++) {
-			            var cookie = jQuery.trim(cookies[i]);
-			            // Does this cookie string begin with the name we want?
-			            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-			                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-			                break;
-			            }
-			        }
-			    }
-			    return cookieValue;
-			}
+		} else if (titleanimation == "messiinfo") {
+			titleclass = 'info';
 
-			function csrfSafeMethod(method) {
-			    // these HTTP methods do not require CSRF protection
-			    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
-			}
-			
+		} else if (titleanimation == "messiwarning") {
+			titleclass = 'anim warning';
 
-			function messiprompt(msg, title, titleanimation) {
-				var titleclass;
+		} else if (titleanimation == "messierror") {
+			titleclass = 'anim error';
+		}
 
-				if (titleanimation == "messisuccess") {
-					titleclass = 'success';
+		new Messi(msg, { title: title, titleClass: titleclass, modal: true });
+	}
 
-				} else if (titleanimation == "messiinfo") {
-					titleclass = 'info';
+	function getajaxerrormessage(jqXHR, exception) {
+        var msg = "An error has occured";
+        if (jqXHR.status == 0) {
+            msg = "0";
+        } else if (jqXHR.status == 404) {
+            msg = "404";
+        } else if (jqXHR.status == 500) {
+            msg = "500";
+        } else if (exception == 'parsererror') {
+            msg = "parsererror";
+        } else if (exception == 'timeout') {
+            msg = "timeout";
+        } else if (exception == 'abort') {
+            msg = "abort";
+        } else {
+            msg = "Error" + ": " + jqXHR.responseText;
+        }
+        return msg;
+    }
 
-				} else if (titleanimation == "messiwarning") {
-					titleclass = 'anim warning';
+	function initializesonic() {
+        $('#overlay').remove();
+        $("body").prepend("<div id='overlay' class='web_dialog'></div>");
 
-				} else if (titleanimation == "messierror") {
-					titleclass = 'anim error';
-				}
+        $("#overlay").css({
+            "width": $(document).width(),
+            "height": $(document).height(),
+        }).fadeTo(0, 0.9);
 
-				new Messi(msg, { title: title, titleClass: titleclass, modal: true });
-			}
+        modal = $('#overlay').dialog({
+            modal: true,
+            closeOnEscape: false,
+            beforeClose: function (event, ui) { return false; },
+            dialogClass: "noClose",
+            height: "auto",
+            width: "auto"
+        }).dialog("widget").find(".ui-dialog-titlebar").remove();
 
+        playSonic();
+    }
+	function playSonic() {
+        var circle = new Sonic({
+            width: 100,
+            height: 100,
+            stepsPerFrame: 1,
+            trailLength: 1,
+            pointDistance: .02,
+            fps: 30,
+            fillColor: '#05E2FF',
 
-			function getajaxerrormessage(jqXHR, exception) {
-		        var msg = "An error has occured";
-		        if (jqXHR.status == 0) {
-		            msg = "0";
-		        } else if (jqXHR.status == 404) {
-		            msg = "404";
-		        } else if (jqXHR.status == 500) {
-		            msg = "500";
-		        } else if (exception == 'parsererror') {
-		            msg = "parsererror";
-		        } else if (exception == 'timeout') {
-		            msg = "timeout";
-		        } else if (exception == 'abort') {
-		            msg = "abort";
-		        } else {
-		            msg = "Error" + ": " + jqXHR.responseText;
-		        }
-		        return msg;
+            step: function (point, index) {
+                this._.beginPath();
+                this._.moveTo(point.x, point.y);
+                this._.arc(point.x, point.y, index * 7, 0, Math.PI * 2, false);
+                this._.closePath();
+                this._.fill();
+            },
+
+            path: [
+                ['arc', 50, 50, 30, 0, 360]
+            ]
+        });
+        circle.play();
+        $('#overlay').append(circle.canvas);
 		    }
-			
-
-			function initializesonic() {
-		        $('#overlay').remove();
-		        $("body").prepend("<div id='overlay' class='web_dialog'></div>");
-
-		        $("#overlay").css({
-		            "width": $(document).width(),
-		            "height": $(document).height(),
-		        }).fadeTo(0, 0.9);
-
-		        modal = $('#overlay').dialog({
-		            modal: true,
-		            closeOnEscape: false,
-		            beforeClose: function (event, ui) { return false; },
-		            dialogClass: "noClose",
-		            height: "auto",
-		            width: "auto"
-		        }).dialog("widget").find(".ui-dialog-titlebar").remove();
-
-		        playSonic();
-		    }
-
-
-		    function playSonic() {
-		        var circle = new Sonic({
-		            width: 100,
-		            height: 100,
-		            stepsPerFrame: 1,
-		            trailLength: 1,
-		            pointDistance: .02,
-		            fps: 30,
-		            fillColor: '#05E2FF',
-
-		            step: function (point, index) {
-		                this._.beginPath();
-		                this._.moveTo(point.x, point.y);
-		                this._.arc(point.x, point.y, index * 7, 0, Math.PI * 2, false);
-		                this._.closePath();
-		                this._.fill();
-		            },
-
-		            path: [
-		                ['arc', 50, 50, 30, 0, 360]
-		            ]
-		        });
-
-		        circle.play();
-		        $('#overlay').append(circle.canvas);
-		    }
-			
-			
-		</script>
+	</script>
 	</head>
 	
 	<body class="offsetfootermargin" {% block bodytag %}{% endblock %}>
@@ -277,7 +259,7 @@
 										<img class="noborder size-full aligncenter" src="{% static 'images/moh.jpg' %}" scale="0">
 									</p>
 									<p style="text-align: center;">
-										<a target="_blank" href="http://www.ministry.org">www.ministry.org</a>
+										<a target="_blank" href="http://www.minisante.bi">www.minisante.bi</a>
 									</p>
 								</div>
 							</div>
@@ -290,7 +272,7 @@
 										<h4 class="widget-title widgettitle">Contact Us</h4>
 										<p class="overview">
 											Ministry of health.....
-											<a href="www.ministry.org">Visit our website</a>
+											<a href="https://www.minisante.bi">Visit our website</a>
 											for more information.
 										</p>
 										<p class="overview">
@@ -299,9 +281,9 @@
 											Bujumbura, Burundi.
 										</p>
 										<p>
-											<a href="mailto:ciat@cgiar.org">
+											<a href="mailto:info[@]minisante.bi">
 											<img class="alignleft" width="18" height="18" alt="Email-icon" src="{% static 'images/Email-icon-150x150.png' %}" scale="0">
-											  info@ministry.org 
+											  info[@]minisante.bi 
 											<br>
 											</a>
 										</p>
@@ -318,7 +300,6 @@
 												</span>
 											</span>
 										</p>
-										
 										<p class="copyright text-muted small">
 											© 2017
 											<span class="separator">|</span>
