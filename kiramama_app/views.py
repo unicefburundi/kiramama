@@ -4,7 +4,6 @@ from health_administration_structure_app.models import *
 from django.http import HttpResponse
 import datetime
 import json
-# from django.http import JsonResponse
 from django.core import serializers
 
 # Create your views here.
@@ -59,13 +58,12 @@ def home(request):
 
     if (cpn2):
         d['cpn2'] = float(ReportCPN.objects.filter(concerned_cpn=cpn2).count())/ float(cpntotal) * 100.0
-        
+
     if (cpn3):
         d['cpn3'] = float(ReportCPN.objects.filter(concerned_cpn=cpn3).count())/ float(cpntotal) * 100.0
 
     if (cpn4):
         d['cpn4'] = float(ReportCPN.objects.filter(concerned_cpn=cpn4).count())/ float(cpntotal) * 100.0
-
 
     # What is the percentage of active and inactive CHWs
     if(CHW.objects.all()):
@@ -177,7 +175,6 @@ def getcdsdata(request):
         start_date = json_data['start_date']
         end_date = json_data['end_date']
         chwdata = ""
-
         if (level):
             cdslist = None
             if (level == "cds"):

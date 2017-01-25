@@ -11,7 +11,6 @@
 		var messimsg;
 		var messititle;
 		var titleanimation;
-		var ajaxresults;
 		var ajaxpostbackfunction = null;
 		var ajaxurl;
 		var data;
@@ -32,7 +31,6 @@
 			
 
 
-
 			if ((".divmessage").length) {
 				$(".divmessage").fadeIn('slow').animate({opacity: 1.0}, 1500).effect("pulsate", { times: 2 }, 800).fadeOut('slow'); 
 			}
@@ -45,9 +43,7 @@
 		$(window).load(function () {
 			
 
-			$('#tblviewusers').dataTable({
-				"pagingType": "full_numbers"
-			});
+			
 
 			
 
@@ -144,13 +140,15 @@
 
 	            ajaxpostbackfunction = "fetchcdsdata";
 	            ajaxpost(ajaxurl, data);
+
+	        } else {
+	        	$('#overlay').remove();
 	        }
 	    }
 
 
 		function ajaxpost(posturl, data) {
-		        ajaxresults = null;
-		        
+		       	
 		        $.ajax({
 		        	beforeSend: function(xhr, settings) {
 				        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
@@ -230,12 +228,27 @@
 										var activechw = (parseFloat(dict[key][1])/ parseFloat(dict[key][0]))*100.0;
 										var inactivechw = 100.0 - activechw;
 
-									    $('#tblchw').find('tbody').append('<tr></tr>');
-											$('#tblchw tr:last').append('<td>' + key + '</td>');
+									    $('#tblchw').find('tbody').append('<tr style="cursor:pointer;"></tr>');
+											$('#tblchw tr:last').append('<td>' + key +'</td>');
 											$('#tblchw tr:last').append('<td>' + totalchw +  '</td>');
 											$('#tblchw tr:last').append('<td>' + activechw + ' %' + '</td>');
 											$('#tblchw tr:last').append('<td>' + inactivechw + ' %' + '</td>');
 
+									});
+
+
+
+									$('#tblchw').DataTable({
+										dom: "<'row'<'col-sm-3'l><'col-sm-4'i><'col-sm-5'f>>" +
+											"<'row'<'col-sm-12'tr>>" +
+											"<'row'<'col-sm-4'B><'col-sm-8'p>>",
+
+										//dom: 'lBfrtip',
+										pagingType: "full_numbers",
+								        buttons: [
+								            'copy', 'csv', 'excel', 'pdf', 'print'
+								        ]
+										
 									});
 								}
 
@@ -266,7 +279,6 @@
 		        
 		        return false;
 		    }
-
 
 
 
