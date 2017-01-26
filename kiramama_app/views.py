@@ -2,9 +2,11 @@ from django.shortcuts import render
 from kiramama_app.models import *
 from health_administration_structure_app.models import *
 from django.http import HttpResponse
-import datetime
 import json
 from django.core import serializers
+from django.contrib.auth.decorators import login_required
+from kiramama_app.serializers import NSCSerializer
+from rest_framework import viewsets
 
 # Create your views here.
 
@@ -200,3 +202,11 @@ def getcdsdata(request):
             response_data = serializers.serialize('json', chwdata)
 
         return HttpResponse(response_data, content_type="application/json")
+
+
+class ReportNSCViewsets(viewsets.ModelViewSet):
+    serializer_class = NSCSerializer
+    queryset = ReportNSC.objects.all()
+    # filter_fields = ('facility__facility_level__name', 'date_of_first_week_day')
+    # search_fields = ('^facility__id_facility',)
+
