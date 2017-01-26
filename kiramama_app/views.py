@@ -124,7 +124,10 @@ def maternalhealth(request):
 
 # require session
 def childhealth(request):
-    return render(request, 'childhealth.html')
+    d = {}
+    d["pagetitle"] = "Children Health"
+    d['provinces'] = getprovinces()
+    return render(request, 'childhealth.html', d)
 
 
 # require session

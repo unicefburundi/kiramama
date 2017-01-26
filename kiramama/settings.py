@@ -42,9 +42,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'redis',
     'django_extensions',
+    'import_export',
     'kiramama_app',
     'health_administration_structure_app',
     'public_administration_structure_app',
+    'rest_framework',
     'djcelery'
 ]
 
@@ -201,6 +203,14 @@ EXPECTED_NUMBER_OF_VALUES = {
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# Django REST FRAMEWORK
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAuthenticated',),
+    'PAGE_SIZE': 10,
+    'DEFAULT_FILTER_BACKENDS': ('rest_framework.filters.DjangoFilterBackend', 'rest_framework.filters.SearchFilter',)
+}
+
 
 # CELERY STUFF
 BROKER_URL = 'redis://localhost:6379'

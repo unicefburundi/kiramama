@@ -7,21 +7,247 @@
 {% block pagename %}pagename{% endblock %}
 
 {% block head %}
-	<script language="JavaScript">
-		var messimsg;
-		var messititle;
-		var titleanimation;
-		
-		$(document).ready(function() {
-			if ((".divmessage").length) {
-				$(".divmessage").fadeIn('slow').animate({opacity: 1.0}, 1500).effect("pulsate", { times: 2 }, 800).fadeOut('slow'); 
-			}
-			
-			if ((".diverror").length) {
-				$(".diverror").fadeIn('slow').animate({opacity: 1.0}, 1500).effect("pulsate", { times: 2 }, 800); 
-			}
+<script language="JavaScript">
+	var messimsg;
+	var messititle;
+	var titleanimation;
+	var ajaxpostbackfunction = null;
+	var ajaxurl;
+	var data;
+	
+	$(document).ready(function() {
+		$('.datepicker').datepicker({
+		    dateFormat: 'yy-mm-dd',
+		    startDate: '-3d'
 		});
-	</script>
+		$(".datepicker").datepicker("setDate", new Date());
+		if ("{{ provinces }}") {
+			{% for c in provinces %}
+				$('#cmbprovince').append('<option value="{{ c.code }}">{{ c.name }}</option>');
+			{% endfor %}
+		}
+		if ((".divmessage").length) {
+			$(".divmessage").fadeIn('slow').animate({opacity: 1.0}, 1500).effect("pulsate", { times: 2 }, 800).fadeOut('slow'); 
+		}
+		if ((".diverror").length) {
+			$(".diverror").fadeIn('slow').animate({opacity: 1.0}, 1500).effect("pulsate", { times: 2 }, 800); 
+		}
+	});
+
+	$(window).load(function () {
+	});
+
+	//<!-- ajax call to database -->
+	function fetchdistricts(code) {
+		$("#cmbdistrict option").each(function(){
+    		if ($(this).val()) {
+    			$(this).remove();
+    		}
+	    });
+	    $("#cmbcds option").each(function(){
+    		if ($(this).val()) {
+    			$(this).remove();
+    		}
+	    });
+
+	    $('#divchw').empty();
+		if (code) {
+			initializesonic();
+			ajaxurl = 'getdistrictsinprovince';
+            data = JSON.stringify({ 'code': code });
+            ajaxpostbackfunction = "fetchdistricts";
+            ajaxpost(ajaxurl, data);
+        }
+    }
+
+//<!-- ajax call to database -->
+	function fetchCDS(code) {
+		$("#cmbcds option").each(function(){
+    		if ($(this).val()) {
+    			$(this).remove();
+    		}
+	    });
+
+		$('#divchw').empty();
+		if (code) {
+			initializesonic();
+			ajaxurl = 'getcdsindistrict';
+            data = JSON.stringify({ 'code': code });
+            ajaxpostbackfunction = "fetchcds";
+            ajaxpost(ajaxurl, data);
+        }
+    }
+
+	function fetchcdsdata() {
+		if (new Date($('#dstartdate').val()) > new Date($('#dendtdate').val())) {
+            messimsg = "Start date cannot e more than End date";
+            messititle = "Invalid Date Selection";
+            titleanimation = "messierror";
+            messiprompt(messimsg, messititle, titleanimation);
+            $('#overlay').remove();
+            return;
+		}
+
+    	initializesonic();
+    	
+    	ajaxurl = 'getcdsdata';
+		var level = null;
+		var code = null;
+		var start_date = null;
+		var end_date = null;
+
+		if ($('#cmbprovince').val() !== "") {
+			level = "province";
+			code = $('#cmbprovince').val();
+		}
+		if ($('#cmbdistrict').val() !== "") {
+			level = "district";
+			code = $('#cmbdistrict').val();
+		}
+		if ($('#cmbcds').val() !== "") {
+			level = "cds";
+			code = $('#cmbcds').val();
+		}
+
+		if ($('#dstartdate').val() !== "") {
+			start_date = $('#dstartdate').val();
+		}
+
+		if ($('#dendtdate').val() !== "") {
+			end_date = $('#dendtdate').val();
+		}
+		$('#divchw').empty();
+		if (level && code && start_date && end_date) {
+	        data = JSON.stringify({ 'level': level, 'code': code, 'start_date': start_date, 'end_date': end_date });
+            ajaxpostbackfunction = "fetchcdsdata";
+            ajaxpost(ajaxurl, data);
+
+        } else {
+        	$('#overlay').remove();
+        }
+    }
+
+
+	function ajaxpost(posturl, data) {
+	       	
+	        $.ajax({
+	        	beforeSend: function(xhr, settings) {
+			        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+			            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+			        }
+			    },
+	            type: 'POST',
+	            url: posturl,
+	            data: data,
+	            contentType: 'application/json; charset=utf-8',
+	            dataType: 'json',
+
+	            success: function (response) {
+	                if (ajaxpostbackfunction == "fetchdistricts") {
+	                	for (i = 0; i < response.length; i++) {
+	                		var code = jQuery.makeArray(response[i].fields)[0].code;
+	                		var name = jQuery.makeArray(response[i].fields)[0].name;
+	                		$('#cmbdistrict').append('<option value=' + code +'>' + name + '</option>');
+						}
+
+						// fetch cds data
+	                	fetchcdsdata();
+
+	                } else if (ajaxpostbackfunction == "fetchcds") {
+	                	for (i = 0; i < response.length; i++) {
+	                		var code = jQuery.makeArray(response[i].fields)[0].code;
+	                		var name = jQuery.makeArray(response[i].fields)[0].name;
+	                		
+	                		$('#cmbcds').append('<option value=' + code +'>' + name + '</option>');
+						}
+
+						// fetch cds data
+	                	fetchcdsdata();
+
+	                } else if (ajaxpostbackfunction == "fetchcdsdata") {
+	                	if (response.length > 0) {
+							var dict = {};
+    						for (i = 0; i < response.length; i++) {
+    							var d = new Date(jQuery.makeArray(response[i].fields)[0].reg_date);
+    							var reg_date = d.getFullYear() + '-' + (d.getMonth()+1) + "-" + d.getDate();
+    							var is_active = jQuery.makeArray(response[i].fields)[0].is_active;
+		                		if (dict.hasOwnProperty(reg_date)) {
+		                			dict[reg_date][0] += 1; // total
+		                			if (is_active === true) {
+		                				dict[reg_date][1] += 1; // active
+		                			}
+		                		} else {
+		                			if (is_active === true) {
+		                				dict[reg_date] = [1, 1];
+		                			} else {
+		                				dict[reg_date] = [1, 0];
+		                			}
+		                		}
+							}
+							
+							if (Object.keys(dict).length > 0) {
+								$('#divchw').append('<p><b>Registered CHWs:</b></p>' +
+
+								'<div style="clear:both; height:10px;"></div>' +
+
+								'<table id="tblchw" class="table table-striped table-bordered table-condensed">');
+								
+								$('#tblchw').append('<thead>' +
+									'<th>Date</th><th>Total CHWs</th><th>Active CHWs</th><th>Inactive CHWs</th>' +
+								'</thead>' +
+									
+								'<tbody>' +
+									
+								'</tbody>');
+
+								var keys = Object.keys(dict);
+								keys.forEach(function(key){
+								   	var totalchw = parseFloat(dict[key][0]);
+									var activechw = (parseFloat(dict[key][1])/ parseFloat(dict[key][0]))*100.0;
+									var inactivechw = 100.0 - activechw;
+
+								    $('#tblchw').find('tbody').append('<tr style="cursor:pointer;"></tr>');
+										$('#tblchw tr:last').append('<td>' + key +'</td>');
+										$('#tblchw tr:last').append('<td>' + totalchw +  '</td>');
+										$('#tblchw tr:last').append('<td>' + activechw + ' %' + '</td>');
+										$('#tblchw tr:last').append('<td>' + inactivechw + ' %' + '</td>');
+								});
+								$('#tblchw').DataTable({
+									dom: "<'row'<'col-sm-3'l><'col-sm-4'i><'col-sm-5'f>>" +
+										"<'row'<'col-sm-12'tr>>" +
+										"<'row'<'col-sm-4'B><'col-sm-8'p>>",
+									//dom: 'lBfrtip',
+									pagingType: "full_numbers",
+							        buttons: [
+							            'copy', 'csv', 'excel', 'pdf', 'print'
+							        ]		
+								});
+							}
+						} else {
+							$('#divchw').append('<p style="color:red;">No records found</p>');
+						}
+	                }
+	                $('#overlay').remove();
+	            },
+
+	            failure: function (json) {
+	                messimsg = "Error";
+	                messititle = "Error";
+	                titleanimation = "messierror";
+	                messiprompt(messimsg, messititle, titleanimation);
+	               $('#overlay').remove();
+	            },
+	            error: function (jqXHR, exception) {
+	                messimsg = getajaxerrormessage(jqXHR, exception); //jqXHR.responseText;
+	                messititle = "error";
+	                titleanimation = "messierror";
+	                messiprompt(messimsg, messititle, titleanimation);
+	                $('#overlay').remove();
+	            }
+	        });
+	        return false;
+	    } 
+</script>
 {% endblock %}
 
 
@@ -35,10 +261,43 @@
 		{% endif %}
 	</div>
 	
-	<div>
+	<div class="form-inline" style="padding-left :5px; padding-right :5px;">
+			<div class="form-group">
+				<label for="cmbprovince">Province:</label>
+				<select id="cmbprovince" class="form-control" style="width:140px" onchange="fetchdistricts(this.value)" required="required">
+					<option value="" selected="selected">[ Select Province ]</option>'
+				</select>
+			</div>
+			<div class="form-group">
+				<label for="cmbdistrict">District:</label>
+				<select id="cmbdistrict" class="form-control" style="width:140px" onchange="fetchCDS(this.value)" required="required">
+					<option value="" selected="selected">[ Select District ]</option>'
+				</select>
+			</div>
+			<div class="form-group">
+				<label for="cmbcds">CDS:</label>
+				<select id="cmbcds" class="form-control" style="width:140px" onchange="fetchcdsdata()" required="required">
+					<option value="" selected="selected">[ Select CDS ]</option>'
+				</select>
+			</div>
+
+			<label for="dstartdate">Start Date:</label>
+			<div class="input-group date" data-provide="datepicker">
+			    <input type="text" id="dstartdate" class="form-control datepicker" readonly="readonly" style="width:130px" required="required" onchange="fetchcdsdata()">
+			    <div class="input-group-addon">
+			        <span class="glyphicon glyphicon-th"></span>
+			    </div>
+			</div>
+			<label for="dendtdate">End Date:</label>
+			<div class="input-group date" data-provide="datepicker">
+			    <input type="text" id="dendtdate" class="form-control datepicker" readonly="readonly" style="width:130px" required="required" onchange="fetchcdsdata()">
+			    <div class="input-group-addon">
+			        <span class="glyphicon glyphicon-th"></span>
+			    </div>
+			</div>
+		<hr style="margin-top:10px; margin-bottom:10px">
 		
-		<h1>KIRAMAMA</h1>
-		
-		
-	</div>
+		<div id="divchw" class="form-inline" style="padding-left :5px; padding-right :5px;"></div>
+			
+		</div>
 {% endblock %}
