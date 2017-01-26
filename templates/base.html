@@ -74,13 +74,6 @@
 					return;
 				}
 			});
-			
-			
-			
-
-
-		    
-
 
 		    // using jQuery
 			function getCookie(name) {
@@ -103,7 +96,6 @@
 			    // these HTTP methods do not require CSRF protection
 			    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
 			}
-			
 
 			function messiprompt(msg, title, titleanimation) {
 				var titleclass;
@@ -190,7 +182,7 @@
 		                ['arc', 50, 50, 30, 0, 360]
 		            ]
 		        });
-			})
+			}
     // using jQuery
 	function getCookie(name) {
 	    var cookieValue = null;
@@ -212,7 +204,6 @@
 	    // these HTTP methods do not require CSRF protection
 	    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
 	}
-	
 
 	function messiprompt(msg, title, titleanimation) {
 		var titleclass;
@@ -273,6 +264,7 @@
 
         playSonic();
     }
+
 	function playSonic() {
         var circle = new Sonic({
             width: 100,
@@ -318,7 +310,7 @@
 						<div id="navbar" class="navbar-collapse collapse" aria-expanded="false" style="width:100%; padding-top:10px;">
 							<ul class="nav navbar-nav navbar" style="width:100%">
 								<h1 class="bet-logo">
-									<a href="#">
+									<a href="/">
 										<div class="col-sm-1" style="padding-left:5px; padding-right:5px;">
 											<img class="noborder size-full aligncenter" src="{% static 'images/kiramama.png' %}" scale="0">
 										</div>
@@ -332,14 +324,6 @@
 									</a>
 								</h1>
 							</ul>
-							<!--<ul class="nav navbar-nav navbar-right">
-								{% if sessionid %}
-									<li><a role="button" href="/changepassword">Change Password</a></li>
-									<li><a role="button" href="/logout">Logout</a></li>
-								{% else %}
-									<li><a role="button" href="/login">Login</a></li>
-								{% endif %}
-							</ul>-->
 						</div>
 					</div>
 				</nav>
@@ -349,24 +333,12 @@
 		{% block navbar %}
 			<div class="fitcontent" id="nav">
 				<ul id="menu-main_menu">
+					{% if user.is_authenticated %}
 					<li><a role="button" href="/home">Home</a></li>
 					<li><a role="button" href="/communityhealthworker">{% trans "Community Health Workers" %}</a></li>
 					<li><a role="button" href="/maternalhealth">{% trans "Maternal Health" %}</a></li>
 					<li><a role="button" href="/childhealth">{% trans "Child Health" %}</a></li>
-					
-					{% if sessionid %}
-						{% if sessionadmin %}
-							<li>
-							  <a href="#">{% trans "Administration" %}<span class="caret"></span></a>
-							  <ul>
-									<li><a role="button" href="/manageusers">{% trans "Manage Users" %}</a></li>
-							  </ul>
-							</li>
-						{% endif %}
-					{% endif %}
-
-					{% if user.is_authenticated %}
-						<li><a role="button" href="/logout">Logout</a></li>
+					<li><a role="button" href="/logout">Logout</a></li>
 					{% endif %}
 				</ul>
 			</div>
