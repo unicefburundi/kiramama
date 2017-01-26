@@ -37,9 +37,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'redis',
+    #'django_extensions',
+    'import_export',
     'kiramama_app',
     'health_administration_structure_app',
     'public_administration_structure_app',
+    'rest_framework',
     'djcelery'
 ]
 
@@ -199,6 +202,15 @@ EXPECTED_NUMBER_OF_VALUES = {
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 
+STATIC_URL = '/static/'
+
+# Django REST FRAMEWORK
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAuthenticated',),
+    'PAGE_SIZE': 10,
+    'DEFAULT_FILTER_BACKENDS': ('rest_framework.filters.DjangoFilterBackend', 'rest_framework.filters.SearchFilter',)
+}
+
 # CELERY STUFF
 BROKER_URL = 'redis://localhost:6379'
 CELERY_RESULT_BACKEND = 'redis://localhost:6379'
@@ -210,6 +222,9 @@ CELERY_TIMEZONE = 'Africa/Bujumbura'
 CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
 
 RAPIDPRO_BROADCAST_URL = 'https://api.rapidpro.io/api/v1/broadcasts.json'
+
+LOGIN_REDIRECT_URL = 'home'
+LOGIN_URL = '/login/'
 
 try:
     from localsettings import *
