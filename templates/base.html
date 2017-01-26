@@ -1,4 +1,5 @@
 {% load staticfiles %}
+{% load i18n %}
 
 <!doctype html>
 <html lang="en">
@@ -33,17 +34,15 @@
 		<script src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
 		<script src="https://cdn.datatables.net/buttons/1.2.4/js/dataTables.buttons.min.js"></script>
 		<script src="https://cdn.datatables.net/1.10.13/js/dataTables.bootstrap.min.js"></script>
-
-		<!--<script src="https://cdn.datatables.net/responsive/2.0.1/js/dataTables.responsive.min.js"></script>
-		<script src="https://cdn.datatables.net/responsive/2.0.1/js/responsive.bootstrap.min.js"></script>-->
-
-		<script src="//cdn.datatables.net/buttons/1.2.4/js/buttons.bootstrap.min.js"></script>
-		<script src="//cdn.datatables.net/buttons/1.2.4/js/buttons.flash.min.js"></script>
-		<script src="//cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js"></script>
-		<script src="//cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/pdfmake.min.js"></script>
-		<script src="//cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/vfs_fonts.js"></script>
-		<script src="//cdn.datatables.net/buttons/1.2.4/js/buttons.html5.min.js"></script>
-		<script src="//cdn.datatables.net/buttons/1.2.4/js/buttons.print.min.js"></script>
+		<script src="https://cdn.datatables.net/responsive/2.0.1/js/dataTables.responsive.min.js"></script>
+		<script src="https://cdn.datatables.net/responsive/2.0.1/js/responsive.bootstrap.min.js"></script>
+		<script src="https://cdn.datatables.net/buttons/1.2.4/js/buttons.bootstrap.min.js"></script>
+		<script src="https://cdn.datatables.net/buttons/1.2.4/js/buttons.flash.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js"></script>
+		<script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/pdfmake.min.js"></script>
+		<script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/vfs_fonts.js"></script>
+		<script src="https://cdn.datatables.net/buttons/1.2.4/js/buttons.html5.min.js"></script>
+		<script src="https://cdn.datatables.net/buttons/1.2.4/js/buttons.print.min.js"></script>
 
 		<!-- Local css-->
 		<link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
@@ -76,9 +75,6 @@
 				}
 			});
 			
-			/*$(window).load(function() {
-				repositionfooter();
-			});*/
 			
 			
 
@@ -159,7 +155,7 @@
 		            "height": $(document).height(),
 		        }).fadeTo(0, 0.9);
 
-		        modal = $('#overlay').dialog({
+		        var modal = $('#overlay').dialog({
 		            modal: true,
 		            closeOnEscape: false,
 		            beforeClose: function (event, ui) { return false; },
@@ -226,7 +222,7 @@
 										</div>
 										<div class="col-sm-10 verticallineseparator" style="padding-left:5px; padding-right:5px;">
 											<span class="brand-app" style="text-align:center;">Kiramama</span>
-											<span style="color:#000000; text-align:center;"> - Tracking The first 1000 Days of Life, Preventing unnecessary mother and newborn  deaths</span>
+											<span style="color:#000000; text-align:center;"> - {% trans "Tracking The first 1000 Days of Life, Preventing unnecessary mother and newborn  deaths" %}</span>
 										</div>
 										<div class="col-sm-1" style="padding-left:5px; padding-right:5px;">
 											<img class="noborder size-full aligncenter" src="{% static 'images/burundi.png' %}" scale="0">
@@ -252,24 +248,24 @@
 			<div class="fitcontent" id="nav">
 				<ul id="menu-main_menu">
 					<li><a role="button" href="/home">Home</a></li>
-					<li><a role="button" href="/communityhealthworker">Community Health Workers</a></li>
-					<li><a role="button" href="/maternalhealth">Maternal Health</a></li>
-					<li><a role="button" href="/childhealth">Child Health</a></li>
-
+					<li><a role="button" href="/communityhealthworker">{% trans "Community Health Workers" %}</a></li>
+					<li><a role="button" href="/maternalhealth">{% trans "Maternal Health" %}</a></li>
+					<li><a role="button" href="/childhealth">{% trans "Child Health" %}</a></li>
+					
 					{% if sessionid %}
 						{% if sessionadmin %}
 							<li>
-							  <a href="#">Administration <span class="caret"></span></a>
+							  <a href="#">{% trans "Administration" %}<span class="caret"></span></a>
 							  <ul>
-									<li><a role="button" href="/manageusers">Manage Users</a></li>
+									<li><a role="button" href="/manageusers">{% trans "Manage Users" %}</a></li>
 							  </ul>
 							</li>
 						{% endif %}
 					{% endif %}
 
 					{% if sessionid %}
-						<li><a role="button" href="/changepassword">Change Password</a></li>
-						<li><a role="button" href="/logout">Logout</a></li>
+						<li><a role="button" href="/changepassword">{% trans "Change Password" %}</a></li>
+						<li><a role="button" href="/logout">{% trans "Logout" %}</a></li>
 					{% endif %}
 				</ul>
 			</div>

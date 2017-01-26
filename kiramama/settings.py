@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 # from __future__ import absolute_import
 import os
 from datetime import timedelta
+from django.utils.translation import ugettext_lazy as _
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -19,10 +20,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
-
-
-PROJECT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__),
-                                            os.pardir))
+PROJECT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 PROJECT_ROOT = os.path.abspath(os.path.join(PROJECT_PATH, os.pardir))
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -30,9 +28,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -56,12 +52,12 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
 ]
 
 ROOT_URLCONF = 'kiramama.urls'
 
 SECRET_KEY = 'ch25angeth23i@ssecr1!!$)(etke@%/32y'
-
 
 TEMPLATES = [
     {
@@ -83,10 +79,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'kiramama.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -94,10 +88,8 @@ DATABASES = {
     }
 }
 
-
 # Password validation
 # https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -113,20 +105,25 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/1.9/topics/i18n/
+# Provide a lists of languages which your site supports.
+LANGUAGES = (
+    ('en', _('English')),
+    ('fr', _('French')),
+)
 
 LANGUAGE_CODE = 'en-US'
 
 TIME_ZONE = 'Africa/Bujumbura'
+
+USE_THOUSAND_SEPARATOR = True
 
 USE_I18N = True
 
 USE_L10N = True
 
 USE_TZ = True
-
 
 STATIC_URL = '/static/'
 
@@ -140,10 +137,14 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'staticfiles'),
 )
 
+# Tell Django where the project's translation files should be.
+LOCALE_PATHS = (
+    os.path.join(PROJECT_PATH, 'locale'),
+)
+
 #The below setting is to define the setting_code of the setting about active/not active for community health workers
 #It's value will be the setting_code of the corresponding setting in Settings model.
 KEY_WORD_FOR_CHW_ACTIVE_SETTING = 'CHWAI'
-
 
 KNOWN_PREFIXES = {
     'REG': 'SELF_REGISTRATION',
@@ -171,17 +172,17 @@ KNOWN_PREFIXES = {
 }
 
 EXPECTED_NUMBER_OF_VALUES = {
-    'SELF_REGISTRATION': '5',
-    'PREGNANT_CASE_REGISTRATION': '6',
-    'PRENATAL_CONSULTATION_REGISTRATION': '7',
-    'BIRTH_REGISTRATION': '9',
-    'POSTNATAL_CARE_REPORT': '8',
-    'CHILD_FOLLOW_UP_REPORT': '5',
-    'RISK_REPORT': '4',
-    'RESPONSE_TO_RISK_REPORT': '4',
-    'DEATH_REPORT': '5',
-    'LEAVE_REPORT': '2',
-    'RECEPTION_REPORT': '2',
+    'SELF_REGISTRATION': 5,
+    'PREGNANT_CASE_REGISTRATION': 6,
+    'PRENATAL_CONSULTATION_REGISTRATION': 7,
+    'BIRTH_REGISTRATION': 9,
+    'POSTNATAL_CARE_REPORT': 8,
+    'CHILD_FOLLOW_UP_REPORT': 5,
+    'RISK_REPORT': 4,
+    'RESPONSE_TO_RISK_REPORT': 4,
+    'DEATH_REPORT': 5,
+    'LEAVE_REPORT': 2,
+    'RECEPTION_REPORT': 2,
     'SELF_REGISTRATION_M': 5,
     'PREGNANT_CASE_REGISTRATION_M': 7,
     'PRENATAL_CONSULTATION_REGISTRATION_M': 7,
@@ -195,11 +196,8 @@ EXPECTED_NUMBER_OF_VALUES = {
     'RECEPTION_REPORT_M': 2,
 }
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
-
-STATIC_URL = '/static/'
 
 # CELERY STUFF
 BROKER_URL = 'redis://localhost:6379'
@@ -211,9 +209,7 @@ CELERY_TIMEZONE = 'Africa/Bujumbura'
 # CELERY_ALWAYS_EAGER = True
 CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
 
-
 RAPIDPRO_BROADCAST_URL = 'https://api.rapidpro.io/api/v1/broadcasts.json'
-
 
 try:
     from localsettings import *

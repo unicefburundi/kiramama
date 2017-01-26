@@ -1,7 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import render, render_to_response, RequestContext
+from django.http import HttpResponse, HttpResponseRedirect
 from kiramama_app.models import *
 from health_administration_structure_app.models import *
-from django.http import HttpResponse
+from django.utils.translation import ugettext as _
 import datetime
 import json
 from django.core import serializers
@@ -43,7 +44,6 @@ def home(request):
     d['percentage_delivery_at_CDS'] = 0.0
 
     d['vac_list'] = []
-
 
     if (CPN.objects.filter(cpn_designation = "CPN1")):
         cpn1 = CPN.objects.get(cpn_designation = "CPN1")
@@ -171,35 +171,43 @@ def getcdsindistrict(request):
 
 def getcdsdata(request):
     response_data = {}
-    if request.method == 'POST':
-        #import pdb; pdb.set_trace()
-        json_data = json.loads(request.body)
-        level = json_data['level']
-        code = json_data['code']
-        start_date = json_data['start_date']
-        end_date = json_data['end_date']
-        chwdata = ""
-        
-        if (level):
-            cdslist = None
-            if (level == "cds"):
-                cdslist = CDS.objects.filter(code = code)
+    try:
+        if request.method == 'POST':
+            #import pdb; pdb.set_trace()
+            json_data = json.loads(request.body)
+            level = json_data['level']
+            code = json_data['code']
+            start_date = json_data['start_date']
+            end_date = json_data['end_date']
+            chwdata = ""
+            
+            if (level):
+                cdslist = None
+                if (level == "cds"):
+                    cdslist = CDS.objects.filter(code = code)
 
-            elif (level == "district"):
-                districtlist = District.objects.filter(code = code)
-                if (districtlist):
-                    cdslist = CDS.objects.filter(district__in = districtlist)
-                
-            elif (level == "province"):
-                provincelist = BPS.objects.filter(code = code)
-                if (provincelist):
-                    districtlist = District.objects.filter(bps__in = provincelist)
+                elif (level == "district"):
+                    districtlist = District.objects.filter(code = code)
                     if (districtlist):
                         cdslist = CDS.objects.filter(district__in = districtlist)
+                    
+                elif (level == "province"):
+                    provincelist = BPS.objects.filter(code = code)
+                    if (provincelist):
+                        districtlist = District.objects.filter(bps__in = provincelist)
+                        if (districtlist):
+                            cdslist = CDS.objects.filter(district__in = districtlist)
 
-            if (cdslist):
-                chwdata = CHW.objects.filter(cds__in = cdslist).filter(reg_date__range=[start_date, end_date]).order_by('reg_date')
+                if (cdslist):
+                    chwdata = CHW.objects.filter(cds__in = cdslist).filter(reg_date__range=[start_date, end_date]).order_by('reg_date')
 
-            response_data = serializers.serialize('json', chwdata)
+                response_data = serializers.serialize('json', chwdata)
+            return HttpResponse(response_data, content_type="application/json")
 
-        return HttpResponse(response_data, content_type="application/json")
+        else:
+            response_data['error'] = _("Method must be a POST")
+            return HttpResponse(response_data)
+            
+    except Exception, e:
+        response_data['error'] = _(e.message)
+        return HttpResponse(response_data)
