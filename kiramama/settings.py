@@ -226,6 +226,7 @@ CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
 RAPIDPRO_BROADCAST_URL = 'https://api.rapidpro.io/api/v1/broadcasts.json'
 
 LOGIN_REDIRECT_URL = 'home'
+LOGIN_URL = '/login/'
 
 try:
     from localsettings import *

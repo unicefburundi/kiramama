@@ -249,8 +249,7 @@
 						{% endif %}
 					{% endif %}
 
-					{% if sessionid %}
-						<li><a role="button" href="/changepassword">Change Password</a></li>
+					{% if user.is_authenticated %}
 						<li><a role="button" href="/logout">Logout</a></li>
 					{% endif %}
 				</ul>

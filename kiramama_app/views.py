@@ -16,7 +16,7 @@ def default(request):
     return render(request, 'default.html', d)
 
 
-# require session
+@login_required
 def home(request):
     d = {}
     d["pagetitle"] = "Home"
@@ -130,16 +130,6 @@ def childhealth(request):
     d["pagetitle"] = "Children Health"
     d['provinces'] = getprovinces()
     return render(request, 'childhealth.html', d)
-
-
-# require session
-def login(request):
-    return render(request, 'login.html')
-
-
-# require session
-def logout(request):
-    return render(request, 'logout.html')
 
 
 def getprovinces():
