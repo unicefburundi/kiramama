@@ -20,6 +20,7 @@
 		    dateFormat: 'yy-mm-dd',
 		    startDate: '-3d'
 		});
+		
 		$(".datepicker").datepicker("setDate", new Date());
 		if ("{{ provinces }}") {
 			{% for c in provinces %}
@@ -37,6 +38,13 @@
 	$(window).load(function () {
 	});
 
+	// get method 
+	    function getdata(url, lookup){
+	    	$.get(url + lookup, function(data, status){
+			        alert("Data: " + data + "\nStatus: " + status);
+			    });
+	    }
+
 	//<!-- ajax call to database -->
 	function fetchdistricts(code) {
 		$("#cmbdistrict option").each(function(){
@@ -52,11 +60,13 @@
 
 	    $('#divchw').empty();
 		if (code) {
-			initializesonic();
-			ajaxurl = 'getdistrictsinprovince';
+			// initializesonic();
+			ajaxurl = '/kiramama/reportnsc?province=';
             data = JSON.stringify({ 'code': code });
+			console.log(data);
             ajaxpostbackfunction = "fetchdistricts";
-            ajaxpost(ajaxurl, data);
+            // ajaxpost(ajaxurl, data);
+            getdata(ajaxurl, code);
         }
     }
 
@@ -80,7 +90,7 @@
 
 	function fetchcdsdata() {
 		if (new Date($('#dstartdate').val()) > new Date($('#dendtdate').val())) {
-            messimsg = "Start date cannot e more than End date";
+            messimsg = "Start date cannot be more than End date";
             messititle = "Invalid Date Selection";
             titleanimation = "messierror";
             messiprompt(messimsg, messititle, titleanimation);
@@ -127,9 +137,9 @@
         }
     }
 
+    
 
 	function ajaxpost(posturl, data) {
-	       	
 	        $.ajax({
 	        	beforeSend: function(xhr, settings) {
 			        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {

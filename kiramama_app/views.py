@@ -1,5 +1,5 @@
-from django.shortcuts import render, render_to_response, RequestContext
-from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import render
+from django.http import HttpResponse
 from kiramama_app.models import *
 from health_administration_structure_app.models import *
 from django.utils.translation import ugettext as _
@@ -9,6 +9,7 @@ from django.core import serializers
 from django.contrib.auth.decorators import login_required
 from kiramama_app.serializers import NSCSerializer
 from rest_framework import viewsets
+import django_filters
 
 # Create your views here.
 
@@ -56,7 +57,6 @@ def home(request):
         cpn3 = CPN.objects.get(cpn_designation="CPN3")
     if(CPN.objects.filter(cpn_designation="CPN4")):
         cpn4 = CPN.objects.get(cpn_designation="CPN4")
-
 
     if (cpn1):
         d['cpn1'] = float(ReportCPN.objects.filter(concerned_cpn=cpn1).count())/ float(cpntotal) * 100.0
@@ -164,6 +164,7 @@ def getcdsindistrict(request):
 
 
 def getcdsdata(request):
+    # import ipdb; ipdb.set_trace()
     response_data = {}
     try:
         if request.method == 'POST':
@@ -178,10 +179,10 @@ def getcdsdata(request):
             if (level):
                 cdslist = None
                 if (level == "cds"):
-                    cdslist = CDS.objects.filter(code = code)
+                    cdslist = CDS.objects.filter(code=code)
 
                 elif (level == "district"):
-                    districtlist = District.objects.filter(code = code)
+                    districtlist = District.objects.filter(code=code)
                     if (districtlist):
                         cdslist = CDS.objects.filter(district__in = districtlist)
                     
@@ -237,8 +238,19 @@ def getcdsdata(request):
         return HttpResponse(response_data, content_type="application/json")
 
 
+class NSCFilter(django_filters.rest_framework.FilterSet):
+    min_birth_date = django_filters.DateFilter(name="birth_date", lookup_expr='gte')
+    max_birth_date = django_filters.DateFilter(name="birth_date", lookup_expr='lte')
+    cds = django_filters.CharFilter(name="report", lookup_expr='cds__name')
+    district = django_filters.CharFilter(name="report", lookup_expr='cds__district__name')
+    province = django_filters.CharFilter(name="report", lookup_expr='cds__district__bps__code')
+
+    class Meta:
+        model = ReportNSC
+        fields = ['cds', 'district', 'province', 'min_birth_date', 'max_birth_date']
+
+
 class ReportNSCViewsets(viewsets.ModelViewSet):
     serializer_class = NSCSerializer
     queryset = ReportNSC.objects.all()
-    # filter_fields = ('facility__facility_level__name', 'date_of_first_week_day')
-    # search_fields = ('^facility__id_facility',)
+    filter_class = NSCFilter

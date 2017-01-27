@@ -6,4 +6,4 @@ class NSCSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ReportNSC
-        fields = ('report', 'child_number', 'birth_date', 'birth_location', 'gender', 'weight', 'next_appointment_date', 'breast_feading' )
+        fields = ('id', 'report', 'child_number', 'birth_date', 'birth_location', 'gender', 'weight', 'next_appointment_date', 'breast_feading' )
