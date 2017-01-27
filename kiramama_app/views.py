@@ -109,7 +109,7 @@ def home(request):
     return render(request, 'home.html', d)
 
 
-# require session
+@login_required
 def communityhealthworker(request):
     d = {}
     d["pagetitle"] = "Community Health Worker"
@@ -118,7 +118,7 @@ def communityhealthworker(request):
     return render(request, 'communityhealthworker.html', d)
 
 
-# require session
+@login_required
 def maternalhealth(request):
     d = {}
     d["pagetitle"] = "Maternal Health"
@@ -127,7 +127,7 @@ def maternalhealth(request):
     return render(request, 'maternalhealth.html', d)
 
 
-# require session
+@login_required
 def childhealth(request):
     d = {}
     d["pagetitle"] = "Children Health"
