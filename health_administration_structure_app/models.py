@@ -1,10 +1,10 @@
 from __future__ import unicode_literals
-
 from django.db import models
+
 
 class BPS(models.Model):
     '''In this model, we will store Burundi BPSs(Bureau provincial de la sante)'''
-    name = models.CharField(('name'),unique=True, max_length=20)
+    name = models.CharField(('name'), unique=True, max_length=20)
     code = models.IntegerField(unique=True, blank=True, null=True)
 
     def __unicode__(self):
@@ -16,6 +16,7 @@ class BPS(models.Model):
 
     class Meta:
         ordering = ('name',)
+
 
 class District(models.Model):
     '''In this model, we will store districts'''
@@ -29,6 +30,7 @@ class District(models.Model):
     class Meta:
         ordering = ('name',)
 
+
 class CDS(models.Model):
     STATUS_CHOICES = (
         ('Pub', 'Public'),
@@ -40,7 +42,7 @@ class CDS(models.Model):
         ('HPrv', 'HPrive'),
     )
     district = models.ForeignKey(District)
-    name = models.CharField( max_length=40)
+    name = models.CharField(max_length=40)
     code = models.CharField(unique=True, max_length=6)
     status = models.CharField(max_length=4, choices=STATUS_CHOICES, blank=True, null=True, help_text=('Either Public, Conf, Ass, Prive  or Hospital status.'))
 

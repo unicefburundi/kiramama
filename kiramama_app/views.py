@@ -241,8 +241,8 @@ def getcdsdata(request):
 class NSCFilter(django_filters.rest_framework.FilterSet):
     min_birth_date = django_filters.DateFilter(name="birth_date", lookup_expr='gte')
     max_birth_date = django_filters.DateFilter(name="birth_date", lookup_expr='lte')
-    cds = django_filters.CharFilter(name="report", lookup_expr='cds__name')
-    district = django_filters.CharFilter(name="report", lookup_expr='cds__district__name')
+    cds = django_filters.CharFilter(name="report", lookup_expr='cds__code')
+    district = django_filters.CharFilter(name="report", lookup_expr='cds__district__code')
     province = django_filters.CharFilter(name="report", lookup_expr='cds__district__bps__code')
 
     class Meta:
@@ -250,7 +250,9 @@ class NSCFilter(django_filters.rest_framework.FilterSet):
         fields = ['cds', 'district', 'province', 'min_birth_date', 'max_birth_date']
 
 
+
 class ReportNSCViewsets(viewsets.ModelViewSet):
     serializer_class = NSCSerializer
     queryset = ReportNSC.objects.all()
     filter_class = NSCFilter
+    filter_fields = ('report__cds__code', )
