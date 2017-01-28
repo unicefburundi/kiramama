@@ -47,14 +47,14 @@
 
 			<label for="dstartdate">Start Date:</label>
 			<div class="input-group date" data-provide="datepicker">
-			    <input type="text" id="dstartdate" class="form-control datepicker" readonly="readonly" style="width:130px" required="required" onchange="fetchcdsdata()">
+			    <input type="text" id="startdate" class="form-control datepicker" readonly="readonly" style="width:130px" ng-model="startdate" ng-change="get_bydate()">
 			    <div class="input-group-addon">
 			        <span class="glyphicon glyphicon-th"></span>
 			    </div>
 			</div>
 			<label for="dendtdate">End Date:</label>
 			<div class="input-group date" data-provide="datepicker">
-			    <input type="text" id="dendtdate" class="form-control datepicker" readonly="readonly" style="width:130px" required="required" onchange="fetchcdsdata()">
+			    <input type="text" id="endtdate" class="form-control datepicker" readonly="readonly" style="width:130px" ng-model="enddate" ng-change="get_bydate()">
 			    <div class="input-group-addon">
 			        <span class="glyphicon glyphicon-th"></span>
 			    </div>
@@ -73,7 +73,7 @@
 					        <th>Mother ID</th>
 					        <th>Gender</th>
 					        <th>Weight(Kg)</th>
-					        <th>Breasfeeding</th>
+					        <th>Breastfeeding</th>
 					    </tr>
 					</thead>
 					<tbody>
@@ -87,7 +87,7 @@
                         	<td>{{y.gender}}</td>
                         	<td>{{y.weight}}</td>
                         	<td>{{y.breast_feading}}</td>
-                        </tr>	
+                        </tr>
 					{% endverbatim %}
 					</tbody>
 				</table>
