@@ -23,9 +23,18 @@
 
 
 {% block container %}
+    <link rel="stylesheet" href="{% static "js/angular-datatables/css/angular-datatables.min.css" %}">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.2.2/css/buttons.dataTables.min.css">
 	<script type="text/javascript" src="{% static "js/angular.min.js" %}"></script>
     <script type="text/javascript" src="{% static "js/angular-sanitize.min.js" %}"></script>
     <script type="text/javascript" src="{% static "js/childhealth.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/angular-datatables/angular-datatables.min.js" %}"></script>
+    <script src="{% static "js/angular-datatables/plugins/buttons/dataTables.buttons.min.js" %}"></script>
+	<script src="{% static "js/angular-datatables/plugins/buttons/buttons.colVis.min.js" %}"></script>
+	<script src="{% static "js/angular-datatables/plugins/buttons/buttons.html5.min.js" %}"></script>
+	<script src="{% static "js/angular-datatables/plugins/buttons/buttons.print.min.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/angular-datatables/plugins/buttons/angular-datatables.buttons.min.js" %}"></script>
+
 		
 	<div ng-app="ChildApp" ng-controller="ChildCtrl">
 		<div class="form-inline" style="padding-left :5px; padding-right :5px;">
@@ -59,11 +68,11 @@
 			        <span class="glyphicon glyphicon-th"></span>
 			    </div>
 			</div>
-		<hr style="margin-top:10px; margin-bottom:10px">
+		<hr style="margin-top:20px; margin-bottom:20px">
 		</div>
 		<div class="contain" >
 			<div class="table-responsive" >
-				<table class="table" data-toggle="table">
+				<table class="table" data-toggle="table" datatable="ng" dt-options="dtOptions">
 					<thead>
 						<tr>
 					        <th>Birth ID</th>

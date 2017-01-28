@@ -1,6 +1,6 @@
-var app = angular.module('ChildApp', ['ngSanitize']);
+var app = angular.module('ChildApp', ['ngSanitize', 'datatables', 'datatables.buttons']);
 
-app.controller('ChildCtrl', ['$scope', '$http', function($scope, $http) {
+app.controller('ChildCtrl', ['$scope', '$http', 'DTOptionsBuilder', function($scope, $http, DTOptionsBuilder) {
         // province
         $http.get("/kiramama/reportnsc/")
         .then(function (response) {
@@ -10,7 +10,11 @@ app.controller('ChildCtrl', ['$scope', '$http', function($scope, $http) {
           $scope.provinces = response.data.results;
       });
         $scope.update_province = function () {
-          var province = $scope.province;
+            var province = $scope.province;
+            $scope.districts = "";
+            $scope.cdss = "";
+            $scope.startdate = "";
+            $scope.enddate = "";
           if (province) {
             $http.get("/structures/districts/?bps__code=" + province.code )
             .then(function (response) {
@@ -25,6 +29,9 @@ app.controller('ChildCtrl', ['$scope', '$http', function($scope, $http) {
           // district
           $scope.update_district = function () {
             var district = $scope.district;
+            $scope.cdss = "";
+            $scope.startdate = "";
+            $scope.enddate = "";
             if (district) {
               $http.get("/structures/cds/?district__code=" + district.code )
               .then(function (response) {
@@ -39,6 +46,8 @@ app.controller('ChildCtrl', ['$scope', '$http', function($scope, $http) {
       // cds
           $scope.update_cds = function () {
             var cds = $scope.cds;
+            $scope.startdate = "";
+            $scope.enddate = "";
             if (cds) {
                 $http.get("/kiramama/reportnsc/?cds=" + cds.code )
                 .then(function (response) {
@@ -51,9 +60,48 @@ app.controller('ChildCtrl', ['$scope', '$http', function($scope, $http) {
         $scope.get_bydate = function () {
           var startdate = $scope.startdate;
           var enddate = $scope.enddate;
-          if (startdate) {
+          var cds = $scope.cds;
+          var district = $scope.district;
+          var province = $scope.province;
+          if (startdate && cds) {
                 if (enddate) {      
-                    $http.get("/kiramama/reportnsc/?min_birth_date=" + startdate + "&max_birth_date=" + enddate )
+                    $http.get("/kiramama/reportnsc/?min_birth_date=" + startdate + "&max_birth_date=" + enddate + "&cds=" + cds.code)
+                      .then(function (response) {
+                          $scope.results = response.data.results;
+                      });
+                } else {
+                    $http.get("/kiramama/reportnsc/?min_birth_date=" + startdate + "&cds=" + cds.code)
+                      .then(function (response) {
+                          $scope.results = response.data.results;
+                      });
+                }
+          } else if (startdate && district) {
+                    if (enddate) {      
+                        $http.get("/kiramama/reportnsc/?min_birth_date=" + startdate + "&max_birth_date=" + enddate + "&district=" + district.code)
+                          .then(function (response) {
+                              $scope.results = response.data.results;
+                          });
+                    } else {
+                        $http.get("/kiramama/reportnsc/?min_birth_date=" + startdate + "&district=" + district.code)
+                          .then(function (response) {
+                              $scope.results = response.data.results;
+                          });
+                    }
+              } else if (startdate && province) {
+                if (enddate) {      
+                    $http.get("/kiramama/reportnsc/?min_birth_date=" + startdate + "&max_birth_date=" + enddate + "&province=" + province.code)
+                      .then(function (response) {
+                          $scope.results = response.data.results;
+                      });
+                } else {
+                    $http.get("/kiramama/reportnsc/?min_birth_date=" + startdate + "&province=" + province.code)
+                      .then(function (response) {
+                          $scope.results = response.data.results;
+                      });
+                }
+          } else if (startdate) {
+                if (enddate) {      
+                    $http.get("/kiramama/reportnsc/?min_birth_date=" + startdate + "&max_birth_date=" + enddate)
                       .then(function (response) {
                           $scope.results = response.data.results;
                       });
@@ -63,13 +111,17 @@ app.controller('ChildCtrl', ['$scope', '$http', function($scope, $http) {
                           $scope.results = response.data.results;
                       });
                 }
-          } else {
-              if (enddate) {
+          } else if (enddate) {
                 $http.get("/kiramama/reportnsc/?max_birth_date=" + enddate )
                       .then(function (response) {
                           $scope.results = response.data.results;
                       });
-              }
-          }
+                }
       };
+      // for datatable 
+      $scope.dtOptions = DTOptionsBuilder.newOptions().withPaginationType('full_numbers').withDisplayLength(10).withButtons([
+            'copy',
+            'print',
+            'excel',
+        ]);
   }]);
