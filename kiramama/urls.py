@@ -25,7 +25,7 @@ urlpatterns = [
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^kiramama/', include('kiramama_app.urls')),
-    url(r'^$', kiramama_app.views.default, name='default'),
+    url(r'^structures/', include('health_administration_structure_app.urls')),
     url(r'^home', kiramama_app.views.home, name='home'),
     url(r'^communityhealthworker', kiramama_app.views.communityhealthworker, name='communityhealthworker'),
     url(r'^maternalhealth', kiramama_app.views.maternalhealth, name='maternalhealth'),
@@ -35,5 +35,5 @@ urlpatterns = [
     url(r'^getdistrictsinprovince', kiramama_app.views.getdistrictsinprovince, name='getdistrictsinprovince'),
     url(r'^getcdsindistrict', kiramama_app.views.getcdsindistrict, name='getcdsindistrict'),
     url(r'^getcdsdata', kiramama_app.views.getcdsdata, name='getcdsdata'),
-    
+    url(r'^$', kiramama_app.views.default, name='default'),
     ]
