@@ -17,7 +17,9 @@
 			    dateFormat: 'yy-mm-dd',
 			    startDate: '-3d'
 			});
-			//$(".datepicker").datepicker("setDate", new Date());
+
+			$(".datepicker").datepicker("setDate", new Date());
+			
 			if ((".divmessage").length) {
 				$(".divmessage").fadeIn('slow').animate({opacity: 1.0}, 1500).effect("pulsate", { times: 2 }, 800).fadeOut('slow'); 
 			}
@@ -31,6 +33,9 @@
 					$('#cmbprovince').append('<option value="{{ c.code }}">{{ c.name }}</option>');
 				{% endfor %}
 			}
+
+
+			fetchwanteddata()
 
 		});
 		
@@ -89,6 +94,64 @@
 
 
 
+		function fetchwanteddata() {
+			console.log("======Debut  fetchwanteddata====")
+			if (new Date($('#dstartdate').val()) > new Date($('#dendtdate').val())) {
+                messimsg = "Start date cannot e more than End date";
+                messititle = "Invalid Date Selection";
+                titleanimation = "messierror";
+                messiprompt(messimsg, messititle, titleanimation);
+                $('#overlay').remove();
+                return;
+			}
+	    	initializesonic();
+	    	
+	    	ajaxurl = 'getwanteddata';
+    		var level = null;
+    		var code = null;
+    		var start_date = null;
+    		var end_date = null;
+
+    		if ($('#cmbprovince').val() != "") {
+    			level = "province";
+    			code = $('#cmbprovince').val();
+    		}else{
+    			level = "national";
+    			code = -1;
+    		}
+    		if ($('#cmbdistrict').val() != "") {
+    			level = "district";
+    			code = $('#cmbdistrict').val();
+    		}
+    		if ($('#cmbcds').val() != "") {
+    			level = "cds";
+    			code = $('#cmbcds').val();
+    		}
+
+    		if ($('#dstartdate').val() != "") {
+    			start_date = $('#dstartdate').val();
+    		}
+
+    		if ($('#dendtdate').val() != "") {
+    			end_date = $('#dendtdate').val();
+    		}
+
+			$('#divmh').empty();
+
+
+    		if (level && code && start_date && end_date) {
+		        data = JSON.stringify({ 'level': level, 'code': code, 'start_date': start_date, 'end_date': end_date });
+
+	            ajaxpostbackfunction = "fetchwanteddata";
+	            ajaxpost(ajaxurl, data);
+
+	        } else {
+	        	$('#overlay').remove();
+	        }
+	    }
+
+
+
 
 
 		function ajaxpost(posturl, data) {
@@ -113,10 +176,8 @@
 		                		
 		                		$('#cmbdistrict').append('<option value=' + code +'>' + name + '</option>');
     						}
-
-    						// fetch cds data
-		                	fetchcdsdata();
-
+    						// fetch wanted data
+		                	fetchwanteddata();
 		                } else if (ajaxpostbackfunction == "fetchcds") {
 		                	for (i = 0; i < response.length; i++) {
 		                		var code = jQuery.makeArray(response[i].fields)[0].code;
@@ -125,65 +186,151 @@
 		                		$('#cmbcds').append('<option value=' + code +'>' + name + '</option>');
     						}
 
-    						// fetch cds data
-		                	fetchcdsdata();
+    						// fetch wanted data
+		                	fetchwanteddata();
 
-		                } else if (ajaxpostbackfunction == "fetchcdsdata") {
+		                } else if (ajaxpostbackfunction == "fetchwanteddata") {
 		                	if (response.length > 0) {
-								var dict = {};
-	    						for (i = 0; i < response.length; i++) {
-	    							var d = new Date(jQuery.makeArray(response[i].fields)[0].reg_date);
-	    							var reg_date = d.getFullYear() + '-' + (d.getMonth()+1) + "-" + d.getDate();
-	    							var is_active = jQuery.makeArray(response[i].fields)[0].is_active;
+		                		var dict = {};
+		                		if($('#cmbprovince').val() == ""){
+		                			// We will list provinces in the table
+		                			location_column = "bps_name";
+		                		}else{
+		                			if($('#cmbdistrict').val() == ""){
+		                				// We will list districts in the table
+		                				location_column = "district_name";
+		                			}else{
+		                				if($('#cmbcds').val() == ""){
+		                					// We will list CDSs in the table
+		                					location_column = "cds_name";
+		                				}else{
+		                					//We will show one CDS in the table
+		                					location_column = "cds_name";
+		                				}
+		                			}
+		                		}
+		                		for (var i = 0; i < response.length; i++){
+		                			location_name = response[i][location_column];
+		                			if((response[i]["reporting_date"] >= $('#dstartdate').val()) && (response[i]["reporting_date"] <= $('#dendtdate').val())){
+		                			if (dict.hasOwnProperty(location_name)){
+		                				dict[location_name][0] += 1;
+		                			}else{
+		                				dict[location_name] = [1,0,0,0,0,0,0];
+		                			}
+		                			if(response[i]["risk_level"] > 1){
+		                				//Let's take risk level greater than one is high risk
+		                				dict[location_name][1] += 1;
+		                			}}
 
-			                		if (dict.hasOwnProperty(reg_date)) {
-			                			dict[reg_date][0] += 1 // total
-			                			if (is_active == true) {
-			                				dict[reg_date][1] += 1 // active
-			                			}
 
-			                		} else {
-			                			if (is_active == true) {
-			                				dict[reg_date] = [1, 1];
-			                			} else {
-			                				dict[reg_date] = [1, 0];
-			                			}
-			                		}
-								}
-								
-								if (Object.keys(dict).length > 0) {
-									$('#divmh').append('<p><b>Registered CHWs:</b></p>' +
+		                			if((response[i]["expected_delivery_date"] >= $('#dstartdate').val()) && (response[i]["expected_delivery_date"] <= $('#dendtdate').val())){
+		                				if (dict.hasOwnProperty(location_name)){
+		                					dict[location_name][2] += 1;
+		                				}else{
+		                					dict[location_name] = [0,0,1,0,0,0,0];
+		                				}
+										
+										if(response[i]["risk_level"] > 1){
+											dict[location_name][3] += 1;
+										}
+
+									}
+
+
+									
+									var exp_der_date = new Date(response[i]["expected_delivery_date"]);
+									var selected_start_date = new Date($('#dstartdate').val());
+									var selected_end_date = new Date($('#dendtdate').val());
+									var end_date = new Date($('#dendtdate').val());
+									end_date.setDate(end_date.getDate() + 14);
+									var reg_gro_date = new Date(response[i]["reporting_date"]);
+									var derivery_date = new Date(response[i]["birth_date"]);
+
+
+									if(((reg_gro_date <= selected_end_date) && (derivery_date > selected_end_date)) || ((reg_gro_date <= selected_end_date) && (isNaN(derivery_date))))
+										{
+										if (dict.hasOwnProperty(location_name)){
+		                					dict[location_name][4] += 1;
+		                				}else{
+		                					dict[location_name] = [0,0,0,0,1,0,0];
+		                				}
+									}
+
+
+									//if((exp_der_date <= end_date) && (isNaN(derivery_date)))
+									if((exp_der_date >= selected_end_date) && (exp_der_date <= end_date)){
+										if (dict.hasOwnProperty(location_name)){
+		                					dict[location_name][5] += 1;
+		                				}else{
+		                					dict[location_name] = [0,0,0,0,0,1,0];
+		                				}
+		                				if(response[i]["risk_level"] > 1){
+											dict[location_name][6] += 1;
+										}
+
+									}
+
+		                		}
+
+		                		if (Object.keys(dict).length > 0){
+		                			$('#divmh').append('<p><b>PREGNANCY REPORTS STATISTICS</b></p>' +
 
 									'<div style="clear:both; height:10px;"></div>' +
 
-									'<table id="tblchw" class="table table-striped table-bordered table-condensed">');
+									'<table id="tblmh" class="table table-striped table-bordered table-condensed">');
 									
-									$('#tblchw').append('<thead>' +
-										'<th>Date</th><th>Total CHWs</th><th>Active CHWs</th><th>Inactive CHWs</th>' +
+									$('#tblmh').append('<thead>' +
+										'<th>Location</th><th>Registered pregnancy</th><th>High risk Registered pregnancy</th><th>Expected Derivery</th><th>High Risk Expected Derivery</th><th>Pregnant Women on Selected end date</th><th>Pregnant Women Expected to deriver next 2 weeks from selected end date</th><th>High Risk Pregnant Women Expected to deriver next 2 weeks from selected end date</th>' +
 									'</thead>' +
 										
 									'<tbody>' +
 										
 									'</tbody>');
 
+
 									var keys = Object.keys(dict);
+
 									keys.forEach(function(key){
-									   	var totalchw = parseFloat(dict[key][0]);
-										var activechw = (parseFloat(dict[key][1])/ parseFloat(dict[key][0]))*100.0;
-										var inactivechw = 100.0 - activechw;
+										var number_registered = parseFloat(dict[key][0]);
+										var number_high_risk = parseFloat(dict[key][1]);
+										var number_expected_deri = parseFloat(dict[key][2]);
+										var number_hred = parseFloat(dict[key][3]);
 
-									    $('#tblchw').find('tbody').append('<tr></tr>');
-											$('#tblchw tr:last').append('<td>' + key + '</td>');
-											$('#tblchw tr:last').append('<td>' + totalchw +  '</td>');
-											$('#tblchw tr:last').append('<td>' + activechw + ' %' + '</td>');
-											$('#tblchw tr:last').append('<td>' + inactivechw + ' %' + '</td>');
-
+										var pw = parseFloat(dict[key][4]);
+										var pwexp = parseFloat(dict[key][5]);
+										var pwexp_high_risk = parseFloat(dict[key][6]);
+										
+										$('#tblmh').find('tbody').append('<tr style="cursor:pointer;"></tr>');
+										$('#tblmh tr:last').append('<td>' + key +'</td>');
+										$('#tblmh tr:last').append('<td>' + number_registered +  '</td>');
+										$('#tblmh tr:last').append('<td>' + number_high_risk + '</td>');
+										$('#tblmh tr:last').append('<td>' + number_expected_deri + '</td>');
+										$('#tblmh tr:last').append('<td>' + number_hred + '</td>');
+										$('#tblmh tr:last').append('<td>' + pw + '</td>');
+										$('#tblmh tr:last').append('<td>' + pwexp + '</td>');
+										$('#tblmh tr:last').append('<td>' + pwexp_high_risk + '</td>');
 									});
-								}
 
-							} else {
-								$('#divmh').append('<p style="color:red;">No records found</p>');
-							}
+
+									$('#tblmh').DataTable({
+										dom: "<'row'<'col-sm-3'l><'col-sm-4'i><'col-sm-5'f>>" +
+											"<'row'<'col-sm-12'tr>>" +
+											"<'row'<'col-sm-4'B><'col-sm-8'p>>",
+
+										//dom: 'lBfrtip',
+										pagingType: "full_numbers",
+								        buttons: [
+								            'copy', 'csv', 'excel', 'pdf', 'print'
+								        ]
+										
+									});
+		                		}
+
+		                	}else {
+		                		$('#divmh').append('<p style="color:red;">No records found</p>');
+		                	}
+
+
 		                }
 
 		                $('#overlay').remove();
@@ -240,21 +387,21 @@
 			</div>
 			<div class="form-group">
 				<label for="cmbcds">CDS:</label>
-				<select id="cmbcds" class="form-control" style="width:140px" onchange="fetchcdsdata()" required="required">
+				<select id="cmbcds" class="form-control" style="width:140px" onchange="fetchwanteddata()" required="required">
 					<option value="" selected="selected">[ Select CDS ]</option>'
 				</select>
 			</div>
 
 			<label for="dstartdate">Start Date:</label>
 			<div class="input-group date" data-provide="datepicker">
-			    <input type="text" id="dstartdate" class="form-control datepicker" readonly="readonly" style="width:130px" required="required" onchange="fetchcdsdata()">
+			    <input type="text" id="dstartdate" class="form-control datepicker" readonly="readonly" style="width:130px" required="required" onchange="fetchwanteddata()">
 			    <div class="input-group-addon">
 			        <span class="glyphicon glyphicon-th"></span>
 			    </div>
 			</div>
 			<label for="dendtdate">End Date:</label>
 			<div class="input-group date" data-provide="datepicker">
-			    <input type="text" id="dendtdate" class="form-control datepicker" readonly="readonly" style="width:130px" required="required" onchange="fetchcdsdata()">
+			    <input type="text" id="dendtdate" class="form-control datepicker" readonly="readonly" style="width:130px" required="required" onchange="fetchwanteddata()">
 			    <div class="input-group-addon">
 			        <span class="glyphicon glyphicon-th"></span>
 			    </div>
@@ -266,8 +413,6 @@
 		
 
 		<div id="divmh" class="form-inline" style="padding-left :5px; padding-right :5px;">
-
-		<h1>Hello</h1>
 
 		</div>
 

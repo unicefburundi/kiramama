@@ -239,6 +239,81 @@ def getcdsdata(request):
         return HttpResponse(response_data, content_type="application/json")
 '''
 
+def date_handler(obj):
+    if hasattr(obj, 'isoformat'):
+        return obj.isoformat()
+    else:
+        raise TypeError
+
+def getwanteddata(request):
+    response_data = {}
+    if request.method == 'POST':
+        #import pdb; pdb.set_trace()
+        json_data = json.loads(request.body)
+        level = json_data['level']
+        code = json_data['code']
+        start_date = json_data['start_date']
+        end_date = json_data['end_date']
+        grodata = ""
+        all_data = []
+
+        if (level):
+            cdslist = None
+            if (level == "cds"):
+                cdslist = CDS.objects.filter(code = code)
+
+            elif (level == "district"):
+                districtlist = District.objects.filter(code = code)
+                if (districtlist):
+                    cdslist = CDS.objects.filter(district__in = districtlist)
+                
+            elif (level == "province"):
+                provincelist = BPS.objects.filter(code = code)
+                if (provincelist):
+                    districtlist = District.objects.filter(bps__in = provincelist)
+                    if (districtlist):
+                        cdslist = CDS.objects.filter(district__in = districtlist)
+            elif (level == "national"):
+                cdslist = CDS.objects.all()
+
+            if (cdslist):
+                start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d')
+                new_start_date = start_date - datetime.timedelta(days=300)
+                #Let fix start date to 10 months before the selected start date
+                #grodata = ReportGRO.objects.filter(report__cds__in = cdslist).filter(report__reporting_date__range=[start_date, end_date])
+                grodata = ReportGRO.objects.filter(report__cds__in = cdslist).filter(report__reporting_date__range=[new_start_date, end_date])
+
+        gro_data_seri = serializers.serialize('python', grodata)
+        columns = [g['fields'] for g in gro_data_seri]
+        response_data = json.dumps(columns, default=date_handler)
+        rows = json.loads(response_data)
+
+        for r in rows:
+            report = Report.objects.get(id = r['report'])
+            r["cds_id"] = report.cds.id
+            r["cds_name"] = report.cds.name
+            r["district_id"] = report.cds.district.id
+            r["district_name"] = report.cds.district.name
+            r["bps_id"] = report.cds.district.bps.id
+            r["bps_name"] = report.cds.district.bps.name
+            r["reporting_date"] = report.reporting_date
+
+            concerned_mother = report.mother
+
+            if not (ReportNSC.objects.filter(report__mother = concerned_mother)):
+                #This mother not yet reported as derivered
+                r["derivered"] = False
+                r["birth_date"] = ""
+            else:
+                r["derivered"] = True
+                r["birth_date"] = ReportNSC.objects.filter(report__mother = concerned_mother)[0].birth_date
+
+
+        rows = json.dumps(rows, default=date_handler)
+
+
+        return HttpResponse(rows, content_type="application/json")
+
 class NSCFilter(django_filters.rest_framework.FilterSet):
     min_birth_date = django_filters.DateFilter(name="birth_date", lookup_expr='gte')
     max_birth_date = django_filters.DateFilter(name="birth_date", lookup_expr='lte')
