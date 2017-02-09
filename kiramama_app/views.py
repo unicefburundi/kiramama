@@ -206,6 +206,7 @@ def getcdsdata(request):
     except Exception, e:
         response_data['error'] = _(e.message)
         return HttpResponse(response_data)
+    '''
     if request.method == 'POST':
         # import pdb; pdb.set_trace()
         json_data = json.loads(request.body)
@@ -236,7 +237,7 @@ def getcdsdata(request):
             response_data = serializers.serialize('json', chwdata)
 
         return HttpResponse(response_data, content_type="application/json")
-
+'''
 
 class NSCFilter(django_filters.rest_framework.FilterSet):
     min_birth_date = django_filters.DateFilter(name="birth_date", lookup_expr='gte')
