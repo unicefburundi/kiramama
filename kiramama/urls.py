@@ -33,5 +33,5 @@ urlpatterns = [
     url(r'^getdistrictsinprovince', kiramama_app.views.getdistrictsinprovince, name='getdistrictsinprovince'),
     url(r'^getcdsindistrict', kiramama_app.views.getcdsindistrict, name='getcdsindistrict'),
     url(r'^getcdsdata', kiramama_app.views.getcdsdata, name='getcdsdata'),
-    
+    url(r'^getwanteddata', kiramama_app.views.getwanteddata, name='getwanteddata'),
     ]
