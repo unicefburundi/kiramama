@@ -257,7 +257,8 @@
 									}
 
 
-									if((exp_der_date <= end_date) && (isNaN(derivery_date))){
+									//if((exp_der_date <= end_date) && (isNaN(derivery_date)))
+									if((exp_der_date >= selected_end_date) && (exp_der_date <= end_date)){
 										if (dict.hasOwnProperty(location_name)){
 		                					dict[location_name][5] += 1;
 		                				}else{
