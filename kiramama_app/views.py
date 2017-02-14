@@ -92,21 +92,20 @@ def home(request):
         if(ReportNSC.objects.filter(birth_location__location_category_designation__iexact='CS')):
             d['percentage_delivery_at_CDS'] = ReportNSC.objects.filter(birth_location__location_category_designation__iexact='CS').count() / float(d['total_delivery']) * 100
         d['percentage_delivery_at_HF'] = d['percentage_delivery_at_CDS'] + d['percentage_delivery_at_hospital']
-
+        
     # Statistics about VAC
     new_object = {}
-    if(VAC.objects.all()):
-        all_vac = VAC.objects.all()
+    all_vac = VAC.objects.all()
+    if(all_vac):
         for v in all_vac:
-            if(ReportVAC.objects.filter(vac=v)):
-                number_of_such_reports = ReportVAC.objects.filter(vac=v).count()
+            vac = ReportVAC.objects.filter(vac=v)
+            if(vac):
+                number_of_such_reports = vac.count()
                 vac_designation = v.vac_designation
-                
                 new_object[vac_designation] = number_of_such_reports
+            
     d['vac_list'] = new_object
-
     print(d['vac_list'])
-
     return render(request, 'home.html', d)
 
 
