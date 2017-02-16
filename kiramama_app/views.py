@@ -278,6 +278,7 @@ def getwanteddata(request):
         rows = json.dumps(rows, default=date_handler)
         return HttpResponse(rows, content_type="application/json")
 
+
 class NSCFilter(django_filters.rest_framework.FilterSet):
     min_birth_date = django_filters.DateFilter(name="birth_date", lookup_expr='gte')
     max_birth_date = django_filters.DateFilter(name="birth_date", lookup_expr='lte')

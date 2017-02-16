@@ -123,8 +123,5 @@ app.controller('ChildCtrl', ['$scope', '$http', 'DTOptionsBuilder', function($sc
             'copy',
             'print',
             'excel',
-        ]).withLengthMenu([
-                            [12, 25, 50, 100, -1 ],
-                            ['12', '25', '50', '100', 'All' ]
-                        ]);
+        ]);
   }]);
