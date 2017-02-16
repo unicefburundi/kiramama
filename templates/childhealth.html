@@ -18,6 +18,8 @@
 		
 		$(".datepicker").datepicker("setDate", new Date());
 	});
+
+	
 </script>
 
 {% endblock %}
@@ -87,14 +89,14 @@
 					<tbody>
 					{% verbatim %}
 						<tr ng-repeat="y in results">
-                        	<td>{{y.id}}</td>
-                        	<td>{{y.birth_date}}</td>
-                        	<td>{{y.birth_location}}</td>
-                        	<td>{{y.child_number}}</td>
-                        	<td>{{y.mother_id}}</td>
-                        	<td>{{y.gender}}</td>
-                        	<td>{{y.weight}}</td>
-                        	<td>{{y.breast_feading}}</td>
+                        	<td>{{ y.id }}</td>
+                        	<td>{{ y.birth_date }}</td>
+                        	<td>{{ y.birth_location }}</td>
+                        	<td>{{ y.child_number }}</td>
+                        	<td>{{ y.mother_id }}</td>
+                        	<td>{{ y.gender }}</td>
+                        	<td>{{ y.weight }}</td>
+                        	<td>{{ y.breast_feading }}</td>
                         </tr>
 					{% endverbatim %}
 					</tbody>
