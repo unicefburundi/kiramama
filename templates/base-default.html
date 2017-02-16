@@ -94,16 +94,16 @@
 										</div>
 										<div class="col-sm-9 verticallineseparator" style="padding-left:5px; padding-right:5px;">
 											<span class="brand-app" style="text-align:center;">Kiramama</span>
-											<span style="color:#000000; text-align:center;"> - Tracking The first 1000 Days of Life, Preventing unnecessary mother and newborn  deaths</span>
+											<span style="color:#000000; text-align:center;"> - {% trans "Tracking The first 1000 Days of Life, Preventing unnecessary mother and newborn  deaths" %}</span>
 										</div>
 										<div class="col-sm-1" style="padding-left:5px; padding-right:5px;">
 											<img class="noborder size-full aligncenter" src="{% static 'images/burundi.png' %}" scale="0">
 										</div>
 										<div class="col-sm-1" style="padding-left:5px; padding-right:5px;">
 											{% if user.is_authenticated %}
-												<li><a role="button" href="/logout">Logout</a></li>
+												<li><a role="button" href="/logout">{% trans "Logout" %}</a></li>
 											{% else %}
-												<li><a role="button" href="/login">Login</a></li>
+												<li><a role="button" href="/login">{% trans "Login" %}</a></li>
 											{% endif %}
 										</div>
 
@@ -152,7 +152,7 @@
 										<img class="noborder size-full aligncenter" src="{% static 'images/moh.jpg' %}" scale="0">
 									</p>
 									<p style="text-align: center;">
-										<a target="_blank" href="http://www.ministry.org">www.ministry.org</a>
+										<a target="_blank" href="http://www.minisante.bi">www.minisante.bi</a>
 									</p>
 								</div>
 							</div>
@@ -162,11 +162,11 @@
 							<div class="footer-widgets-1 widget-area">
 								<div class="widget">
 									<div class="widget-wrap">
-										<h4 class="widget-title widgettitle">Contact Us</h4>
+										<h4 class="widget-title widgettitle">{% trans "Contact Us" %}</h4>
 										<p class="overview">
-											Ministry of health.....
-											<a href="www.ministry.org">Visit our website</a>
-											for more information.
+											{% trans "Ministry of Public Health and the fight against AIDS" %}
+											<a href="https://www.minisante.bi">{% trans "Visit our website" %}</a>
+											{% trans "for more information." %}
 										</p>
 										<p class="overview">
 											Bujumbura Avenue.......,
@@ -174,9 +174,9 @@
 											Bujumbura, Burundi.
 										</p>
 										<p>
-											<a href="mailto:ciat@cgiar.org">
+											<a href="mailto:info[@]minisante.bi">
 											<img class="alignleft" width="18" height="18" alt="Email-icon" src="{% static 'images/Email-icon-150x150.png' %}" scale="0">
-											  info@ministry.org 
+											  info[@]minisante.bi 
 											<br>
 											</a>
 										</p>
@@ -184,14 +184,13 @@
 											<img class="alignleft" width="18" height="18" alt="telephone-icon-grey" src="{% static 'images/telephone-icon-grey-150x150.png' %}" scale="0">
 											<span class="skype_c2c_print_container notranslate">+257 00 000000</span>
 										</p>
-										
 										<p class="copyright text-muted small">
 											© 2017
 											<span class="separator">|</span>
-												Powered by Open-Source
+												{% trans "Powered by Open-Source" %}
 										</p>
 										<p class="copyright text-muted small">
-											© All Photos by
+											© {% trans "All Photos by" %}
 											<a href="http://www.unicef.org"> UNICEF BURUNDI </a>
 										</p>
 									</div>
