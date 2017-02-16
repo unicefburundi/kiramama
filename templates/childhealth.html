@@ -1,11 +1,12 @@
 {% extends "base.html" %}
 {% load i18n %}
 {% load static %}
+
 {% block title %}
 	<title> {{ pagetitle }}</title>
 {% endblock %}
 
-{% block pagename %}CHILD HEALTH{% endblock %}
+{% block pagename %}{% trans "CHILD HEALTH" %}{% endblock %}
 
 {% block head %}
 <script type="text/javascript">
@@ -17,11 +18,11 @@
 		
 		$(".datepicker").datepicker("setDate", new Date());
 	});
+
+	
 </script>
 
 {% endblock %}
-
-
 
 {% block container %}
     <link rel="stylesheet" href="{% static "js/angular-datatables/css/angular-datatables.min.css" %}">
@@ -35,26 +36,24 @@
 	<script src="{% static "js/angular-datatables/plugins/buttons/buttons.html5.min.js" %}"></script>
 	<script src="{% static "js/angular-datatables/plugins/buttons/buttons.print.min.js" %}"></script>
     <script type="text/javascript" src="{% static "js/angular-datatables/plugins/buttons/angular-datatables.buttons.min.js" %}"></script>
-
-		
+    
 	<div ng-app="ChildApp" ng-controller="ChildCtrl">
 		<div class="form-inline" style="padding-left :5px; padding-right :5px;">
 			<div class="form-group">
-				<label for="province">Province:</label>
+				<label for="province">{% trans "Province:" %}</label>
 				<select id="province" class="form-control" style="width:140px"  ng-model="province" ng-options="x.name for x in provinces track by x.code" ng-change="update_province()"><option value="">[ {% trans "Select Province" %} ]</option></select>
 			</div>
 			<div class="form-group">
-				<label for="district">District:</label>
+				<label for="district">{% trans "District:" %}</label>
 				<select id="district" class="form-control" style="width:140px" ng-model="district" ng-options="x.name for x in districts track by x.code" ng-change="update_district()"><option value="" selected="selected">[ {% trans "Select District" %} ]</option>'
 				</select>
 			</div>
 			<div class="form-group">
-				<label for="cds">CDS:</label>
+				<label for="cds">{% trans "CDS:" %}</label>
 				<select id="cds" class="form-control" style="width:140px" ng-model="cds" ng-options="x.name for x in cdss track by x.code" ng-change="update_cds()">
 					<option value="" selected="selected">[ {% trans "Select CDS" %} ]</option>'
 				</select>
 			</div>
-
 			<label for="dstartdate">{% trans "Start Date" %}:</label>
 			<div class="input-group date" data-provide="datepicker">
 			    <input type="text" id="startdate" class="form-control datepicker" readonly="readonly" style="width:130px" ng-model="startdate" ng-change="get_bydate()">
@@ -89,14 +88,14 @@
 					<tbody>
 					{% verbatim %}
 						<tr ng-repeat="y in results">
-                        	<td>{{y.id}}</td>
-                        	<td>{{y.birth_date}}</td>
-                        	<td>{{y.birth_location}}</td>
-                        	<td>{{y.child_number}}</td>
-                        	<td>{{y.mother_id}}</td>
-                        	<td>{{y.gender}}</td>
-                        	<td>{{y.weight}}</td>
-                        	<td>{{y.breast_feading}}</td>
+                        	<td>{{ y.id }}</td>
+                        	<td>{{ y.birth_date }}</td>
+                        	<td>{{ y.birth_location }}</td>
+                        	<td>{{ y.child_number }}</td>
+                        	<td>{{ y.mother_id }}</td>
+                        	<td>{{ y.gender }}</td>
+                        	<td>{{ y.weight }}</td>
+                        	<td>{{ y.breast_feading }}</td>
                         </tr>
 					{% endverbatim %}
 					</tbody>

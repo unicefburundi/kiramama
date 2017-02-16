@@ -13,7 +13,6 @@ import django_filters
 
 # Create your views here.
 
-
 def default(request):
     d = {}
     return render(request, 'default.html', d)

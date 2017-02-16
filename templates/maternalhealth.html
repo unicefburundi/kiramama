@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load i18n %}
 
 {% block title %}
 	<title> {{ pagetitle }}</title>
@@ -34,17 +35,10 @@
 				{% endfor %}
 			}
 
-
 			fetchwanteddata()
 
 		});
 		
-		/*$(window).load(function () {
-			$('#tblviewusers').dataTable({
-				"pagingType": "full_numbers"
-			});
-		});*/
-
 
 		<!-- ajax call to database -->
 		function fetchdistricts(code) {
@@ -93,7 +87,6 @@
 		}
 
 
-
 		function fetchwanteddata() {
 			console.log("======Debut  fetchwanteddata====")
 			if (new Date($('#dstartdate').val()) > new Date($('#dendtdate').val())) {
@@ -138,7 +131,6 @@
 
 			$('#divmh').empty();
 
-
     		if (level && code && start_date && end_date) {
 		        data = JSON.stringify({ 'level': level, 'code': code, 'start_date': start_date, 'end_date': end_date });
 
@@ -149,9 +141,6 @@
 	        	$('#overlay').remove();
 	        }
 	    }
-
-
-
 
 
 		function ajaxpost(posturl, data) {
@@ -222,7 +211,6 @@
 		                				dict[location_name][1] += 1;
 		                			}}
 
-
 		                			if((response[i]["expected_delivery_date"] >= $('#dstartdate').val()) && (response[i]["expected_delivery_date"] <= $('#dendtdate').val())){
 		                				if (dict.hasOwnProperty(location_name)){
 		                					dict[location_name][2] += 1;
@@ -233,11 +221,8 @@
 										if(response[i]["risk_level"] > 1){
 											dict[location_name][3] += 1;
 										}
-
 									}
 
-
-									
 									var exp_der_date = new Date(response[i]["expected_delivery_date"]);
 									var selected_start_date = new Date($('#dstartdate').val());
 									var selected_end_date = new Date($('#dendtdate').val());
@@ -245,7 +230,6 @@
 									end_date.setDate(end_date.getDate() + 14);
 									var reg_gro_date = new Date(response[i]["reporting_date"]);
 									var derivery_date = new Date(response[i]["birth_date"]);
-
 
 									if(((reg_gro_date <= selected_end_date) && (derivery_date > selected_end_date)) || ((reg_gro_date <= selected_end_date) && (isNaN(derivery_date))))
 										{
@@ -255,7 +239,6 @@
 		                					dict[location_name] = [0,0,0,0,1,0,0];
 		                				}
 									}
-
 
 									//if((exp_der_date <= end_date) && (isNaN(derivery_date)))
 									if((exp_der_date >= selected_end_date) && (exp_der_date <= end_date)){
@@ -267,26 +250,23 @@
 		                				if(response[i]["risk_level"] > 1){
 											dict[location_name][6] += 1;
 										}
-
 									}
-
 		                		}
 
 		                		if (Object.keys(dict).length > 0){
-		                			$('#divmh').append('<p><b>PREGNANCY REPORTS STATISTICS</b></p>' +
+		                			$('#divmh').append('<p><b>{% trans "PREGNANCY REPORTS STATISTICS" %}</b></p>' +
 
 									'<div style="clear:both; height:10px;"></div>' +
 
 									'<table id="tblmh" class="table table-striped table-bordered table-condensed">');
 									
 									$('#tblmh').append('<thead>' +
-										'<th>Location</th><th>Registered pregnancy</th><th>High risk Registered pregnancy</th><th>Expected Derivery</th><th>High Risk Expected Derivery</th><th>Pregnant Women on Selected end date</th><th>Pregnant Women Expected to deriver next 2 weeks from selected end date</th><th>High Risk Pregnant Women Expected to deriver next 2 weeks from selected end date</th>' +
+										'<th>{% trans "Location" %}</th><th>{% trans "Registered Pregnancy" %}</th><th>{% trans "High Risk Registered pregnancy" %}</th><th>{% trans "Expected Derivery" %}</th><th>{% trans "High Risk Expected Derivery" %}</th><th>{% trans "Pregnant Women on Selected end date" %}</th><th>{% trans "Pregnant Women Expected to deriver next 2 weeks from selected end date" %}</th><th>{% trans "High Risk Pregnant Women Expected to deriver next 2 weeks from selected end date" %}</th>' +
 									'</thead>' +
 										
 									'<tbody>' +
 										
 									'</tbody>');
-
 
 									var keys = Object.keys(dict);
 
@@ -311,26 +291,25 @@
 										$('#tblmh tr:last').append('<td>' + pwexp_high_risk + '</td>');
 									});
 
-
+									
 									$('#tblmh').DataTable({
 										dom: "<'row'<'col-sm-3'l><'col-sm-4'i><'col-sm-5'f>>" +
 											"<'row'<'col-sm-12'tr>>" +
 											"<'row'<'col-sm-4'B><'col-sm-8'p>>",
-
-										//dom: 'lBfrtip',
 										pagingType: "full_numbers",
+										lengthMenu: [
+								            [10, 25, 50, 100, -1 ],
+								            ['10', '25', '50', '100', 'All' ]
+								        ],
 								        buttons: [
 								            'copy', 'csv', 'excel', 'pdf', 'print'
 								        ]
-										
 									});
 		                		}
 
 		                	}else {
 		                		$('#divmh').append('<p style="color:red;">No records found</p>');
 		                	}
-
-
 		                }
 
 		                $('#overlay').remove();
@@ -374,39 +353,39 @@
 	<div>
 		<div class="form-inline" style="padding-left :5px; padding-right :5px;">
 			<div class="form-group">
-				<label for="cmbprovince">Province:</label>
+				<label for="cmbprovince">{% trans "Province:" %}</label>
 				<select id="cmbprovince" class="form-control" style="width:140px" onchange="fetchdistricts(this.value)" required="required">
-					<option value="" selected="selected">[ Select Province ]</option>
+					<option value="" selected="selected">[ {% trans "Select Province" %} ]</option>
 				</select>
 			</div>
 			<div class="form-group">
 				<label for="cmbdistrict">District:</label>
 				<select id="cmbdistrict" class="form-control" style="width:140px" onchange="fetchCDS(this.value)" required="required">
-					<option value="" selected="selected">[ Select District ]</option>'
+					<option value="" selected="selected">[ {% trans "Select District" %} ]</option>'
 				</select>
 			</div>
 			<div class="form-group">
 				<label for="cmbcds">CDS:</label>
 				<select id="cmbcds" class="form-control" style="width:140px" onchange="fetchwanteddata()" required="required">
-					<option value="" selected="selected">[ Select CDS ]</option>'
+					<option value="" selected="selected">[ {% trans "Select CDS" %} ]</option>'
 				</select>
 			</div>
 
-			<label for="dstartdate">Start Date:</label>
+			<label for="dstartdate">{% trans "Start Date:" %}</label>
 			<div class="input-group date" data-provide="datepicker">
 			    <input type="text" id="dstartdate" class="form-control datepicker" readonly="readonly" style="width:130px" required="required" onchange="fetchwanteddata()">
 			    <div class="input-group-addon">
 			        <span class="glyphicon glyphicon-th"></span>
 			    </div>
 			</div>
-			<label for="dendtdate">End Date:</label>
+
+			<label for="dendtdate">{% trans "End Date:" %}</label>
 			<div class="input-group date" data-provide="datepicker">
 			    <input type="text" id="dendtdate" class="form-control datepicker" readonly="readonly" style="width:130px" required="required" onchange="fetchwanteddata()">
 			    <div class="input-group-addon">
 			        <span class="glyphicon glyphicon-th"></span>
 			    </div>
 			</div>
-
 		</div>
 
 		<hr style="margin-top:10px; margin-bottom:10px">

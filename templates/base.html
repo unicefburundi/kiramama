@@ -74,7 +74,6 @@
 					return;
 				}
 			});
-
 		    // using jQuery
 			function getCookie(name) {
 			    var cookieValue = null;
@@ -91,31 +90,23 @@
 			    }
 			    return cookieValue;
 			}
-
 			function csrfSafeMethod(method) {
 			    // these HTTP methods do not require CSRF protection
 			    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
 			}
-
 			function messiprompt(msg, title, titleanimation) {
 				var titleclass;
-
 				if (titleanimation == "messisuccess") {
 					titleclass = 'success';
-
 				} else if (titleanimation == "messiinfo") {
 					titleclass = 'info';
-
 				} else if (titleanimation == "messiwarning") {
 					titleclass = 'anim warning';
-
 				} else if (titleanimation == "messierror") {
 					titleclass = 'anim error';
 				}
-
 				new Messi(msg, { title: title, titleClass: titleclass, modal: true });
 			}
-
 			function getajaxerrormessage(jqXHR, exception) {
 		        var msg = "An error has occured";
 		        if (jqXHR.status == 0) {
@@ -135,16 +126,13 @@
 		        }
 		        return msg;
 		    }
-
 			function initializesonic() {
 		        $('#overlay').remove();
 		        $("body").prepend("<div id='overlay' class='web_dialog'></div>");
-
 		        $("#overlay").css({
 		            "width": $(document).width(),
 		            "height": $(document).height(),
 		        }).fadeTo(0, 0.9);
-
 		        modal = $('#overlay').dialog({
 		            modal: true,
 		            closeOnEscape: false,
@@ -153,10 +141,8 @@
 		            height: "auto",
 		            width: "auto"
 		        }).dialog("widget").find(".ui-dialog-titlebar").remove();
-
 		        playSonic();
 		    }
-
 			function playSonic() {
 		        var circle = new Sonic({
 		            width: 100,
@@ -166,7 +152,6 @@
 		            pointDistance: .02,
 		            fps: 30,
 		            fillColor: '#05E2FF',
-
 		            step: function (point, index) {
 		                this._.beginPath();
 		                this._.moveTo(point.x, point.y);
@@ -182,8 +167,6 @@
 		        circle.play();
 		        $('#overlay').append(circle.canvas);
 			}
-
-
 		</script>
 	</head>
 	
@@ -194,7 +177,7 @@
 					<div class="container-fluid" style="width:100%;">
 						<div class="navbar-header" style="width:100%;">
 							<button class="navbar-toggle collapsed" aria-controls="navbar" aria-expanded="false" data-target="#navbar" data-toggle="collapse" type="button">
-								<span class="sr-only">Toggle navigation</span>
+								<span class="sr-only"> {% trans "Toggle navigation" %}</span>
 								<span class="icon-bar"></span>
 								<span class="icon-bar"></span>
 								<span class="icon-bar"></span>
@@ -228,11 +211,11 @@
 			{% block navbar %}
 				<div class="fitcontent" id="nav">
 					<ul id="menu-main_menu">
-						<li><a role="button" href="/home">Home</a></li>
+						<li><a role="button" href="/home">{% trans "Home" %}</a></li>
 						<li><a role="button" href="/communityhealthworker">{% trans "Community Health Workers" %}</a></li>
 						<li><a role="button" href="/maternalhealth">{% trans "Maternal Health" %}</a></li>
 						<li><a role="button" href="/childhealth">{% trans "Child Health" %}</a></li>
-						<li><a role="button" href="/logout">Logout</a></li>
+						<li><a role="button" href="/logout">{% trans "Logout" %}</a></li>
 						
 					</ul>
 				</div>
@@ -269,10 +252,10 @@
 							<div class="footer-widgets-1 widget-area">
 								<div class="widget">
 									<div class="widget-wrap">
-										<h4 class="widget-title widgettitle">{% trans "Contact Us" %}</h4>
+										<h4 class="widget-title widgettitle">Contact Us</h4>
 										<p class="overview">
 											{% trans "Ministry of Public Health and the fight against AIDS" %}
-											<a href="https://www.minisante.bi">Visit our website</a>
+											<a href="https://www.minisante.bi">{% trans "Visit our website" %}</a>
 											{% trans "for more information." %}
 										</p>
 										<p class="overview">
@@ -297,7 +280,7 @@
 												{% trans "Powered by Open-Source" %}
 										</p>
 										<p class="copyright text-muted small">
-											© {% trans "All Photos by" %}
+											© All Photos by
 											<a href="http://www.unicef.org"> UNICEF BURUNDI </a>
 										</p>
 									</div>
