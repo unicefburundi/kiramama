@@ -112,12 +112,3 @@ msgstr "Début:"
 #: templates/communityhealthworker.html:318
 msgid "End Date:"
 msgstr "Fin:"
-
-#~ msgid "Administration"
-#~ msgstr "Administration"
-
-#~ msgid "Manage Users"
-#~ msgstr "Gérer les utilisateurs"
-
-#~ msgid "Change Password"
-#~ msgstr "Changer le mot de passe"
