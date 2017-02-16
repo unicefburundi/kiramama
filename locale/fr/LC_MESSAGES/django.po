@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-02-16 11:00+0200\n"
-"PO-Revision-Date: 2017-02-16 11:00+0200\n"
+"POT-Creation-Date: 2017-02-16 15:28+0200\n"
+"PO-Revision-Date: 2017-02-16 15:29+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -75,35 +75,75 @@ msgstr "Travailleurs de la Santé Communautaire"
 
 #: templates/base.html:233
 msgid "Maternal Health"
-msgstr "La santé maternelle"
+msgstr "Santé maternelle"
 
 #: templates/base.html:234
 msgid "Child Health"
-msgstr "Santé de l'enfant"
+msgstr "Santé Infantile"
+
+#: templates/childhealth.html:44 templates/communityhealthworker.html:295
+msgid "Select Province"
+msgstr "Sélectionnez la Province"
+
+#: templates/childhealth.html:48 templates/communityhealthworker.html:301
+msgid "Select District"
+msgstr "Sélectionnez le District"
+
+#: templates/childhealth.html:54 templates/communityhealthworker.html:307
+msgid "Select CDS"
+msgstr "Sélectionnez le CDS"
+
+#: templates/childhealth.html:58
+msgid "Start Date"
+msgstr "Début:"
+
+#: templates/childhealth.html:65
+msgid "End Date"
+msgstr "Fin:"
+
+#: templates/childhealth.html:79
+msgid "Birth ID"
+msgstr "ID de naissance"
+
+#: templates/childhealth.html:80
+msgid "Date of Birth"
+msgstr "Date de naissance"
+
+#: templates/childhealth.html:81
+msgid "Location"
+msgstr "Localité"
+
+#: templates/childhealth.html:82
+msgid "Child Number"
+msgstr "ID de l'enfant"
+
+#: templates/childhealth.html:83
+msgid "Mother ID"
+msgstr "ID de la mère"
+
+#: templates/childhealth.html:84
+msgid "Gender"
+msgstr "Genre"
+
+#: templates/childhealth.html:85
+msgid "Weight(Kg)"
+msgstr "Poids(Kg)"
+
+#: templates/childhealth.html:86
+msgid "Breastfeeding"
+msgstr "Allaitement"
 
 #: templates/communityhealthworker.html:293
 msgid "Province:"
 msgstr "Province"
 
-#: templates/communityhealthworker.html:295
-msgid "Select Province"
-msgstr "Sélectionnez la Province"
-
 #: templates/communityhealthworker.html:299
 msgid "District:"
 msgstr "District:"
 
-#: templates/communityhealthworker.html:301
-msgid "Select District"
-msgstr "Sélectionnez le District"
-
 #: templates/communityhealthworker.html:305
 msgid "CDS:"
 msgstr "CDS:"
-
-#: templates/communityhealthworker.html:307
-msgid "Select CDS"
-msgstr "Sélectionnez le CDS"
 
 #: templates/communityhealthworker.html:311
 msgid "Start Date:"
