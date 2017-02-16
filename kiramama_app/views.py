@@ -92,20 +92,20 @@ def home(request):
         if(ReportNSC.objects.filter(birth_location__location_category_designation__iexact='CS')):
             d['percentage_delivery_at_CDS'] = ReportNSC.objects.filter(birth_location__location_category_designation__iexact='CS').count() / float(d['total_delivery']) * 100
         d['percentage_delivery_at_HF'] = d['percentage_delivery_at_CDS'] + d['percentage_delivery_at_hospital']
-
+        
     # Statistics about VAC
-    if(VAC.objects.all()):
-        all_vac = VAC.objects.all()
+    new_object = {}
+    all_vac = VAC.objects.all()
+    if(all_vac):
         for v in all_vac:
-            if(ReportVAC.objects.filter(vac=v)):
-                number_of_such_reports = ReportVAC.objects.filter(vac=v).count()
+            vac = ReportVAC.objects.filter(vac=v)
+            if(vac):
+                number_of_such_reports = vac.count()
                 vac_designation = v.vac_designation
-                new_object = {}
                 new_object[vac_designation] = number_of_such_reports
-                d['vac_list'].append(new_object)
-
+            
+    d['vac_list'] = new_object
     print(d['vac_list'])
-
     return render(request, 'home.html', d)
 
 
@@ -206,37 +206,6 @@ def getcdsdata(request):
     except Exception, e:
         response_data['error'] = _(e.message)
         return HttpResponse(response_data)
-    if request.method == 'POST':
-        # import pdb; pdb.set_trace()
-        json_data = json.loads(request.body)
-        level = json_data['level']
-        code = json_data['code']
-        start_date = json_data['start_date']
-        end_date = json_data['end_date']
-        chwdata = ""
-        if (level):
-            cdslist = None
-            if (level == "cds"):
-                cdslist = CDS.objects.filter(code=code)
-
-            elif (level == "district"):
-                districtlist = District.objects.filter(code=code)
-                if (districtlist):
-                    cdslist = CDS.objects.filter(district__in=districtlist)
-            elif (level == "province"):
-                provincelist = BPS.objects.filter(code=code)
-                if (provincelist):
-                    districtlist = District.objects.filter(bps__in=provincelist)
-                    if (districtlist):
-                        cdslist = CDS.objects.filter(district__in=districtlist)
-
-            if (cdslist):
-                chwdata = CHW.objects.filter(cds__in=cdslist).filter(reg_date__range=[start_date, end_date]).order_by('reg_date')
-
-            response_data = serializers.serialize('json', chwdata)
-
-        return HttpResponse(response_data, content_type="application/json")
-
 
 def date_handler(obj):
     if hasattr(obj, 'isoformat'):
@@ -307,10 +276,7 @@ def getwanteddata(request):
                 r["derivered"] = True
                 r["birth_date"] = ReportNSC.objects.filter(report__mother = concerned_mother)[0].birth_date
 
-
         rows = json.dumps(rows, default=date_handler)
-
-
         return HttpResponse(rows, content_type="application/json")
 
 class NSCFilter(django_filters.rest_framework.FilterSet):

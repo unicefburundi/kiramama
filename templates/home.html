@@ -22,12 +22,6 @@
 			}
 		});
 		
-		/*$(window).load(function () {
-			$('#tblviewusers').dataTable({
-				"pagingType": "full_numbers"
-			});
-		});*/
-		 
 	</script>
 {% endblock %}
 
@@ -43,32 +37,50 @@
 	</div>
 	
 	<div class="row">
-		<div>
-			<h1>Registered Mothers: {{ registeredmothers }}</h1>
+		<div class="col-md-4">
+			<div>
+				<h1><b>Registered Mothers: {{ registeredmothers }}</b></h1>
+			</div>
+			<div>
+				<h1>CPN 1: {{ cpn1 }} %</h1>
+				<h1>CPN 2: {{ cpn2 }} %</h1>
+				<h1>CPN 3: {{ cpn3 }} %</h1>
+				<h1>CPN 4: {{ cpn4 }} %</h1>
+			</div>
 		</div>
 		<div class="col-md-4">
-			<h1>CPN 1: {{ cpn1 }} %</h1>
-			<h1>CPN 2: {{ cpn2 }} %</h1>
-			<h1>CPN 3: {{ cpn3 }} %</h1>
-			<h1>CPN 4: {{ cpn4 }} %</h1>
+			<div>
+				<h1><b>Community Health Workers: {{ number_of_chw }}</b></h1>
+			</div>
+			<div>
+				<h1>Active CHWs : {{ percentage_of_active_chw }} %</h1>
+				<h1>Inactive CHWs : {{ percentage_of_not_active_chw }} %</h1>
+			</div>
 		</div>
 		<div class="col-md-4">
-			<h1>Number of CHWs : {{number_of_chw}} </h1>
-			<h1>Active CHWs : {{percentage_of_active_chw}} %</h1>
-			<h1>Inactive CHWs : {{percentage_of_not_active_chw}} %</h1>
-		</div>
-		<div class="col-md-4">
-			<h1>Total Delivery : {{total_delivery}}</h1>
-			<h1>Delivery at home : {{percentage_delivery_at_home}}</h1>
-			<h1>Delivery on Road : {{percentage_delivery_on_road}}</h1>
-			<h1>Delivery on health facility : {{percentage_delivery_at_HF}}</h1>
+			<div>
+				<h1><b>Total Delivery: {{ total_delivery }}</b></h1>
+			</div>
+			<div>
+				<h1>Delivery at home : {{ percentage_delivery_at_home }} %</h1>
+				<h1>Delivery on Road : {{ percentage_delivery_on_road }} %</h1>
+				<h1>Delivery on health facility : {{ percentage_delivery_at_HF }} %</h1>
+			</div>
 		</div>
 	</div>
-
+	
+	<hr style="margin-top:10px; margin-bottom:10px">
 	<div class="row">
-		{% for obj in vac_list %}
-			<h1> {{ obj }} </h1>
-		{% endfor %}
+		<div class="col-md-12">
+			<div>
+				<h1><b>Vaccinations:</b></h1>
+			</div>
+			<div>
+				{% for mykey, myvalue in vac_list.items %}
+				   <h1> {{ mykey }}: {{ myvalue }} </h1>
+				{% endfor %}
+			</div>
+		</div>
 	</div>
 	
 {% endblock %}
