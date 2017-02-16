@@ -3,96 +3,121 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-01-25 15:51+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"POT-Creation-Date: 2017-02-16 11:00+0200\n"
+"PO-Revision-Date: 2017-02-16 11:00+0200\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.8.7.1\n"
 
-#: .\kiramama\settings.py:122
+#: kiramama/settings.py:115
 msgid "English"
 msgstr "Anglais"
 
-#: .\kiramama\settings.py:123
+#: kiramama/settings.py:116
 msgid "French"
-msgstr "Le Fraincais"
+msgstr "Français "
 
-#: .\kiramama_app\views.py:209
+#: kiramama_app/views.py:203
 msgid "Method must be a POST"
 msgstr "La méthode doit être un POST"
 
-#: .\templates\base.html:225
+#: templates/base-default.html:97 templates/base.html:213
 msgid ""
 "Tracking The first 1000 Days of Life, Preventing unnecessary mother and "
 "newborn  deaths"
 msgstr ""
-"Suivi Les premiers 1000 jours de vie, la prévention de la mère inutile et "
-"Les décès de nouveau-nés"
+"Suivi des premiers 1000 Jours de la Vie, Prévention des décès  inutiles des "
+"mères et des nouveau-nés"
 
-#: .\templates\base.html:251
-msgid "Community Health Workers"
-msgstr "Travailleurs de la santé communautaire"
-
-#: .\templates\base.html:252
-msgid "Maternal Health"
-msgstr "La santé maternelle"
-
-#: .\templates\base.html:253
-msgid "Child Health"
-msgstr "Santé de l'enfant"
-
-#: .\templates\base.html:258
-msgid "Administration"
-msgstr "Administration"
-
-#: .\templates\base.html:260
-msgid "Manage Users"
-msgstr "Gérer les utilisateurs"
-
-#: .\templates\base.html:267
-msgid "Change Password"
-msgstr "Changer le mot de passe"
-
-#: .\templates\base.html:268
+#: templates/base-default.html:104
 msgid "Logout"
 msgstr "Se déconnecter"
 
-#: .\templates\communityhealthworker.html:311
+#: templates/base-default.html:106
+msgid "Login"
+msgstr "Se connecter"
+
+#: templates/base-default.html:165
+msgid "Contact Us"
+msgstr "Nous contacter"
+
+#: templates/base-default.html:167
+msgid "Ministry of Public Health and the fight against AIDS"
+msgstr "Ministère de la Santé publique et lutte contre le SIDA"
+
+#: templates/base-default.html:168
+msgid "Visit our website"
+msgstr "Aller sur le site notre website"
+
+#: templates/base-default.html:169
+msgid "for more information."
+msgstr "pour plus d'informations."
+
+#: templates/base-default.html:190
+msgid "Powered by Open-Source"
+msgstr "Propulsé par l'Open Source"
+
+#: templates/base-default.html:193
+msgid "All Photos by"
+msgstr "Tous les photos par"
+
+#: templates/base.html:232
+msgid "Community Health Workers"
+msgstr "Travailleurs de la Santé Communautaire"
+
+#: templates/base.html:233
+msgid "Maternal Health"
+msgstr "La santé maternelle"
+
+#: templates/base.html:234
+msgid "Child Health"
+msgstr "Santé de l'enfant"
+
+#: templates/communityhealthworker.html:293
 msgid "Province:"
 msgstr "Province"
 
-#: .\templates\communityhealthworker.html:313
+#: templates/communityhealthworker.html:295
 msgid "Select Province"
 msgstr "Sélectionnez la Province"
 
-#: .\templates\communityhealthworker.html:317
+#: templates/communityhealthworker.html:299
 msgid "District:"
 msgstr "District:"
 
-#: .\templates\communityhealthworker.html:319
+#: templates/communityhealthworker.html:301
 msgid "Select District"
-msgstr "Sélectionnez la District"
+msgstr "Sélectionnez le District"
 
-#: .\templates\communityhealthworker.html:323
+#: templates/communityhealthworker.html:305
 msgid "CDS:"
 msgstr "CDS:"
 
-#: .\templates\communityhealthworker.html:325
+#: templates/communityhealthworker.html:307
 msgid "Select CDS"
-msgstr "Sélectionnez la CDS"
+msgstr "Sélectionnez le CDS"
 
-#: .\templates\communityhealthworker.html:329
+#: templates/communityhealthworker.html:311
 msgid "Start Date:"
-msgstr "Date de début:"
+msgstr "Début:"
 
-#: .\templates\communityhealthworker.html:336
+#: templates/communityhealthworker.html:318
 msgid "End Date:"
-msgstr "Date de fin:"
+msgstr "Fin:"
+
+#~ msgid "Administration"
+#~ msgstr "Administration"
+
+#~ msgid "Manage Users"
+#~ msgstr "Gérer les utilisateurs"
+
+#~ msgid "Change Password"
+#~ msgstr "Changer le mot de passe"
