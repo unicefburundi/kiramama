@@ -119,9 +119,6 @@ app.controller('ChildCtrl', ['$scope', '$http', 'DTOptionsBuilder', function($sc
                 }
       };
       // for datatable 
-      $scope.dtOptions = DTOptionsBuilder.newOptions().withPaginationType('full_numbers').withDisplayLength(10).withButtons([
-            'copy',
-            'print',
-            'excel',
-        ]);
+
+      $scope.dtOptions = DTOptionsBuilder.newOptions().withPaginationType('full_numbers').withButtons([ 'copy', 'csv', 'excel', 'pdf', 'print']).withDOM("<'row'<'col-sm-3'l><'col-sm-4'i><'col-sm-5'f>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-4'B><'col-sm-8'p>>").withDisplayLength(10);
   }]);

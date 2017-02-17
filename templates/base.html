@@ -74,7 +74,6 @@
 					return;
 				}
 			});
-
 		    // using jQuery
 			function getCookie(name) {
 			    var cookieValue = null;
@@ -91,31 +90,23 @@
 			    }
 			    return cookieValue;
 			}
-
 			function csrfSafeMethod(method) {
 			    // these HTTP methods do not require CSRF protection
 			    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
 			}
-
 			function messiprompt(msg, title, titleanimation) {
 				var titleclass;
-
 				if (titleanimation == "messisuccess") {
 					titleclass = 'success';
-
 				} else if (titleanimation == "messiinfo") {
 					titleclass = 'info';
-
 				} else if (titleanimation == "messiwarning") {
 					titleclass = 'anim warning';
-
 				} else if (titleanimation == "messierror") {
 					titleclass = 'anim error';
 				}
-
 				new Messi(msg, { title: title, titleClass: titleclass, modal: true });
 			}
-
 			function getajaxerrormessage(jqXHR, exception) {
 		        var msg = "An error has occured";
 		        if (jqXHR.status == 0) {
@@ -135,16 +126,13 @@
 		        }
 		        return msg;
 		    }
-
 			function initializesonic() {
 		        $('#overlay').remove();
 		        $("body").prepend("<div id='overlay' class='web_dialog'></div>");
-
 		        $("#overlay").css({
 		            "width": $(document).width(),
 		            "height": $(document).height(),
 		        }).fadeTo(0, 0.9);
-
 		        modal = $('#overlay').dialog({
 		            modal: true,
 		            closeOnEscape: false,
@@ -153,10 +141,8 @@
 		            height: "auto",
 		            width: "auto"
 		        }).dialog("widget").find(".ui-dialog-titlebar").remove();
-
 		        playSonic();
 		    }
-
 			function playSonic() {
 		        var circle = new Sonic({
 		            width: 100,
@@ -166,7 +152,6 @@
 		            pointDistance: .02,
 		            fps: 30,
 		            fillColor: '#05E2FF',
-
 		            step: function (point, index) {
 		                this._.beginPath();
 		                this._.moveTo(point.x, point.y);
@@ -182,8 +167,6 @@
 		        circle.play();
 		        $('#overlay').append(circle.canvas);
 			}
-
-
 		</script>
 	</head>
 	

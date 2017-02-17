@@ -41,7 +41,7 @@
 		<div class="form-inline" style="padding-left :5px; padding-right :5px;">
 			<div class="form-group">
 				<label for="province">{% trans "Province:" %}</label>
-				<select id="province" class="form-control" style="width:140px"  ng-model="province" ng-options="x.name for x in provinces track by x.code" ng-change="update_province()"><option value="">[ {% trans "Select District" %} ]</option></select>
+				<select id="province" class="form-control" style="width:140px"  ng-model="province" ng-options="x.name for x in provinces track by x.code" ng-change="update_province()"><option value="">[ {% trans "Select Province" %} ]</option></select>
 			</div>
 			<div class="form-group">
 				<label for="district">{% trans "District:" %}</label>
@@ -54,15 +54,14 @@
 					<option value="" selected="selected">[ {% trans "Select CDS" %} ]</option>'
 				</select>
 			</div>
-
-			<label for="dstartdate">{% trans "Start Date:" %}</label>
+			<label for="dstartdate">{% trans "Start Date" %}:</label>
 			<div class="input-group date" data-provide="datepicker">
 			    <input type="text" id="startdate" class="form-control datepicker" readonly="readonly" style="width:130px" ng-model="startdate" ng-change="get_bydate()">
 			    <div class="input-group-addon">
 			        <span class="glyphicon glyphicon-th"></span>
 			    </div>
 			</div>
-			<label for="dendtdate">{% trans "End Date:" %}</label>
+			<label for="dendtdate">{% trans "End Date" %}:</label>
 			<div class="input-group date" data-provide="datepicker">
 			    <input type="text" id="endtdate" class="form-control datepicker" readonly="readonly" style="width:130px" ng-model="enddate" ng-change="get_bydate()">
 			    <div class="input-group-addon">

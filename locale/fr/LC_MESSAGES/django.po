@@ -7,41 +7,41 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-02-16 11:56+0200\n"
-"PO-Revision-Date: 2017-02-16 11:00+0200\n"
-"Last-Translator: \n"
-"Language-Team: \n"
+"POT-Creation-Date: 2017-02-16 16:44+0200\n"
+"PO-Revision-Date: 2017-02-16 16:49+0200\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Last-Translator: \n"
+"Language-Team: \n"
 "X-Generator: Poedit 1.8.7.1\n"
 
-#: .\kiramama\settings.py:115
+#: kiramama/settings.py:115
 msgid "English"
 msgstr "Anglais"
 
-#: .\kiramama\settings.py:116
+#: kiramama/settings.py:116
 msgid "French"
 msgstr "Français "
 
-#: .\kiramama_app\views.py:202
+#: kiramama_app/views.py:202
 msgid "Method must be a POST"
 msgstr "La méthode doit être un POST"
 
-#: .\templates\base-default.html:43
+#: templates/base-default.html:43
 msgid "Your internet connection is not reliable. Computations not possible."
-msgstr ""
+msgstr "Il n y a pas de connexion  internet."
 
-#: .\templates\base-default.html:43
+#: templates/base-default.html:43
 msgid "Internet Connection"
-msgstr ""
+msgstr "Connexion Internet"
 
-#: .\templates\base-default.html:80 .\templates\base.html:197
+#: templates/base-default.html:80 templates/base.html:180
 msgid "Toggle navigation"
-msgstr ""
+msgstr "Basculer la navigation"
 
-#: .\templates\base-default.html:96 .\templates\base.html:213
+#: templates/base-default.html:96 templates/base.html:196
 msgid ""
 "Tracking The first 1000 Days of Life, Preventing unnecessary mother and "
 "newborn  deaths"
@@ -49,248 +49,246 @@ msgstr ""
 "Suivi des premiers 1000 Jours de la Vie, Prévention des décès  inutiles des "
 "mères et des nouveau-nés"
 
-#: .\templates\base-default.html:103 .\templates\base.html:235
+#: templates/base-default.html:103 templates/base.html:218
 msgid "Logout"
 msgstr "Se déconnecter"
 
-#: .\templates\base-default.html:105
+#: templates/base-default.html:105
 msgid "Login"
 msgstr "Se connecter"
 
-#: .\templates\base-default.html:156
+#: templates/base-default.html:156
 msgid "Contact Us"
 msgstr "Nous contacter"
 
-#: .\templates\base-default.html:158 .\templates\base.html:274
+#: templates/base-default.html:158 templates/base.html:257
 msgid "Ministry of Public Health and the fight against AIDS"
 msgstr "Ministère de la Santé publique et lutte contre le SIDA"
 
-#: .\templates\base-default.html:159 .\templates\base.html:275
+#: templates/base-default.html:159 templates/base.html:258
 msgid "Visit our website"
 msgstr "Aller sur le site notre website"
 
-#: .\templates\base-default.html:160 .\templates\base.html:276
+#: templates/base-default.html:160 templates/base.html:259
 msgid "for more information."
 msgstr "pour plus d'informations."
 
-#: .\templates\base-default.html:181 .\templates\base.html:297
+#: templates/base-default.html:181 templates/base.html:280
 msgid "Powered by Open-Source"
 msgstr "Propulsé par l'Open Source"
 
-#: .\templates\base-default.html:184
+#: templates/base-default.html:184
 msgid "All Photos by"
 msgstr "Tous les photos par"
 
-#: .\templates\base.html:231
+#: templates/base.html:214
 msgid "Home"
-msgstr ""
+msgstr "Accueil"
 
-#: .\templates\base.html:232
+#: templates/base.html:215
 msgid "Community Health Workers"
-msgstr "Travailleurs de la Santé Communautaire"
+msgstr "Travailleurs de Santé Communautaire"
 
-#: .\templates\base.html:233
+#: templates/base.html:216
 msgid "Maternal Health"
-msgstr "La santé maternelle"
+msgstr "Santé maternelle"
 
-#: .\templates\base.html:234
+#: templates/base.html:217
 msgid "Child Health"
-msgstr "Santé de l'enfant"
+msgstr "Santé Infantile"
 
-#: .\templates\childhealth.html:9
+#: templates/childhealth.html:9
 msgid "CHILD HEALTH"
-msgstr ""
+msgstr "Santé Infantile"
 
-#: .\templates\childhealth.html:41 .\templates\communityhealthworker.html:293
-#: .\templates\maternalhealth.html:355
+#: templates/childhealth.html:43 templates/communityhealthworker.html:293
+#: templates/maternalhealth.html:356
 msgid "Province:"
-msgstr "Province"
+msgstr "Province:"
 
-#: .\templates\childhealth.html:42 .\templates\childhealth.html:46
-#: .\templates\communityhealthworker.html:301
-#: .\templates\maternalhealth.html:363
-msgid "Select District"
-msgstr "Sélectionnez le District"
-
-#: .\templates\childhealth.html:45 .\templates\communityhealthworker.html:299
-msgid "District:"
-msgstr "District:"
-
-#: .\templates\childhealth.html:50 .\templates\communityhealthworker.html:305
-msgid "CDS:"
-msgstr "CDS:"
-
-#: .\templates\childhealth.html:52 .\templates\communityhealthworker.html:307
-#: .\templates\maternalhealth.html:369
-msgid "Select CDS"
-msgstr "Sélectionnez le CDS"
-
-#: .\templates\childhealth.html:56 .\templates\communityhealthworker.html:311
-#: .\templates\maternalhealth.html:373
-msgid "Start Date:"
-msgstr "Début:"
-
-#: .\templates\childhealth.html:63 .\templates\communityhealthworker.html:318
-#: .\templates\maternalhealth.html:381
-msgid "End Date:"
-msgstr "Fin:"
-
-#: .\templates\childhealth.html:77
-msgid "Birth ID"
-msgstr ""
-
-#: .\templates\childhealth.html:78
-msgid "Date of Birth"
-msgstr ""
-
-#: .\templates\childhealth.html:79 .\templates\maternalhealth.html:264
-msgid "Location"
-msgstr ""
-
-#: .\templates\childhealth.html:80
-msgid "Child Number"
-msgstr ""
-
-#: .\templates\childhealth.html:81
-msgid "Mother ID"
-msgstr ""
-
-#: .\templates\childhealth.html:82
-msgid "Gender"
-msgstr ""
-
-#: .\templates\childhealth.html:83
-msgid "Weight(Kg)"
-msgstr ""
-
-#: .\templates\childhealth.html:84
-msgid "Breastfeeding"
-msgstr ""
-
-#: .\templates\communityhealthworker.html:209
-#, fuzzy
-#| msgid "End Date:"
-msgid "Date"
-msgstr "Fin:"
-
-#: .\templates\communityhealthworker.html:209
-msgid "Total CHWs"
-msgstr ""
-
-#: .\templates\communityhealthworker.html:209
-msgid "Active CHWs"
-msgstr ""
-
-#: .\templates\communityhealthworker.html:209
-msgid "Inactive CHWs"
-msgstr ""
-
-#: .\templates\communityhealthworker.html:295
-#: .\templates\maternalhealth.html:357
+#: templates/childhealth.html:44 templates/communityhealthworker.html:295
+#: templates/maternalhealth.html:358
 msgid "Select Province"
 msgstr "Sélectionnez la Province"
 
-#: .\templates\default.html:46
+#: templates/childhealth.html:47 templates/communityhealthworker.html:299
+msgid "District:"
+msgstr "District:"
+
+#: templates/childhealth.html:48 templates/communityhealthworker.html:301
+#: templates/maternalhealth.html:364
+msgid "Select District"
+msgstr "Sélectionnez le District"
+
+#: templates/childhealth.html:52 templates/communityhealthworker.html:305
+msgid "CDS:"
+msgstr "CDS:"
+
+#: templates/childhealth.html:54 templates/communityhealthworker.html:307
+#: templates/maternalhealth.html:370
+msgid "Select CDS"
+msgstr "Sélectionnez le CDS"
+
+#: templates/childhealth.html:57
+msgid "Start Date"
+msgstr "Début:"
+
+#: templates/childhealth.html:64
+msgid "End Date"
+msgstr "Fin:"
+
+#: templates/childhealth.html:78
+msgid "Birth ID"
+msgstr "ID de naissance"
+
+#: templates/childhealth.html:79
+msgid "Date of Birth"
+msgstr "Date de naissance"
+
+#: templates/childhealth.html:80 templates/maternalhealth.html:264
+msgid "Location"
+msgstr "Localité"
+
+#: templates/childhealth.html:81
+msgid "Child Number"
+msgstr "ID de l'enfant"
+
+#: templates/childhealth.html:82
+msgid "Mother ID"
+msgstr "ID de la mère"
+
+#: templates/childhealth.html:83
+msgid "Gender"
+msgstr "Genre"
+
+#: templates/childhealth.html:84
+msgid "Weight(Kg)"
+msgstr "Poids(Kg)"
+
+#: templates/childhealth.html:85
+msgid "Breastfeeding"
+msgstr "Allaitement"
+
+#: templates/communityhealthworker.html:202
+msgid "Registered CHWs:"
+msgstr "TSC enregistrés:"
+
+#: templates/communityhealthworker.html:209
+msgid "Date"
+msgstr "Date"
+
+#: templates/communityhealthworker.html:209
+msgid "Total CHWs"
+msgstr "Total des TSC"
+
+#: templates/communityhealthworker.html:209
+msgid "Active CHWs"
+msgstr "TSC Actifs"
+
+#: templates/communityhealthworker.html:209
+msgid "Inactive CHWs"
+msgstr "TSC Inactifs"
+
+#: templates/communityhealthworker.html:311 templates/maternalhealth.html:374
+msgid "Start Date:"
+msgstr "Début:"
+
+#: templates/communityhealthworker.html:318 templates/maternalhealth.html:382
+msgid "End Date:"
+msgstr "Fin:"
+
+#: templates/default.html:47
 msgid "About Kiramama"
-msgstr ""
+msgstr "A propos de Kiramama"
 
-#: .\templates\default.html:51 .\templates\default.html:75
+#: templates/default.html:52 templates/default.html:76
 msgid "MINSTRY TEXT"
-msgstr ""
+msgstr "Texte du Ministère "
 
-#: .\templates\default.html:70
+#: templates/default.html:71
 msgid "About the Ministry"
-msgstr ""
+msgstr "A propos du Ministère "
 
-#: .\templates\default.html:90
+#: templates/default.html:91
 msgid "About UNICEF"
-msgstr ""
+msgstr "A propos de l'UNICEF"
 
-#: .\templates\default.html:95
+#: templates/default.html:96
 msgid "UNICEF TEXT"
-msgstr ""
+msgstr "Texte de l'UNICEF"
 
-#: .\templates\default.html:114
+#: templates/default.html:115
 msgid "Information About Current statistics"
-msgstr ""
+msgstr "Informations sur les tendances"
 
-#: .\templates\default.html:119
+#: templates/default.html:120
 msgid "CURRENT STATISTICS TEXT"
-msgstr ""
+msgstr "Les tendances Actuelles"
 
-#: .\templates\home.html:54
-#, fuzzy
-#| msgid "Community Health Workers"
+#: templates/home.html:54
 msgid "Community Health Workers:"
-msgstr "Travailleurs de la Santé Communautaire"
+msgstr "Travailleurs de Santé Communautaire"
 
-#: .\templates\home.html:57
+#: templates/home.html:57
 msgid "Active CHWs :"
-msgstr ""
+msgstr "TSC Actifs:"
 
-#: .\templates\home.html:58
+#: templates/home.html:58
 msgid "Inactive CHWs :"
-msgstr ""
+msgstr "TSC Inactifs:"
 
-#: .\templates\home.html:63
+#: templates/home.html:63
 msgid "Total Delivery :"
-msgstr ""
+msgstr "Total des Accouchements: "
 
-#: .\templates\home.html:66
+#: templates/home.html:66
 msgid "Delivery at home :"
-msgstr ""
+msgstr "Accouchements au domicile: "
 
-#: .\templates\home.html:67
+#: templates/home.html:67
 msgid "Delivery on Road :"
-msgstr ""
+msgstr "Accouchements en route: "
 
-#: .\templates\home.html:68
+#: templates/home.html:68
 msgid "Delivery on health facility :"
-msgstr ""
+msgstr "Accouchements au CDS: "
 
-#: .\templates\home.html:77
+#: templates/home.html:77
 msgid "Vaccinations:"
-msgstr ""
+msgstr "Vaccinations:"
 
-#: .\templates\maternalhealth.html:257
+#: templates/maternalhealth.html:257
 msgid "PREGNANCY REPORTS STATISTICS"
-msgstr ""
+msgstr "Rapports des Statistiques sur les Grosses"
 
-#: .\templates\maternalhealth.html:264
+#: templates/maternalhealth.html:264
 msgid "Registered Pregnancy"
-msgstr ""
+msgstr "Grossesses enregistrées "
 
-#: .\templates\maternalhealth.html:264
+#: templates/maternalhealth.html:264
 msgid "High Risk Registered pregnancy"
-msgstr ""
+msgstr "Grossesses à haut risque enregistres"
 
-#: .\templates\maternalhealth.html:264
+#: templates/maternalhealth.html:264
 msgid "Expected Derivery"
-msgstr ""
+msgstr "Accouchements attendus"
 
-#: .\templates\maternalhealth.html:264
+#: templates/maternalhealth.html:264
 msgid "High Risk Expected Derivery"
-msgstr ""
+msgstr "Accouchements à haut risque attendus"
 
-#: .\templates\maternalhealth.html:264
+#: templates/maternalhealth.html:264
 msgid "Pregnant Women on Selected end date"
-msgstr ""
+msgstr "Femmes enceintes à la date"
 
-#: .\templates\maternalhealth.html:264
+#: templates/maternalhealth.html:264
 msgid "Pregnant Women Expected to deriver next 2 weeks from selected end date"
-msgstr ""
+msgstr "Femmes enceintes attendues pour accoucher dans 2 semaines à partir de"
 
-#: .\templates\maternalhealth.html:264
+#: templates/maternalhealth.html:264
 msgid ""
 "High Risk Pregnant Women Expected to deriver next 2 weeks from selected end "
 "date"
 msgstr ""
-
-#~ msgid "Administration"
-#~ msgstr "Administration"
-
-#~ msgid "Manage Users"
-#~ msgstr "Gérer les utilisateurs"
-
-#~ msgid "Change Password"
-#~ msgstr "Changer le mot de passe"
+"Femmes enceintes à haut risque attendues pour accoucher dans 2 semaines à "
+"partir de"
