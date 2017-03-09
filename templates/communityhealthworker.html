@@ -27,9 +27,10 @@
 				{% for c in provinces %}
 					$('#cmbprovince').append('<option value="{{ c.code }}">{{ c.name }}</option>');
 				{% endfor %}
+
+				fetchcdsdata();
 			}
-			
-			
+
 			if ((".divmessage").length) {
 				$(".divmessage").fadeIn('slow').animate({opacity: 1.0}, 1500).effect("pulsate", { times: 2 }, 800).fadeOut('slow'); 
 			}
@@ -128,15 +129,15 @@
     		}
 
 			$('#divchw').empty();
-    		if (level && code && start_date && end_date) {
-		        data = JSON.stringify({ 'level': level, 'code': code, 'start_date': start_date, 'end_date': end_date });
+    		//if (level && code && start_date && end_date) {
+	        data = JSON.stringify({ 'level': level, 'code': code, 'start_date': start_date, 'end_date': end_date });
 
-	            ajaxpostbackfunction = "fetchcdsdata";
-	            ajaxpost(ajaxurl, data);
+            ajaxpostbackfunction = "fetchcdsdata";
+            ajaxpost(ajaxurl, data);
 
-	        } else {
-	        	$('#overlay').remove();
-	        }
+	        //} else {
+	        //	$('#overlay').remove();
+	        //}
 	    }
 	    
 		function ajaxpost(posturl, data) {
@@ -178,24 +179,24 @@
 	                } else if (ajaxpostbackfunction == "fetchcdsdata") {
 	                	if (response.length > 0) {
 							var dict = {};
-    						for (i = 0; i < response.length; i++) {
-    							var d = new Date(jQuery.makeArray(response[i].fields)[0].reg_date);
-    							var reg_date = d.getFullYear() + '-' + (d.getMonth()+1) + "-" + d.getDate();
-    							var is_active = jQuery.makeArray(response[i].fields)[0].is_active;
+							for (i = 0; i < response.length; i++) {
+								var d = new Date(jQuery.makeArray(response[i].fields)[0].reg_date);
+								var reg_date = d.getFullYear() + '-' + (d.getMonth()+1) + "-" + d.getDate();
+								var is_active = jQuery.makeArray(response[i].fields)[0].is_active;
 
-		                		if (dict.hasOwnProperty(reg_date)) {
-		                			dict[reg_date][0] += 1 // total
-		                			if (is_active == true) {
-		                				dict[reg_date][1] += 1 // active
-		                			}
+			            		if (dict.hasOwnProperty(reg_date)) {
+			            			dict[reg_date][0] += 1 // total
+			            			if (is_active == true) {
+			            				dict[reg_date][1] += 1 // active
+			            			}
 
-		                		} else {
-		                			if (is_active == true) {
-		                				dict[reg_date] = [1, 1];
-		                			} else {
-		                				dict[reg_date] = [1, 0];
-		                			}
-		                		}
+			            		} else {
+			            			if (is_active == true) {
+			            				dict[reg_date] = [1, 1];
+			            			} else {
+			            				dict[reg_date] = [1, 0];
+			            			}
+			            		}
 							}
 							
 							if (Object.keys(dict).length > 0) {
@@ -269,8 +270,11 @@
 	        
 	        return false;
 	    }
+
+
 		 
 	</script>
+	    }
 {% endblock %}
 
 

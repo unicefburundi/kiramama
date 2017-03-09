@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from rest_framework import serializers
 from health_administration_structure_app.models import BPS, District, CDS
 

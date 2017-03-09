@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from jsonview.decorators import json_view
 from django.views.decorators.csrf import csrf_exempt
 import re

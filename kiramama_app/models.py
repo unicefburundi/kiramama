@@ -1,5 +1,5 @@
+# -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-
 from django.db import models
 from health_administration_structure_app.models import CDS
 from public_administration_structure_app.models import SousColline
