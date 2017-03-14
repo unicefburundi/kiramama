@@ -164,7 +164,7 @@ def change_chw_status():
 
 
 
-@periodic_task(run_every=(crontab(minute='*/15')), name="tasks.change_chw_status", ignore_result=True) 
+@periodic_task(run_every=(crontab(minute=0, hour='6')), name="tasks.change_chw_status", ignore_result=True) 
 def inform_supersors_on_inactive_chw():
     '''
     This task inform the concerned supervisor if there is a community health work who is not active
