@@ -68,11 +68,13 @@ class Lieu(models.Model):
 
 class CPN(models.Model):
     ''' `In this model will be stored CPN categories '''
+    #cpn_number = models.IntegerField(unique=True)
+    cpn_number = models.IntegerField()
     cpn_designation = models.CharField(max_length=10)
     cpn_description = models.CharField(max_length=50)
 
     def __unicode__(self):
-        return "{0} - {1}".format(self.cpn_designation, self.cpn_description)
+        return "{0} - {1} - {2}".format(self.cpn_number, self.cpn_designation, self.cpn_description)
 
 
 class BreastFeed(models.Model):
