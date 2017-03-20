@@ -10,8 +10,8 @@ from django.contrib.auth.decorators import login_required
 from kiramama_app.serializers import NSCSerializer
 from rest_framework import viewsets
 import django_filters
+from django.views.generic import DetailView
 
-# Create your views here.
 
 def default(request):
     d = {}
@@ -278,6 +278,7 @@ def getwanteddata(request):
         rows = json.dumps(rows, default=date_handler)
         return HttpResponse(rows, content_type="application/json")
 
+
 class NSCFilter(django_filters.rest_framework.FilterSet):
     min_birth_date = django_filters.DateFilter(name="birth_date", lookup_expr='gte')
     max_birth_date = django_filters.DateFilter(name="birth_date", lookup_expr='lte')
@@ -290,9 +291,19 @@ class NSCFilter(django_filters.rest_framework.FilterSet):
         fields = ['cds', 'district', 'province', 'min_birth_date', 'max_birth_date']
 
 
-
 class ReportNSCViewsets(viewsets.ModelViewSet):
     serializer_class = NSCSerializer
     queryset = ReportNSC.objects.all()
     filter_class = NSCFilter
     filter_fields = ('report__cds__code', )
+
+
+class MotherDetailView(DetailView):
+    model = Mother
+    template_name = "mother-detail.html"
+    slug_field = 'id_mother'
+
+    def get_context_data(self, **kwargs):
+        context = super(MotherDetailView, self).get_context_data(**kwargs)
+        return context
+

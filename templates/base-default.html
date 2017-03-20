@@ -91,16 +91,20 @@
 										<div class="col-sm-1" style="padding-left:5px; padding-right:5px;">
 											<img class="noborder size-full aligncenter" src="{% static 'images/kiramama.png' %}" scale="0">
 										</div>
-										<div class="col-sm-9 verticallineseparator" style="padding-left:5px; padding-right:5px;">
+										<div class="col-sm-8 verticallineseparator" style="padding-left:5px; padding-right:5px;">
 											<span class="brand-app" style="text-align:center;">Kiramama</span>
 											<span style="color:#000000; text-align:center;"> - {% trans "Tracking The first 1000 Days of Life, Preventing unnecessary mother and newborn  deaths" %}</span>
 										</div>
-										<div class="col-sm-1" style="padding-left:5px; padding-right:5px;">
+										<div class="col-sm-1" >
 											<img class="noborder size-full aligncenter" src="{% static 'images/burundi.png' %}" scale="0">
 										</div>
-										<div class="col-sm-1" style="padding-left:5px; padding-right:5px;">
-											{% if user.is_authenticated %}
+										{% if user.is_authenticated %}
+										<div class="col-sm-1" >
+												<li><a role="button" href="{% url 'home' %}">{% trans "Home" %}</a></li>
+										</div>
+										<div class="col-sm-1" >
 												<li><a role="button" href="/logout">{% trans "Logout" %}</a></li>
+										</div>
 											{% else %}
 												<li><a role="button" href="/login">{% trans "Login" %}</a></li>
 											{% endif %}
