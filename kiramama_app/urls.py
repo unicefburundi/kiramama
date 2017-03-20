@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from django.conf.urls import url, include
 from kiramama_app.backend import handel_rapidpro_request
 from kiramama_app.views import *

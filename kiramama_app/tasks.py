@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from celery.task.schedules import crontab
 from celery.decorators import periodic_task
 from celery.utils.log import get_task_logger
@@ -33,7 +34,7 @@ def send_scheduled_messages():
         # There is one or more messages to be sent to one or more mothers
         for mother_message in ready_to_send_mother_messages:
             if(mother_message.mother.phone_number):
-                print(mother_message.mother.phone_number)
+                #print(mother_message.mother.phone_number)
                 print mother_message.message_to_send
                 the_contact_phone_number = "tel:"+mother_message.mother.phone_number
                 data = {

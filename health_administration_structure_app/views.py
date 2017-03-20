@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from health_administration_structure_app.models import BPS, District, CDS
 from health_administration_structure_app.serializers import BPSSerializer, DistrictSerializer, CDSSerializer
 from rest_framework import viewsets

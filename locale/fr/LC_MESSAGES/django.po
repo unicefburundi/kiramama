@@ -286,12 +286,12 @@ msgid "Pregnant Women on Selected end date"
 msgstr "Femmes enceintes à la date"
 
 #: templates/maternalhealth.html:264
-msgid "Pregnant Women Expected to deriver next 2 weeks from selected end date"
+msgid "Pregnant Women Expected to deliver next 2 weeks from selected end date"
 msgstr "Femmes enceintes attendues pour accoucher dans 2 semaines à partir de"
 
 #: templates/maternalhealth.html:264
 msgid ""
-"High Risk Pregnant Women Expected to deriver next 2 weeks from selected end "
+"High Risk Pregnant Women Expected to deliver next 2 weeks from selected end "
 "date"
 msgstr ""
 "Femmes enceintes à haut risque attendues pour accoucher dans 2 semaines à "

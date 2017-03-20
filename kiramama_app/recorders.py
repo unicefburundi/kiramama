@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from kiramama_app.models import *
 from health_administration_structure_app.models import *
 from public_administration_structure_app.models import *

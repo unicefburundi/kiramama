@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from django.shortcuts import render
 from django.http import HttpResponse
 from kiramama_app.models import *
@@ -163,19 +164,19 @@ def getcdsindistrict(request):
 
 
 def getcdsdata(request):
-    # import ipdb; ipdb.set_trace()
     response_data = {}
+    
     try:
         if request.method == 'POST':
-            #import pdb; pdb.set_trace()
             json_data = json.loads(request.body)
             level = json_data['level']
             code = json_data['code']
             start_date = json_data['start_date']
             end_date = json_data['end_date']
-            chwdata = ""
-            
-            if (level):
+            chw_data = None
+            #chwdata = cdsdata(level, code, start_date, end_date)
+
+            if (level and code and start_date and end_date):
                 cdslist = None
                 if (level == "cds"):
                     cdslist = CDS.objects.filter(code=code)
@@ -193,24 +194,29 @@ def getcdsdata(request):
                             cdslist = CDS.objects.filter(district__in = districtlist)
 
                 if (cdslist):
-                    chwdata = CHW.objects.filter(cds__in = cdslist).filter(reg_date__range=[start_date, end_date]).order_by('reg_date')
+                    chw_data = CHW.objects.filter(cds__in = cdslist).filter(reg_date__range=[start_date, end_date]).order_by('reg_date')
 
-                response_data = serializers.serialize('json', chwdata)
+            else:
+                chw_data = CHW.objects.all()
+            
+            response_data = serializers.serialize('json', chw_data)
             return HttpResponse(response_data, content_type="application/json")
 
         else:
-            response_data['error'] = _("Method must be a POST")
+            response_data = _("Method must be a POST")
             return HttpResponse(response_data)
             
     except Exception, e:
-        response_data['error'] = _(e.message)
+        response_data = _(e.message)
         return HttpResponse(response_data)
+
 
 def date_handler(obj):
     if hasattr(obj, 'isoformat'):
         return obj.isoformat()
     else:
         raise TypeError
+
 
 def getwanteddata(request):
     response_data = {}
