@@ -369,6 +369,40 @@ def check_cpn_name_exists(args):
         args['info_to_contact'] = "Le nom du CPN indique existe dans le systeme"
 
 
+def check_cpn_order_respected(args):
+    '''
+    This function checks if the CPN order is respected for the current woman
+    The first CPN should be number 2 (cpn_number = 2), the second number 3, etc
+    '''
+    cpn_number = ReportCPN.objects.all().count()
+    the_last_cpn_number_for_this_mother = 1
+    the_sent_cpn_number = args["concerned_cpn"].cpn_number
+    #Let's check if the CPN indicated is the expected one
+    the_last_cpns_for_this_mother = ReportCPN.objects.filter(report__mother = args['concerned_woman']).order_by('id').reverse()
+    
+    if(len(the_last_cpns_for_this_mother) > 0):
+        #At least one CPN have been reported for this mother
+
+        the_last_cpn_number_for_this_mother = the_last_cpns_for_this_mother[0].cpn_number
+
+    
+    the_expected_cpn_number = the_last_cpn_number_for_this_mother + 1
+        
+    if(the_expected_cpn_number > cpn_number):
+        args['valide'] = False
+        #args['info_to_contact'] = "Erreur. Aucun rapport CPN n est attendu pour cette femme."
+        args['info_to_contact'] = "Ikosa. Nta raporo CPN yitezwe yerekeye uwo mupfasoni."
+        return
+    if(the_sent_cpn_number != the_expected_cpn_number):
+        args['valide'] = False
+        #args['info_to_contact'] = "Erreur. Le CPN envoye n est pas celui attendu pour cette maman."
+        args['info_to_contact'] = "Ikosa. Iyo raporo CPN utanze siyo yari yitezwe kuri uwo mupfasi."
+        return
+
+    args['valide'] = True
+    args['info_to_contact'] = "Raporo CPN itanzwe niyo yari yitezwe kuri uyo mupfasoni."
+
+    
 def check_is_float(args):
     ''' This function checks if a given value is a float '''
 
@@ -503,11 +537,7 @@ def check_symptoms(args):
 
     sent_symptoms = args["symptoms"]
     # Symptoms are separated by comma. Let's put them in a list.
-    print("====>>>")
-    print(sent_symptoms)
     sent_symptoms_list = sent_symptoms.split(",")
-    print("====>>>")
-    print(sent_symptoms_list)
 
     # Let's assume that all symbols are correct
     valid = True
@@ -617,7 +647,6 @@ def check_supervisor_phone_number(args):
     the_supervisor_phone_number_no_space = the_supervisor_phone_number.replace(" ", "")
     # expression = r'^(\+?(257)?)((62)|(79)|(71)|(76))([0-9]{6})$'
     expression = r'^(\+?(257)?)((61)|(62)|(68)|(69)|(71)|(72)|(75)|(76)|(79))([0-9]{6})$'
-    print(the_supervisor_phone_number_no_space)
     if re.search(expression, the_supervisor_phone_number_no_space) is None:
         # The phone number is not well written
         args['valide'] = False
@@ -661,8 +690,6 @@ def save_temporary_the_reporter(args):
 
             the_hill = Colline.objects.filter(name__iexact=the_hill_name)
             if len(the_hill) < 1:
-                print("The hill name ==>"+the_hill_name)
-                print("The sub hill name ==>"+the_sub_hill_name)
                 args['valide'] = False
                 # args['info_to_contact'] = "Erreur. Le nom de la colline envoye n est pas valide. Pour corriger, reenvoyer le message bien ecrit commencant par REG"
                 args['info_to_contact'] = "Ikosa. Izina ryumusozi wanditse ntiribaho. Mu gukosora, subira urungike iyo mesaje itangurwa na 'REG' yanditse neza"
@@ -885,7 +912,6 @@ def record_pregnant_case(args):
 
     # Let's check if the person who send this message is a reporter
     check_if_is_reporter(args)
-    print(args['valide'])
     if not args['valide']:
         return
 
@@ -953,9 +979,7 @@ def record_pregnant_case(args):
     # the_last_mother_registered_from_this_cds = the_last_gro_report_from_this_cds.mother
 
     mother_id_2 = '0'
-    print("-1-") 
     if(len(gro_reports_from_this_cds) > 0):
-        print("-2-")
         the_last_mother_from_this_cds = Report.objects.filter(cds = args['facility'], category = args['mot_cle']).order_by("-id")[0].mother
         # Let's identify the id used by the system users for this patient
         the_last_mother_id = the_last_mother_from_this_cds.id_mother
@@ -970,12 +994,9 @@ def record_pregnant_case(args):
 
         # mother_id_2 is the second part of the new mother
         mother_id_2 = str(the_second_part_int)
-        print("-3-")
     else:
-        print("-4-")
         mother_id_2 = '0'
 
-    print("-5-")
     if len(mother_id_2) == 1:
         mother_id_2 = "00"+mother_id_2
     if len(mother_id_2) == 2:
@@ -983,9 +1004,6 @@ def record_pregnant_case(args):
 
     mother_id = mother_id_1+""+mother_id_2
 
-    print("Mother id")
-    print("=========")
-    print(mother_id)
 
     # Let's check if there is no mother with that id
     '''check_mother_exists = Mother.objects.filter(id_mother = mother_id)
@@ -1012,8 +1030,7 @@ def record_pregnant_case(args):
 
     # -----------------  
     next_appointment_date_time = datetime.datetime.combine(args["next_appointment_date"], datetime.datetime.now().time())
-    print("next_appointment_date_time ==>")
-    print(next_appointment_date_time)
+
     # -----------------
     the_cpn2_notification_type = cpn2_notification_type[0]
 
@@ -1029,20 +1046,12 @@ def record_pregnant_case(args):
         if(time_measure_unit.code.startswith("h") or time_measure_unit.code.startswith("H")):
             time_for_reminder = next_appointment_date_time - datetime.timedelta(hours = number_for_time)
 
-        print("[Mother] - time_for_reminder after changing hour and minute")
-        print(time_for_reminder)
 
         remind_message_to_send_to_mother = notification_for_mother.message_to_send
 
         if notification_for_mother.word_to_replace_by_the_date_in_the_message_to_send:
-            print("@# @# @# @# @# @# @# @# @# @# @# @# @# @# @# @# @# @# @# @# @# @# @# @# @# @# @# @")
-            print("remind_message_to_send_to_mother Before replacing")
-            print(remind_message_to_send_to_mother)
             remind_message_to_send_to_mother = remind_message_to_send_to_mother.replace(notification_for_mother.word_to_replace_by_the_date_in_the_message_to_send, next_appointment_date_time.date().isoformat())
-            print("remind_message_to_send_to_mother after replacing")
-            print(remind_message_to_send_to_mother)
-            print("@# @# @# @# @# @# @# @# @# @# @# @# @# @# @# @# @# @# @# @# @# @# @# @# @# @# @# @")
-
+          
         created_reminder = NotificationsMother.objects.create(mother = the_created_mother_record, notification = notification_for_mother, date_time_for_sending = time_for_reminder, message_to_send = remind_message_to_send_to_mother)
 
     notifications_for_chw = NotificationsForCHW.objects.filter(notification_type = the_cpn2_notification_type)
@@ -1056,8 +1065,6 @@ def record_pregnant_case(args):
         if(time_measure_unit.code.startswith("h") or time_measure_unit.code.startswith("H")):
             time_for_reminder = next_appointment_date_time - datetime.timedelta(hours = number_for_time)
 
-        print("[CHW] - time_for_reminder after changing hour and minute")
-        print(time_for_reminder)
 
         remind_message_to_send_to_chw = notification_for_chw.message_to_send
 
@@ -1079,8 +1086,6 @@ def record_pregnant_case(args):
 
     # -----------------    
     expected_delivery_date_time = datetime.datetime.combine(args["expected_birth_date"], datetime.datetime.now().time())
-    print("expected_delivery_date_time ==>")
-    print(expected_delivery_date_time)
     # -----------------
 
     the_acc_notification_type = acc_notification_type[0]
@@ -1096,8 +1101,6 @@ def record_pregnant_case(args):
         if(time_measure_unit.code.startswith("h") or time_measure_unit.code.startswith("H")):
             time_for_reminder = expected_delivery_date_time - datetime.timedelta(hours = number_for_time)
 
-        print("[Mother] - time_for_reminder after changing hour and minute")
-        print(time_for_reminder)
 
         remind_message_to_send_to_mother = notification_for_mother.message_to_send
 
@@ -1117,8 +1120,6 @@ def record_pregnant_case(args):
         if(time_measure_unit.code.startswith("h") or time_measure_unit.code.startswith("H")):
             time_for_reminder = expected_delivery_date_time - datetime.timedelta(hours = number_for_time)
 
-        print("[CHW] - time_for_reminder after changing hour and minute")
-        print(time_for_reminder)
 
         remind_message_to_send_to_chw = notification_for_chw.message_to_send
 
@@ -1141,7 +1142,6 @@ def modify_record_pregnant_case(args):
 
     # Let's check if the person who send this message is a reporter
     check_if_is_reporter(args)
-    print(args['valide'])
     if not args['valide']:
         return
 
@@ -1269,6 +1269,12 @@ def record_prenatal_consultation_report(args):
     if not args['valide']:
         return
     args["concerned_cpn"] = args['specified_cpn']
+
+    # Let's check if the CPN order is respected. The first one should be 
+    #number 1
+    check_cpn_order_respected(args)
+    if not args['valide']:
+        return
 
     # Let's check if the consultation date is valid
     # It must be a previous date or today's date
@@ -1476,7 +1482,6 @@ def record_birth_case_report(args):
 
     # Let's check if the person who send this message is a reporter
     check_if_is_reporter(args)
-    print(args['valide'])
     if not args['valide']:
         return
     # Let's check if the message sent is composed by an expected number of values
@@ -1578,7 +1583,6 @@ def modify_record_birth_case_report(args):
 
     # Let's check if the person who send this message is a reporter
     check_if_is_reporter(args)
-    print(args['valide'])
     if not args['valide']:
         return
     # Let's check if the message sent is composed by an expected number of values
@@ -1715,7 +1719,6 @@ def record_postnatal_care_report(args):
 
     # Let's check if the person who send this message is a reporter
     check_if_is_reporter(args)
-    print(args['valide'])
     if not args['valide']:
         return
     # Let's check if the message sent is composed by an expected number of values
@@ -1799,7 +1802,6 @@ def modify_record_postnatal_care_report(args):
 
     # Let's check if the person who send this message is a reporter
     check_if_is_reporter(args)
-    print(args['valide'])
     if not args['valide']:
         return
 
@@ -1921,7 +1923,6 @@ def record_child_follow_up_report(args):
 
     # Let's check if the person who send this message is a reporter
     check_if_is_reporter(args)
-    print(args['valide'])
     if not args['valide']:
         return
 
@@ -1979,7 +1980,6 @@ def modify_record_child_follow_up_report(args):
 
     # Let's check if the person who send this message is a reporter
     check_if_is_reporter(args)
-    print(args['valide'])
     if not args['valide']:
         return
 
@@ -2066,7 +2066,6 @@ def record_risk_report(args):
 
     # Let's check if the person who send this message is a reporter
     check_if_is_reporter(args)
-    print(args['valide'])
     if not args['valide']:
         return
 
@@ -2147,8 +2146,7 @@ def record_risk_report(args):
     args['data'] = data
     send_sms_through_rapidpro(args)
 
-    print("args['info_to_supervisors']")
-    print(args['info_to_supervisors'])
+
 
 
 def modify_record_risk_report(args):
@@ -2157,7 +2155,6 @@ def modify_record_risk_report(args):
 
     # Let's check if the person who send this message is a reporter
     check_if_is_reporter(args)
-    print(args['valide'])
     if not args['valide']:
         return
 
@@ -2272,7 +2269,6 @@ def record_response_to_risk_report(args):
 
     # Let's check if the person who send this message is a reporter
     check_if_is_reporter(args)
-    print(args['valide'])
     if not args['valide']:
         return
 
@@ -2328,7 +2324,6 @@ def modify_record_response_to_risk_report(args):
 
     # Let's check if the person who send this message is a reporter
     check_if_is_reporter(args)
-    print(args['valide'])
     if not args['valide']:
         return
 
@@ -2413,7 +2408,6 @@ def record_death_report(args):
 
     # Let's check if the person who send this message is a reporter
     check_if_is_reporter(args)
-    print(args['valide'])
     if not args['valide']:
         return
 
@@ -2493,7 +2487,6 @@ def modify_record_death_report(args):
 
     # Let's check if the person who send this message is a reporter
     check_if_is_reporter(args)
-    print(args['valide'])
     if not args['valide']:
         return
 
@@ -2607,7 +2600,6 @@ def record_leave_report(args):
 
     # Let's check if the person who send this message is a reporter
     check_if_is_reporter(args)
-    print(args['valide'])
     if not args['valide']:
         return
     # Let's check if the message sent is composed by an expected number of values
@@ -2646,7 +2638,6 @@ def modify_record_leave_report(args):
 
     # Let's check if the person who send this message is a reporter
     check_if_is_reporter(args)
-    print(args['valide'])
     if not args['valide']:
         return
 
@@ -2716,7 +2707,6 @@ def record_mother_reception_report(args):
 
     # Let's check if the person who send this message is a reporter
     check_if_is_reporter(args)
-    print(args['valide'])
     if not args['valide']:
         return
 

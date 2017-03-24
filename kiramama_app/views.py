@@ -105,7 +105,6 @@ def home(request):
                 new_object[vac_designation] = number_of_such_reports
             
     d['vac_list'] = new_object
-    print(d['vac_list'])
     return render(request, 'home.html', d)
 
 

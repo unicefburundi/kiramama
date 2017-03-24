@@ -34,8 +34,6 @@ def send_scheduled_messages():
         # There is one or more messages to be sent to one or more mothers
         for mother_message in ready_to_send_mother_messages:
             if(mother_message.mother.phone_number):
-                #print(mother_message.mother.phone_number)
-                print mother_message.message_to_send
                 the_contact_phone_number = "tel:"+mother_message.mother.phone_number
                 data = {
                     "urns": [the_contact_phone_number],
@@ -58,7 +56,6 @@ def send_scheduled_messages():
         for chw_message in ready_to_send_chw_messages:
             if(chw_message.chw.phone_number):
                 logger.info(chw_message.chw.phone_number)
-                print chw_message.message_to_send
                 the_contact_phone_number = "tel:"+chw_message.chw.phone_number
                 data = {
                     "urns": [the_contact_phone_number],
@@ -83,7 +80,6 @@ def change_chw_status():
         This function switch a CHW to the following status : active/inactive
         A CHW is switched to inactive status if he spend long time without sending any message.
     '''
-    print(" ====> BIGIN change_chw_status() ")
     key_word_for_chwai_setting = getattr(settings,'KEY_WORD_FOR_CHW_ACTIVE_SETTING','')
 
     if len(key_word_for_chwai_setting) < 1:
@@ -111,12 +107,6 @@ def change_chw_status():
 
     limit_time = ""
 
-    print("=datetime.timedelta(minutes = value_for_time)=")
-    print(datetime.timedelta(minutes = value_for_time))
-    print("datetime.datetime.now().time()")
-    print(datetime.datetime.now().time())
-    print("datetime.datetime.now()")
-    print(datetime.datetime.now())
 
     if(time_unit.startswith("m") or time_unit.startswith("M")):
         #The time measuring unit used is minutes
@@ -148,12 +138,6 @@ def change_chw_status():
             #Let's check if this CHW doesn't spend many days (based on limit_time variable) without sending any report
             his_last_report = reports_given_by_the_current_chw.order_by('-id')[0]
 
-            print("111")
-            print("his_last_report.reporting_date")
-            print(his_last_report.reporting_date)
-            print("limit_time")
-            print(limit_time)
-            print("111")
 
             #if(his_last_report.reporting_date < limit_time):
             if(datetime.datetime.combine(his_last_report.reporting_date, datetime.datetime.now().time()) < limit_time):

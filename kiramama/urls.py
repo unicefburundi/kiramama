@@ -18,12 +18,13 @@ from django.conf.urls.i18n import i18n_patterns
 from django.contrib import admin
 import kiramama_app.views
 from django.contrib.auth import views as auth_views
-
 '''
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
 ]'''
-urlpatterns = i18n_patterns (
+
+#urlpatterns = i18n_patterns (
+urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^kiramama/', include('kiramama_app.urls')),
     url(r'^structures/', include('health_administration_structure_app.urls')),
@@ -38,4 +39,5 @@ urlpatterns = i18n_patterns (
     url(r'^getcdsdata', kiramama_app.views.getcdsdata, name='getcdsdata'),
     url(r'^getwanteddata', kiramama_app.views.getwanteddata, name='getwanteddata'),
     url(r'^$', kiramama_app.views.default, name='default'),
-    )
+]
+#   )

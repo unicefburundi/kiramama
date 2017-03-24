@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from jsonview.decorators import json_view
 from django.views.decorators.csrf import csrf_exempt
 import re
@@ -29,7 +28,6 @@ def check_session(args):
 def eliminate_unnecessary_spaces(args):
     '''This function eliminate unnecessary spaces in an the incoming message'''
     the_incoming_message = args['text']
-    print("The text before sub             "+the_incoming_message)
     #the_new_message = re.sub(' +',' ',the_incoming_message)
 
     #Messages from RapidPro comes with spaces replaced by '+'
@@ -41,9 +39,7 @@ def eliminate_unnecessary_spaces(args):
 
     #Let's eliminate spaces at the begining and the end of the message
     the_new_message = the_new_message.strip()
-    print("The text after sub              "+the_new_message)
     args['text'] = the_new_message
-    print("The text after sub args['text'] "+args['text'])
 
 
 def check_necessary_configurations_are_done(args):
@@ -108,7 +104,6 @@ def handel_rapidpro_request(request):
 	#The system can be used if some configurations are done
 	check_necessary_configurations_are_done(incoming_data)
 	if not incoming_data['valide']:
-		print("T2T2T2")
 		response['ok'] = False
 		response['info_to_contact'] = incoming_data['info']
 		return response
