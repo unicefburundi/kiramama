@@ -68,12 +68,7 @@ class Lieu(models.Model):
 
 class CPN(models.Model):
     ''' `In this model will be stored CPN categories '''
-    #!!! When "cpn_number" field will be on production, put the right values
-    #on production (evoid duplications) and then make it unique (on localhost)
-    #and then push to production. It should be unique. We can not make it unique know
-    #because it will cause ploblems when we will be doing migrations
-    #cpn_number = models.IntegerField(unique=True)
-    cpn_number = models.IntegerField()
+    cpn_number = models.IntegerField(unique=True)
     cpn_designation = models.CharField(max_length=10)
     cpn_description = models.CharField(max_length=50)
 
