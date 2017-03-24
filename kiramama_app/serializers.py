@@ -20,7 +20,7 @@ class NSCSerializer(serializers.ModelSerializer):
         return obj.report.mother.id_mother
 
     def get_breast_feading(self, obj):
-        return obj.breast_feading.breast_feed_option_name
+        return obj.breast_feading.breast_feed_option_description
 
     def get_birth_location(self, obj):
         return obj.birth_location.location_category_designation

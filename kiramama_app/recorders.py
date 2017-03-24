@@ -383,7 +383,7 @@ def check_cpn_order_respected(args):
     if(len(the_last_cpns_for_this_mother) > 0):
         #At least one CPN have been reported for this mother
 
-        the_last_cpn_number_for_this_mother = the_last_cpns_for_this_mother[0].cpn_number
+        the_last_cpn_number_for_this_mother = the_last_cpns_for_this_mother[0].concerned_cpn.cpn_number
 
     
     the_expected_cpn_number = the_last_cpn_number_for_this_mother + 1

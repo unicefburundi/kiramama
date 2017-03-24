@@ -23,7 +23,7 @@ class District(models.Model):
     '''In this model, we will store districts'''
     bps = models.ForeignKey(BPS, verbose_name='BPS')
     name = models.CharField(('nom'), unique=True, max_length=40)
-    code = models.CharField(unique=True, max_length=4)
+    code = models.CharField(max_length=4, unique=True)
 
     def __unicode__(self):
         return self.name

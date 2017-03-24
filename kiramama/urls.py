@@ -41,3 +41,4 @@ urlpatterns = [
     url(r'^$', kiramama_app.views.default, name='default'),
 ]
 #   )
+
