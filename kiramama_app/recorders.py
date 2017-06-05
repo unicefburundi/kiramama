@@ -374,7 +374,6 @@ def check_cpn_order_respected(args):
     This function checks if the CPN order is respected for the current woman
     The first CPN should be number 2 (cpn_number = 2), the second number 3, etc
     '''
-    cpn_number = ReportCPN.objects.all().count()
     the_last_cpn_number_for_this_mother = 1
     the_sent_cpn_number = args["concerned_cpn"].cpn_number
     #Let's check if the CPN indicated is the expected one
@@ -388,15 +387,10 @@ def check_cpn_order_respected(args):
     
     the_expected_cpn_number = the_last_cpn_number_for_this_mother + 1
         
-    if(the_expected_cpn_number > cpn_number):
-        args['valide'] = False
-        #args['info_to_contact'] = "Erreur. Aucun rapport CPN n est attendu pour cette femme."
-        args['info_to_contact'] = "Ikosa. Nta raporo CPN yitezwe yerekeye uwo mupfasoni."
-        return
     if(the_sent_cpn_number != the_expected_cpn_number):
         args['valide'] = False
         #args['info_to_contact'] = "Erreur. Le CPN envoye n est pas celui attendu pour cette maman."
-        args['info_to_contact'] = "Ikosa. Iyo raporo CPN utanze siyo yari yitezwe kuri uwo mupfasi."
+        args['info_to_contact'] = "Ikosa. Iyo raporo CPN utanze siyo yari yitezwe kuri uwo mupfasoni."
         return
 
     args['valide'] = True
