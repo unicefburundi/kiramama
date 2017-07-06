@@ -22,6 +22,14 @@
 				$(".diverror").fadeIn('slow').animate({opacity: 1.0}, 1500).effect("pulsate", { times: 2 }, 800); 
 			}
 		});
+
+
+
+		function displayVaccinationReports(key=0){
+			alert(key);
+
+			window.open('vaccination_reports/?vac='+key,'','fullscreen=yes');
+		}
 		
 	</script>
 {% endblock %}
@@ -43,10 +51,10 @@
 				<h1><b>{% trans "Registered Mothers" %}: {{ registeredmothers }}</b></h1>
 			</div>
 			<div>
-				<h1>CPN 1: {{ cpn1 }} %</h1>
-				<h1>CPN 2: {{ cpn2 }} %</h1>
-				<h1>CPN 3: {{ cpn3 }} %</h1>
-				<h1>CPN 4: {{ cpn4 }} %</h1>
+				<h1>CPN 1 : {{ cpn1 }} %</h1>
+				<h1>CPN 2 : {{ cpn2 }} %</h1>
+				<h1>CPN 3 : {{ cpn3 }} %</h1>
+				<h1>CPN 4 : {{ cpn4 }} %</h1>
 			</div>
 		</div>
 		<div class="col-md-4">
@@ -78,7 +86,7 @@
 			</div>
 			<div>
 				{% for mykey, myvalue in vac_list.items %}
-				   <h1> {{ mykey }}: {{ myvalue }} </h1>
+				   <h1> <a href="#" onclick = "displayVaccinationReports(this.text.split(':')[0])"> {{ mykey }} : {{ myvalue }} </a> </h1>
 				{% endfor %}
 			</div>
 		</div>

@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}
+	<title> {{ pagetitle }}</title>
+{% endblock %}
+
+{% block pagename %}pagename{% endblock %}
+
+{% block head %}
+	<script language="JavaScript">
+		var messimsg;
+		var messititle;
+		var titleanimation;
+		
+		$(document).ready(function() {
+			if ((".divmessage").length) {
+				$(".divmessage").fadeIn('slow').animate({opacity: 1.0}, 1500).effect("pulsate", { times: 2 }, 800).fadeOut('slow'); 
+			}
+			
+			if ((".diverror").length) {
+				$(".diverror").fadeIn('slow').animate({opacity: 1.0}, 1500).effect("pulsate", { times: 2 }, 800); 
+			}
+		
+		displayVaccinationReports();
+
+		});
+
+
+
+		function displayVaccinationReports(){
+			$('#divvaccinations').append('<p><b></b></p>' +
+
+								'<div style="clear:both; height:10px;"></div>' +
+
+								'<table id="tblvacination" class="table table-striped table-bordered table-condensed">');
+								
+								$('#tblvacination').append('<thead>' +
+									'<th>{% trans "Report number" %}</th><th>{% trans "Location" %}</th><th>{% trans "Child number" %}</th>' +
+								'</thead>' +
+									
+								'<tbody>' +
+									
+								'</tbody>');
+
+			var dict = {};
+			var fetched_vaccination_reports = "{{fetched_vaccination_reports|safe}}";
+			//var fetched_vaccination_reports = "{{fetched_vaccination_reports}}";
+			
+			fetched_vaccination_reports = fetched_vaccination_reports.split("},");
+			for(i=0; i<fetched_vaccination_reports.length; i++)
+			{	
+				one_report = fetched_vaccination_reports[i];
+				var col0 = one_report.split(",")[0].split(":")[1];
+				var col1 = one_report.split(",")[1].split(":")[1];
+				var col2 = one_report.split(",")[2].split(":")[1];
+				var col3 = one_report.split(",")[3].split(":")[1];
+				col3 = col3.replace("}]","");
+
+				$('#tblvacination').find('tbody').append('<tr style="cursor:pointer;"></tr>');
+				$('#tblvacination tr:last').append('<td>' + col0 +'</td>');
+				//$('#tblvacination tr:last').append('<td>' + col1 +'</td>');
+				$('#tblvacination tr:last').append('<td>' + col2 +'</td>');
+				$('#tblvacination tr:last').append('<td>' + col3 +'</td>');
+
+			}
+
+		}
+
+		
+	</script>
+{% endblock %}
+
+
+
+{% block container %}
+	<div>
+		{% if msg %}
+			<div class="divmessage"><p>{{ msg }}</p></div>
+		{% endif %}
+		{% if err %}
+			<div class="diverror"><p>{{ err }}</p></div>
+		{% endif %}
+
+		<p><b>
+		{{selected_vaccination}} Vaccination Reports
+		</b></p>
+		<div id="divvaccinations" class="form-inline" style="padding-left :5px; padding-right :5px;">
+
+
+		</div>
+
+	</div>
+{% endblock %}

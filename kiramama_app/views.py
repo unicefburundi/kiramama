@@ -12,6 +12,7 @@ from kiramama_app.serializers import NSCSerializer
 from rest_framework import viewsets
 import django_filters
 from django.views.generic import DetailView
+import unicodedata
 
 
 def default(request):
@@ -282,6 +283,25 @@ def getwanteddata(request):
 
         rows = json.dumps(rows, default=date_handler)
         return HttpResponse(rows, content_type="application/json")
+
+
+def vaccination_reports(request, vac):
+    d = {}
+    submited_vaccination_name = str(request.GET.get('vac', '')).strip()
+    submited_vaccination = VAC.objects.filter(vac_designation = submited_vaccination_name)
+    if(submited_vaccination):
+        submited_vaccination = submited_vaccination[0]
+        wanted_vaccination_reports = ReportVAC.objects.filter(vac=submited_vaccination)
+        
+        wanted_vaccination_reports = serializers.serialize('python', wanted_vaccination_reports)
+        columns = [vr['fields'] for vr in wanted_vaccination_reports]
+        wanted_vaccination_reports = json.dumps(columns, default=date_handler)
+        wanted_vaccination_reports = json.loads(wanted_vaccination_reports)
+        
+        if(wanted_vaccination_reports):
+            d['selected_vaccination'] = submited_vaccination_name
+            d['fetched_vaccination_reports'] = wanted_vaccination_reports
+    return render(request, 'vaccination_reports.html', d)
 
 
 class NSCFilter(django_filters.rest_framework.FilterSet):
