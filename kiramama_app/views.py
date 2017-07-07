@@ -297,7 +297,16 @@ def vaccination_reports(request, vac):
         columns = [vr['fields'] for vr in wanted_vaccination_reports]
         wanted_vaccination_reports = json.dumps(columns, default=date_handler)
         wanted_vaccination_reports = json.loads(wanted_vaccination_reports)
-        
+
+        for r in wanted_vaccination_reports:
+            l = Lieu.objects.filter(id = r['location'])
+            if not (l):
+                r["location name"] = ""
+            else:
+                r["location name"] = unicodedata.normalize('NFKD', l[0].location_category_designation).encode('ascii','ignore')
+                #r["location name"] = l[0].location_category_designation
+
+        print(wanted_vaccination_reports)
         if(wanted_vaccination_reports):
             d['selected_vaccination'] = submited_vaccination_name
             d['fetched_vaccination_reports'] = wanted_vaccination_reports
