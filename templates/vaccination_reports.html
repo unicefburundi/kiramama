@@ -36,7 +36,7 @@
 								'<table id="tblvacination" class="table table-striped table-bordered table-condensed">');
 								
 								$('#tblvacination').append('<thead>' +
-									'<th>{% trans "Report number" %}</th><th>{% trans "Location" %}</th><th>{% trans "Child number" %}</th>' +
+									'<th>{% trans "Report number" %}</th><th>{% trans "Place of vaccine" %}</th><th>{% trans "Child number" %}</th>' +
 								'</thead>' +
 									
 								'<tbody>' +
@@ -55,6 +55,7 @@
 				var col1 = one_report.split(",")[1].split(":")[1];
 				var col2 = one_report.split(",")[2].split(":")[1];
 				var col3 = one_report.split(",")[3].split(":")[1];
+				var col4 = one_report.split(",")[4].split(":")[1];
 				col3 = col3.replace("}]","");
 
 				$('#tblvacination').find('tbody').append('<tr style="cursor:pointer;"></tr>');
@@ -62,10 +63,17 @@
 				//$('#tblvacination tr:last').append('<td>' + col1 +'</td>');
 				$('#tblvacination tr:last').append('<td>' + col2 +'</td>');
 				//$('#tblvacination tr:last').append('<td>' + col2.replace("'","") +'</td>');
-				$('#tblvacination tr:last').append('<td>' + col3 +'</td>');
+				//$('#tblvacination tr:last').append('<td>' + col3 +'</td>');
+				$('#tblvacination tr:last').append('<a href="#" onclick = "displayMotherDetails(this.text)" <td>' + col4 +'</td>');
 
 			}
 
+		}
+
+
+		function displayMotherDetails(key=0){
+			alert(key);
+			window.open('mother_details/?child='+key,'','fullscreen=yes');
 		}
 
 		

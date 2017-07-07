@@ -306,11 +306,25 @@ def vaccination_reports(request, vac):
                 r["location name"] = unicodedata.normalize('NFKD', l[0].location_category_designation).encode('ascii','ignore')
                 #r["location name"] = l[0].location_category_designation
 
+            nsc_id = r["child"]
+            related_nsc = ReportNSC.objects.filter(id=nsc_id)
+            if not (related_nsc):
+                r["naissance_id"] = ""
+            else:
+                r["naissance_id"] = related_nsc[0].id
+
         print(wanted_vaccination_reports)
         if(wanted_vaccination_reports):
             d['selected_vaccination'] = submited_vaccination_name
             d['fetched_vaccination_reports'] = wanted_vaccination_reports
     return render(request, 'vaccination_reports.html', d)
+
+
+def mother_details (request, child):
+    submitted_child_id = str(request.GET.get('child', '')).strip()
+    print(submitted_child_id)
+    d = {}
+    return render(request, 'mother_details.html', d)
 
 
 class NSCFilter(django_filters.rest_framework.FilterSet):
