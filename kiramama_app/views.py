@@ -322,8 +322,13 @@ def vaccination_reports(request, vac):
 
 def mother_details (request, child):
     submitted_child_id = str(request.GET.get('child', '')).strip()
-    print(submitted_child_id)
+    submitted_child_id = int(submitted_child_id)
     d = {}
+    concerned_nsc = ReportNSC.objects.filter(id=submitted_child_id)
+    if len(concerned_nsc) > 0:
+        concerned_mother = concerned_nsc[0].report.mother
+        d['mother_id'] = concerned_mother.id_mother
+        d['phone_number'] = concerned_mother.phone_number
     return render(request, 'mother_details.html', d)
 
 
