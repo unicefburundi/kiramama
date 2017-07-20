@@ -46,7 +46,6 @@
 			var dict = {};
 			var fetched_vaccination_reports = "{{fetched_vaccination_reports|safe}}";
 			//var fetched_vaccination_reports = "{{fetched_vaccination_reports}}";
-			
 			fetched_vaccination_reports = fetched_vaccination_reports.split("},");
 			for(i=0; i<fetched_vaccination_reports.length; i++)
 			{	
@@ -72,7 +71,6 @@
 
 
 		function displayMotherDetails(key=0){
-			alert(key);
 			window.open('mother_details/?child='+key,'','fullscreen=yes');
 		}
 
@@ -91,11 +89,11 @@
 			<div class="diverror"><p>{{ err }}</p></div>
 		{% endif %}
 
-		<p><b>
-		{{selected_vaccination}} Vaccination Reports
-		</b></p>
+		
 		<div id="divvaccinations" class="form-inline" style="padding-left :5px; padding-right :5px;">
-
+		<p><b>
+		<center>{{selected_vaccination}} Vaccination Reports</center>
+		</b></p>
 
 		</div>
 

@@ -13,6 +13,7 @@ from rest_framework import viewsets
 import django_filters
 from django.views.generic import DetailView
 import unicodedata
+import ast
 
 
 def default(request):
@@ -313,7 +314,6 @@ def vaccination_reports(request, vac):
             else:
                 r["naissance_id"] = related_nsc[0].id
 
-        print(wanted_vaccination_reports)
         if(wanted_vaccination_reports):
             d['selected_vaccination'] = submited_vaccination_name
             d['fetched_vaccination_reports'] = wanted_vaccination_reports
@@ -330,6 +330,45 @@ def mother_details (request, child):
         d['mother_id'] = concerned_mother.id_mother
         d['phone_number'] = concerned_mother.phone_number
     return render(request, 'mother_details.html', d)
+
+
+def registered_preg_details (request, location_name):
+    #d = {}
+    location_name = str(request.GET.get('location_name', '')).strip()
+    location_level = str(request.GET.get('location_level', '')).strip()
+    start_date = str(request.GET.get('start_date', '')).strip()
+    end_date = str(request.GET.get('end_date', '')).strip()
+    start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d')
+    end_date = datetime.datetime.strptime(end_date, '%Y-%m-%d')
+    
+    if(location_level == "PROVINCE"):
+        concerned_cdss = CDS.objects.filter(district__bps__name__iexact = location_name)
+    if(location_level == "DISTRICT"):
+        concerned_cdss = CDS.objects.filter(district__name__iexact = location_name)
+    if(location_level == "CDS"):
+        concerned_cdss = CDS.objects.filter(name__iexact = location_name)
+
+
+    concerned_report_gro = ReportGRO.objects.filter(report__cds__in = concerned_cdss, report__reporting_date__range=[start_date, end_date])
+    
+    concerned_report_gro = serializers.serialize('python', concerned_report_gro)
+    columns = [g['fields'] for g in concerned_report_gro]
+    response_data = json.dumps(columns, default=date_handler)
+    rows = json.loads(response_data)
+
+    for r in rows:
+        report = Report.objects.get(id = r['report'])
+        r["sous_coline"] = report.sub_hill.name
+        r["colline"] = report.sub_hill.colline.name
+        r["commune"] = report.sub_hill.colline.commune.name
+        r["province"] = report.sub_hill.colline.commune.province.name
+        r["reporter_phone_number"] = report.chw.phone_number
+        r["risk_level_name"] = RiskLevel.objects.get(id = r['risk_level']).risk_level_meaning
+        r["lieu_de_consultation"] = Lieu.objects.get(id = r['consultation_location']).location_category_description
+
+
+    return render(request, 'registered_pregnancies_details.html', {'rows':rows})
+
 
 
 class NSCFilter(django_filters.rest_framework.FilterSet):

@@ -281,8 +281,13 @@
 										var pwexp_high_risk = parseFloat(dict[key][6]);
 										
 										$('#tblmh').find('tbody').append('<tr style="cursor:pointer;"></tr>');
+
 										$('#tblmh tr:last').append('<td>' + key +'</td>');
-										$('#tblmh tr:last').append('<td>' + number_registered +  '</td>');
+	
+
+										$('#tblmh tr:last').append('<td><a href="#" onclick = "displayRegPreDetails(this)">'+ number_registered +'</a></td>');
+
+
 										$('#tblmh tr:last').append('<td>' + number_high_risk + '</td>');
 										$('#tblmh tr:last').append('<td>' + number_expected_deri + '</td>');
 										$('#tblmh tr:last').append('<td>' + number_hred + '</td>');
@@ -334,6 +339,29 @@
 		        
 		        return false;
 		    }
+
+
+
+		    function displayRegPreDetails(key=0){
+			location_name = key.closest('tr').getElementsByTagName('td')[0].innerHTML;
+			location_level = null
+			
+			if ($('#cmbprovince').val() == ""){
+				location_level = "PROVINCE";
+			}else{
+				if ($('#cmbdistrict').val() == ""){
+					location_level = "DISTRICT";
+				}else{
+					location_level = "CDS";
+				}
+			}
+
+			start_date = $('#dstartdate').val();
+			end_date = $('#dendtdate').val();
+
+			
+			window.open('registered_preg_details/?location_name='+location_name+'&location_level='+location_level+'&start_date='+start_date+'&end_date='+end_date,'','fullscreen=yes');
+		}
 		 
 
 	</script>
