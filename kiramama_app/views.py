@@ -12,6 +12,8 @@ from kiramama_app.serializers import NSCSerializer
 from rest_framework import viewsets
 import django_filters
 from django.views.generic import DetailView
+import unicodedata
+import ast
 
 
 def default(request):
@@ -282,6 +284,91 @@ def getwanteddata(request):
 
         rows = json.dumps(rows, default=date_handler)
         return HttpResponse(rows, content_type="application/json")
+
+
+def vaccination_reports(request, vac):
+    d = {}
+    submited_vaccination_name = str(request.GET.get('vac', '')).strip()
+    submited_vaccination = VAC.objects.filter(vac_designation = submited_vaccination_name)
+    if(submited_vaccination):
+        submited_vaccination = submited_vaccination[0]
+        wanted_vaccination_reports = ReportVAC.objects.filter(vac=submited_vaccination)
+        
+        wanted_vaccination_reports = serializers.serialize('python', wanted_vaccination_reports)
+        columns = [vr['fields'] for vr in wanted_vaccination_reports]
+        wanted_vaccination_reports = json.dumps(columns, default=date_handler)
+        wanted_vaccination_reports = json.loads(wanted_vaccination_reports)
+
+        for r in wanted_vaccination_reports:
+            l = Lieu.objects.filter(id = r['location'])
+            if not (l):
+                r["location name"] = ""
+            else:
+                r["location name"] = unicodedata.normalize('NFKD', l[0].location_category_designation).encode('ascii','ignore')
+                #r["location name"] = l[0].location_category_designation
+
+            nsc_id = r["child"]
+            related_nsc = ReportNSC.objects.filter(id=nsc_id)
+            if not (related_nsc):
+                r["naissance_id"] = ""
+            else:
+                r["naissance_id"] = related_nsc[0].id
+
+        if(wanted_vaccination_reports):
+            d['selected_vaccination'] = submited_vaccination_name
+            d['fetched_vaccination_reports'] = wanted_vaccination_reports
+    return render(request, 'vaccination_reports.html', d)
+
+
+def mother_details (request, child):
+    submitted_child_id = str(request.GET.get('child', '')).strip()
+    submitted_child_id = int(submitted_child_id)
+    d = {}
+    concerned_nsc = ReportNSC.objects.filter(id=submitted_child_id)
+    if len(concerned_nsc) > 0:
+        concerned_mother = concerned_nsc[0].report.mother
+        d['mother_id'] = concerned_mother.id_mother
+        d['phone_number'] = concerned_mother.phone_number
+    return render(request, 'mother_details.html', d)
+
+
+def registered_preg_details (request, location_name):
+    #d = {}
+    location_name = str(request.GET.get('location_name', '')).strip()
+    location_level = str(request.GET.get('location_level', '')).strip()
+    start_date = str(request.GET.get('start_date', '')).strip()
+    end_date = str(request.GET.get('end_date', '')).strip()
+    start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d')
+    end_date = datetime.datetime.strptime(end_date, '%Y-%m-%d')
+    
+    if(location_level == "PROVINCE"):
+        concerned_cdss = CDS.objects.filter(district__bps__name__iexact = location_name)
+    if(location_level == "DISTRICT"):
+        concerned_cdss = CDS.objects.filter(district__name__iexact = location_name)
+    if(location_level == "CDS"):
+        concerned_cdss = CDS.objects.filter(name__iexact = location_name)
+
+
+    concerned_report_gro = ReportGRO.objects.filter(report__cds__in = concerned_cdss, report__reporting_date__range=[start_date, end_date])
+    
+    concerned_report_gro = serializers.serialize('python', concerned_report_gro)
+    columns = [g['fields'] for g in concerned_report_gro]
+    response_data = json.dumps(columns, default=date_handler)
+    rows = json.loads(response_data)
+
+    for r in rows:
+        report = Report.objects.get(id = r['report'])
+        r["sous_coline"] = report.sub_hill.name
+        r["colline"] = report.sub_hill.colline.name
+        r["commune"] = report.sub_hill.colline.commune.name
+        r["province"] = report.sub_hill.colline.commune.province.name
+        r["reporter_phone_number"] = report.chw.phone_number
+        r["risk_level_name"] = RiskLevel.objects.get(id = r['risk_level']).risk_level_meaning
+        r["lieu_de_consultation"] = Lieu.objects.get(id = r['consultation_location']).location_category_description
+
+
+    return render(request, 'registered_pregnancies_details.html', {'rows':rows})
+
 
 
 class NSCFilter(django_filters.rest_framework.FilterSet):
