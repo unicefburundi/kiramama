@@ -28,7 +28,9 @@ urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^kiramama/', include('kiramama_app.urls')),
     url(r'^structures/', include('health_administration_structure_app.urls')),
-    url(r'^home', kiramama_app.views.home, name='home'),
+    url(r'^home/vaccination_reports/(?P<vac>)$', kiramama_app.views.vaccination_reports, name='vaccination_reports'),
+    url(r'^home/vaccination_reports/mother_details/(?P<child>)', kiramama_app.views.mother_details, name='mother_details'),
+    url(r'^home/$', kiramama_app.views.home, name='home'),
     url(r'^communityhealthworker', kiramama_app.views.communityhealthworker, name='communityhealthworker'),
     url(r'^maternalhealth', kiramama_app.views.maternalhealth, name='maternalhealth'),
     url(r'^childhealth', kiramama_app.views.childhealth, name='childhealth'),
@@ -39,6 +41,8 @@ urlpatterns = [
     url(r'^getcdsdata', kiramama_app.views.getcdsdata, name='getcdsdata'),
     url(r'^getwanteddata', kiramama_app.views.getwanteddata, name='getwanteddata'),
     url(r'^$', kiramama_app.views.default, name='default'),
+    url(r'^registered_preg_details/(?P<location_name>)', kiramama_app.views.registered_preg_details, name='registered_preg_details'),
+
 ]
 #   )
 

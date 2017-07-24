@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}
+	<title> {{ pagetitle }}</title>
+{% endblock %}
+
+{% block pagename %}pagename{% endblock %}
+
+{% block head %}
+	<script language="JavaScript">
+		var messimsg;
+		var messititle;
+		var titleanimation;
+		
+		$(document).ready(function() {
+			if ((".divmessage").length) {
+				$(".divmessage").fadeIn('slow').animate({opacity: 1.0}, 1500).effect("pulsate", { times: 2 }, 800).fadeOut('slow'); 
+			}
+			
+			if ((".diverror").length) {
+				$(".diverror").fadeIn('slow').animate({opacity: 1.0}, 1500).effect("pulsate", { times: 2 }, 800); 
+			}
+		
+		displayMotherDetails();
+
+		});
+
+
+
+		function displayMotherDetails(){
+			$('#divvaccinations').append('<p><b></b></p>' +
+
+								'<div style="clear:both; height:10px;"></div>' +
+
+								'<table id="tblvacination" class="table table-striped table-bordered table-condensed">');
+			
+								$('#tblvacination').append('<thead>' +
+									'<th>{% trans "Mother id" %}</th><th>{% trans "Phone number" %}</th>' +
+								'</thead>' +
+									
+								'<tbody>' +
+									
+								'</tbody>');
+
+								mother_id = "{{mother_id|safe}}";
+								phone_number = "{{phone_number|safe}}";
+
+								$('#tblvacination').find('tbody').append('<tr style="cursor:pointer;"></tr>');
+								$('#tblvacination tr:last').append('<td>' + mother_id +'</td>');
+								$('#tblvacination tr:last').append('<td>' + phone_number +'</td>');
+
+
+		}
+	</script>
+{% endblock %}
+
+
+
+{% block container %}
+	<div>
+		{% if msg %}
+			<div class="divmessage"><p>{{ msg }}</p></div>
+		{% endif %}
+		{% if err %}
+			<div class="diverror"><p>{{ err }}</p></div>
+		{% endif %}
+
+		<p><b>
+		Mother details
+		</b></p>
+		<div id="divvaccinations" class="form-inline" style="padding-left :5px; padding-right :5px;">
+
+
+		</div>
+
+	</div>
+{% endblock %}
