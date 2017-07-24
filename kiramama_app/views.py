@@ -361,12 +361,15 @@ def registered_preg_details (request, location_name):
         r["sous_coline"] = report.sub_hill.name
         r["colline"] = report.sub_hill.colline.name
         r["commune"] = report.sub_hill.colline.commune.name
+        r["cds_name"] = report.cds.name
+        r["district"] = report.cds.district.name
         r["province"] = report.sub_hill.colline.commune.province.name
         r["reporter_phone_number"] = report.chw.phone_number
         r["risk_level_name"] = RiskLevel.objects.get(id = r['risk_level']).risk_level_meaning
         r["lieu_de_consultation"] = Lieu.objects.get(id = r['consultation_location']).location_category_description
-
-
+        r["mother_id"] = report.mother.id_mother
+        r["mother_phone_number"] = report.mother.phone_number
+        r["report_text"] = report.text
     return render(request, 'registered_pregnancies_details.html', {'rows':rows})
 
 
