@@ -50,7 +50,8 @@
 			for(i=0; i<fetched_vaccination_reports.length; i++)
 			{	
 				one_report = fetched_vaccination_reports[i];
-				var col0 = one_report.split(",")[0].split(":")[1];
+				var col0 = one_report.split(",")[5].split(":")[1];
+				col0 = col0.replace("}]","");
 				var col1 = one_report.split(",")[1].split(":")[1];
 				var col2 = one_report.split(",")[2].split(":")[1];
 				var col3 = one_report.split(",")[3].split(":")[1];
@@ -109,6 +110,8 @@
 		<p><b>
 		<center>{{selected_vaccination}} Vaccination Reports</center>
 		</b></p>
+
+		<!--{{fetched_vaccination_reports}}-->
 
 		</div>
 
