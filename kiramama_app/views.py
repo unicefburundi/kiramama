@@ -407,6 +407,35 @@ def mother_message_history(request, mother_id):
     return render(request, 'mother_message_history.html', {'rows':rows})
 
 
+def child_message_history(request, child_id):
+
+    rows = {}
+
+    child_id = int(str(request.GET.get('child_id', '')).replace("'","").strip())
+
+    the_concerned_child = ReportNSC.objects.get(id = child_id)
+
+    concerned_mother = the_concerned_child.report.mother
+    reports_about_this_mother = Report.objects.filter(mother = concerned_mother)
+
+    reports_about_this_mother = serializers.serialize('python', reports_about_this_mother)
+    columns = [g['fields'] for g in reports_about_this_mother]
+    reports_about_this_mother = json.dumps(columns, default=date_handler)
+    rows = json.loads(reports_about_this_mother)
+
+    for r in rows:
+        reporter_set = CHW.objects.filter(id = r["chw"])
+        if len(reporter_set) > 0:
+            r["reporter_phone_number"] = reporter_set[0].phone_number
+        else:
+            r["reporter_phone_number"] = ""
+
+
+    return render(request, 'child_messages_history.html', {'rows':rows})
+
+
+
+
 class NSCFilter(django_filters.rest_framework.FilterSet):
     min_birth_date = django_filters.DateFilter(name="birth_date", lookup_expr='gte')
     max_birth_date = django_filters.DateFilter(name="birth_date", lookup_expr='lte')

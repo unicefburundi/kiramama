@@ -63,7 +63,7 @@
 				$('#tblvacination tr:last').append('<td>' + col2 +'</td>');
 				//$('#tblvacination tr:last').append('<td>' + col2.replace("'","") +'</td>');
 				//$('#tblvacination tr:last').append('<td>' + col3 +'</td>');
-				$('#tblvacination tr:last').append('<a href="#" onclick = "displayMotherDetails(this.text)" <td>' + col4 +'</td>');
+				$('#tblvacination tr:last').append('<a href="#" onclick = "displayChildMessagesHistory(this.text)" <td>' + col4 +'</td>');
 
 			}
 
@@ -85,8 +85,8 @@
 		}
 
 
-		function displayMotherDetails(key=0){
-			window.open('mother_details/?child='+key,'','fullscreen=yes');
+		function displayChildMessagesHistory(key=0){
+			window.open('/child_message_history/?child_id='+key,'','fullscreen=yes');
 		}
 
 		
