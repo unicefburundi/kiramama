@@ -373,6 +373,39 @@ def registered_preg_details (request, location_name):
     return render(request, 'registered_pregnancies_details.html', {'rows':rows})
 
 
+def mother_message_history(request, mother_id):
+
+    rows = {}
+    mother_id = str(request.GET.get('mother_id', '')).replace("'","").strip()
+
+    concerned_mother = Mother.objects.filter(id_mother = mother_id)[0]
+
+    reports_about_this_mother = Report.objects.filter(mother = concerned_mother)
+
+
+    reports_about_this_mother = serializers.serialize('python', reports_about_this_mother)
+    columns = [g['fields'] for g in reports_about_this_mother]
+    reports_about_this_mother = json.dumps(columns, default=date_handler)
+    rows = json.loads(reports_about_this_mother)
+
+    for r in rows:
+        reporter_set = CHW.objects.filter(id = r["chw"])
+        if len(reporter_set) > 0:
+            r["reporter_phone_number"] = reporter_set[0].phone_number
+        else:
+            r["reporter_phone_number"] = ""
+
+        '''type_reports_list = ["CPN", "CON", "VAC"]
+
+        print(r["category"])
+
+        if(r["category"] not in type_reports_list):
+            r["report_type"] = r["category"]
+        if(r["category"] == "CPN"):
+            pass'''
+
+    return render(request, 'mother_message_history.html', {'rows':rows})
+
 
 class NSCFilter(django_filters.rest_framework.FilterSet):
     min_birth_date = django_filters.DateFilter(name="birth_date", lookup_expr='gte')

@@ -81,7 +81,7 @@
 
 
 									$('#tblregipreg').find('tbody').append('<tr style="cursor:pointer;"></tr>');
-									$('#tblregipreg tr:last').append('<td>' + col0 +'</td>');
+									$('#tblregipreg tr:last').append('<td><a href="#" onclick = "displayMotherMessageHistory(this)">' + col0 +'</a></td>');
 									$('#tblregipreg tr:last').append('<td>' + col1 +'</td>');
 									$('#tblregipreg tr:last').append('<td>' + col2 +'</td>');
 									$('#tblregipreg tr:last').append('<td>' + col3 +'</td>');
@@ -105,7 +105,10 @@
 									});
 
 
-
+		}
+		function displayMotherMessageHistory(key=0){
+			mother_id = key.closest('tr').getElementsByTagName('a')[0].innerHTML;
+			window.open('/mother_message_history/?mother_id='+mother_id,'','fullscreen=yes');
 		}
 	</script>
 {% endblock %}

@@ -41,7 +41,8 @@ urlpatterns = [
     url(r'^getcdsdata', kiramama_app.views.getcdsdata, name='getcdsdata'),
     url(r'^getwanteddata', kiramama_app.views.getwanteddata, name='getwanteddata'),
     url(r'^$', kiramama_app.views.default, name='default'),
-    url(r'^registered_preg_details/(?P<location_name>)', kiramama_app.views.registered_preg_details, name='registered_preg_details'),
+    url(r'^registered_preg_details/(?P<location_name>)$', kiramama_app.views.registered_preg_details, name='registered_preg_details'),
+    url(r'^mother_message_history/(?P<mother_id>)', kiramama_app.views.mother_message_history, name='mother_message_history'),
 
 ]
 #   )
