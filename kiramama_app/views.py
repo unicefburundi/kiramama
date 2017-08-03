@@ -392,8 +392,23 @@ def active_chw(request):
         r["cds_name"] = cds.name
         r["district_name"] = cds.district.name
 
+        r["last_seen"] = ""
+        
+        chw_pn = unicodedata.normalize('NFKD', r["phone_number"]).encode('ascii','ignore')
+        concerned_chw_set = CHW.objects.filter(phone_number = chw_pn)
+        if(len(concerned_chw_set) > 0):
+            concerned_chw = concerned_chw_set[0]
+            report_set = Report.objects.filter(chw = concerned_chw)
+            if(len(report_set) > 0):
+                last_report = Report.objects.filter(chw = concerned_chw).order_by('-id')[0]
+                last_seen = last_report.reporting_date
+                last_seen = last_seen.strftime('%Y/%m/%d')
+                r["last_seen"] = last_seen
+
     return render(request, 'active_chws.html', {'data':data})
 
+import unicodedata
+import datetime
 
 def inactive_chw(request):
     data = CHW.objects.filter(is_active = False)
@@ -414,7 +429,21 @@ def inactive_chw(request):
         r["cds_name"] = cds.name
         r["district_name"] = cds.district.name
 
-    return render(request, 'active_chws.html', {'data':data})
+
+        r["last_seen"] = ""
+        
+        chw_pn = unicodedata.normalize('NFKD', r["phone_number"]).encode('ascii','ignore')
+        concerned_chw_set = CHW.objects.filter(phone_number = chw_pn)
+        if(len(concerned_chw_set) > 0):
+            concerned_chw = concerned_chw_set[0]
+            report_set = Report.objects.filter(chw = concerned_chw)
+            if(len(report_set) > 0):
+                last_report = Report.objects.filter(chw = concerned_chw).order_by('-id')[0]
+                last_seen = last_report.reporting_date
+                last_seen = last_seen.strftime('%Y/%m/%d')
+                r["last_seen"] = last_seen
+
+    return render(request, 'inactive_chws.html', {'data':data})
 
 def mother_message_history(request, mother_id):
 

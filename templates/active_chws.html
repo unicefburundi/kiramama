@@ -22,13 +22,13 @@
 				$(".diverror").fadeIn('slow').animate({opacity: 1.0}, 1500).effect("pulsate", { times: 2 }, 800); 
 			}
 		
-		displayCHWDetails();
+		displayActiveCHWDetails();
 
 		});
 
 
 
-		function displayCHWDetails(){
+		function displayActiveCHWDetails(){
 			$('#div_active_chw').append('<p><b></b></p>' +
 
 								'<div style="clear:both; height:10px;"></div>' +
@@ -50,7 +50,7 @@
 			for(i=0; i<fetched_CHWs.length; i++)
 			{	
 				one_report = fetched_CHWs[i];
-				var col0 = one_report.split(",")[11].split(":")[1];
+				var col0 = one_report.split(",")[12].split(":")[1];
 				col0 = col0.replace("u","");
 				col0 = col0.split("'")[1];
 				
@@ -60,7 +60,7 @@
 				var col2 = one_report.split(",")[7].split(":")[1];
 				col2 = col2.replace("u","");
 				col2 = col2.split("'")[1];
-				var col3 = one_report.split(",")[10].split(":")[1];
+				var col3 = one_report.split(",")[11].split(":")[1];
 				col3 = col3.replace("u","");
 				col3 = col3.split("'")[1];
 				var col4 = one_report.split(",")[4].split(":")[1];
@@ -69,7 +69,7 @@
 				var col5 = one_report.split(",")[0].split(":")[1];
 				col5 = col5.replace("u","");
 				col5 = col5.split("'")[1];
-				var col6 = one_report.split(",")[6].split(":")[1];
+				var col6 = one_report.split(",")[10].split(":")[1];
 				col6 = col6.replace("u","");
 				col6 = col6.split("'")[1];
 
