@@ -395,6 +395,27 @@ def active_chw(request):
     return render(request, 'active_chws.html', {'data':data})
 
 
+def inactive_chw(request):
+    data = CHW.objects.filter(is_active = False)
+
+    data = serializers.serialize('python', data)
+    columns = [d['fields'] for d in data]
+    data = json.dumps(columns, default=date_handler)
+    data = json.loads(data)
+
+    for r in data:
+        sub_coline = SousColline.objects.get(id = r["sub_colline"])
+        r["sub_colline_name"] = sub_coline.name
+        r["colline_name"] = sub_coline.colline.name
+        r["commune_name"] = sub_coline.colline.commune.name
+        r["province_name"] = sub_coline.colline.commune.province.name
+
+        cds = CDS.objects.get(id = r["cds"])
+        r["cds_name"] = cds.name
+        r["district_name"] = cds.district.name
+
+    return render(request, 'active_chws.html', {'data':data})
+
 def mother_message_history(request, mother_id):
 
     rows = {}

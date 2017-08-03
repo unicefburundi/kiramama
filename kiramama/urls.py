@@ -45,6 +45,7 @@ urlpatterns = [
     url(r'^mother_message_history/(?P<mother_id>)', kiramama_app.views.mother_message_history, name='mother_message_history'),
     url(r'^child_message_history/(?P<child_id>)', kiramama_app.views.child_message_history, name='child_message_history'),
     url(r'^home/active_chw', kiramama_app.views.active_chw, name='active_chw'),
+    url(r'^home/inactive_chw', kiramama_app.views.inactive_chw, name='inactive_chw'),
 
 ]
 #   )
