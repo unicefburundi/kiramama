@@ -28,6 +28,14 @@
 		function displayVaccinationReports(key=0){
 			window.open('vaccination_reports/?vac='+key,'','fullscreen=yes');
 		}
+
+		function displayActiveCHWDetails(key=0){
+			window.open('active_chw','','fullscreen=yes');
+		}
+
+		function displayInactiveCHWDetails(key=0){
+			alert(key);
+		}
 		
 	</script>
 {% endblock %}
@@ -60,8 +68,8 @@
 				<h1><b>{% trans "Community Health Workers:" %} {{ number_of_chw }}</b></h1>
 			</div>
 			<div>
-				<h1>{% trans "Active CHWs :" %} {{ percentage_of_active_chw }} %</h1>
-				<h1>{% trans "Inactive CHWs :" %}" {{ percentage_of_not_active_chw }} %</h1>
+				<h1><a href="#" onclick = "displayActiveCHWDetails()"> {% trans "Active CHWs :" %} {{ percentage_of_active_chw }} % </a></h1>
+				<h1><a href="#" onclick = "displayInactiveCHWDetails()"> {% trans "Inactive CHWs :" %}" {{ percentage_of_not_active_chw }} % </a></h1>
 			</div>
 		</div>
 		<div class="col-md-4">
