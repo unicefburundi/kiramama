@@ -15,7 +15,6 @@ from django.views.generic import DetailView
 import unicodedata
 import ast
 
-
 def default(request):
     d = {}
     return render(request, 'default.html', d)
@@ -167,48 +166,66 @@ def getcdsindistrict(request):
 def getcdsdata(request):
     response_data = {}
     
-    try:
-        if request.method == 'POST':
-            json_data = json.loads(request.body)
-            level = json_data['level']
-            code = json_data['code']
-            start_date = json_data['start_date']
-            end_date = json_data['end_date']
-            chw_data = None
-            #chwdata = cdsdata(level, code, start_date, end_date)
+    if request.method == 'POST':
+        json_data = json.loads(request.body)
+        level = json_data['level']
+        code = json_data['code']
+        chw_data = None
 
-            if (level and code and start_date and end_date):
-                cdslist = None
-                if (level == "cds"):
-                    cdslist = CDS.objects.filter(code=code)
-
-                elif (level == "district"):
-                    districtlist = District.objects.filter(code=code)
+        if (level and code):
+            cdslist = None
+            if (level == "cds"):
+                cdslist = CDS.objects.filter(code=code)
+            elif (level == "district"):
+                districtlist = District.objects.filter(code=code)
+                if (districtlist):
+                    cdslist = CDS.objects.filter(district__in = districtlist)
+            elif (level == "province"):
+                provincelist = BPS.objects.filter(code = code)
+                if (provincelist):
+                    districtlist = District.objects.filter(bps__in = provincelist)
                     if (districtlist):
                         cdslist = CDS.objects.filter(district__in = districtlist)
-                    
-                elif (level == "province"):
-                    provincelist = BPS.objects.filter(code = code)
-                    if (provincelist):
-                        districtlist = District.objects.filter(bps__in = provincelist)
-                        if (districtlist):
-                            cdslist = CDS.objects.filter(district__in = districtlist)
-
-                if (cdslist):
-                    chw_data = CHW.objects.filter(cds__in = cdslist).filter(reg_date__range=[start_date, end_date]).order_by('reg_date')
-
-            else:
-                chw_data = CHW.objects.all()
-            
-            response_data = serializers.serialize('json', chw_data)
-            return HttpResponse(response_data, content_type="application/json")
-
+            if (cdslist):
+                chw_data = CHW.objects.filter(cds__in = cdslist).order_by('reg_date')
         else:
-            response_data = _("Method must be a POST")
-            return HttpResponse(response_data)
+            chw_data = CHW.objects.all()
+
+        chw_data = serializers.serialize('python', chw_data)
+        columns = [d['fields'] for d in chw_data]
+        data = json.dumps(columns, default=date_handler)
+        chw_data = json.loads(data)
+
+        for r in chw_data:
+            sub_coline = SousColline.objects.get(id = r["sub_colline"])
+            r["sub_colline_name"] = sub_coline.name
+            r["colline_name"] = sub_coline.colline.name
+            r["commune_name"] = sub_coline.colline.commune.name
+            r["province_name"] = sub_coline.colline.commune.province.name
+
+            cds = CDS.objects.get(id = r["cds"])
+            r["cds_name"] = cds.name
+            r["district_name"] = cds.district.name
+
+            r["last_seen"] = ""
             
-    except Exception, e:
-        response_data = _(e.message)
+            chw_pn = unicodedata.normalize('NFKD', r["phone_number"]).encode('ascii','ignore')
+            concerned_chw_set = CHW.objects.filter(phone_number = chw_pn)
+            if(len(concerned_chw_set) > 0):
+                concerned_chw = concerned_chw_set[0]
+                report_set = Report.objects.filter(chw = concerned_chw)
+                if(len(report_set) > 0):
+                    last_report = Report.objects.filter(chw = concerned_chw).order_by('-id')[0]
+                    last_seen = last_report.reporting_date
+                    last_seen = last_seen.strftime('%Y/%m/%d')
+                    r["last_seen"] = last_seen
+
+
+        response_data = json.dumps(chw_data, default=date_handler)
+
+        return HttpResponse(response_data, content_type="application/json")
+    else:
+        response_data = _("Method must be a POST")
         return HttpResponse(response_data)
 
 
@@ -407,8 +424,7 @@ def active_chw(request):
 
     return render(request, 'active_chws.html', {'data':data})
 
-import unicodedata
-import datetime
+
 
 def inactive_chw(request):
     data = CHW.objects.filter(is_active = False)

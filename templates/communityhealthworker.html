@@ -90,22 +90,12 @@
 		}
 
 		function fetchcdsdata() {
-			if (new Date($('#dstartdate').val()) > new Date($('#dendtdate').val())) {
-                messimsg = "Start date cannot e more than End date";
-                messititle = "Invalid Date Selection";
-                titleanimation = "messierror";
-                messiprompt(messimsg, messititle, titleanimation);
-                $('#overlay').remove();
-                return;
-			}
-
+			
 	    	initializesonic();
 	    	
 	    	ajaxurl = 'getcdsdata';
     		var level = null;
     		var code = null;
-    		var start_date = null;
-    		var end_date = null;
 
     		if ($('#cmbprovince').val() != "") {
     			level = "province";
@@ -120,24 +110,13 @@
     			code = $('#cmbcds').val();
     		}
 
-    		if ($('#dstartdate').val() != "") {
-    			start_date = $('#dstartdate').val();
-    		}
-
-    		if ($('#dendtdate').val() != "") {
-    			end_date = $('#dendtdate').val();
-    		}
-
 			$('#divchw').empty();
-    		//if (level && code && start_date && end_date) {
-	        data = JSON.stringify({ 'level': level, 'code': code, 'start_date': start_date, 'end_date': end_date });
+
+	        data = JSON.stringify({ 'level': level, 'code': code });
 
             ajaxpostbackfunction = "fetchcdsdata";
             ajaxpost(ajaxurl, data);
 
-	        //} else {
-	        //	$('#overlay').remove();
-	        //}
 	    }
 	    
 		function ajaxpost(posturl, data) {
@@ -178,70 +157,66 @@
 
 	                } else if (ajaxpostbackfunction == "fetchcdsdata") {
 	                	if (response.length > 0) {
-							var dict = {};
-							for (i = 0; i < response.length; i++) {
-								var d = new Date(jQuery.makeArray(response[i].fields)[0].reg_date);
-								var reg_date = d.getFullYear() + '-' + (d.getMonth()+1) + "-" + d.getDate();
-								var is_active = jQuery.makeArray(response[i].fields)[0].is_active;
-
-			            		if (dict.hasOwnProperty(reg_date)) {
-			            			dict[reg_date][0] += 1 // total
-			            			if (is_active == true) {
-			            				dict[reg_date][1] += 1 // active
-			            			}
-
-			            		} else {
-			            			if (is_active == true) {
-			            				dict[reg_date] = [1, 1];
-			            			} else {
-			            				dict[reg_date] = [1, 0];
-			            			}
-			            		}
-							}
-							
-							if (Object.keys(dict).length > 0) {
-								$('#divchw').append('<p><b>{% trans "Registered CHWs:" %}</b></p>' +
+							$('#divchw').append('<p><b></b></p>' +
 
 								'<div style="clear:both; height:10px;"></div>' +
 
-								'<table id="tblchw" class="table table-striped table-bordered table-condensed">');
+								'<table id="tblCHWs" class="table table-striped table-bordered table-condensed">');
 								
-								$('#tblchw').append('<thead>' +
-									'<th>{% trans "Date" %}</th><th>{% trans "Total CHWs" %}</th><th>{% trans "Active CHWs" %}</th><th>{% trans "Inactive CHWs" %}</th>' +
+							$('#tblCHWs').append('<thead>' +
+									'<th>{% trans "Province" %}</th><th>{% trans "District" %}</th><th>{% trans "CDS" %}</th><th>{% trans "Hill" %}</th><th>{% trans "Sub Hill" %}</th><th>{% trans "Phone CHW" %}</th><th>{% trans "Last seen date" %}</th>' +
 								'</thead>' +
 									
 								'<tbody>' +
 									
 								'</tbody>');
 
-								var keys = Object.keys(dict);
-								keys.forEach(function(key){
-								   	var totalchw = parseFloat(dict[key][0]);
-									var activechw = (parseFloat(dict[key][1])/ parseFloat(dict[key][0]))*100.0;
-									var inactivechw = 100.0 - activechw;
+							var dict = {};
+							var fetched_CHWs = "{{response_data|safe}}";
+							fetched_CHWs = fetched_CHWs.split("},");
+							for(i = 0; i < response.length; i++)
+							{	
+								one_report = fetched_CHWs[i];
+								var col0 = jQuery.makeArray(response[i].province_name);
 
-								    $('#tblchw').find('tbody').append('<tr style="cursor:pointer;"></tr>');
-										$('#tblchw tr:last').append('<td>' + key +'</td>');
-										$('#tblchw tr:last').append('<td>' + totalchw +  '</td>');
-										$('#tblchw tr:last').append('<td>' + activechw + ' %' + '</td>');
-										$('#tblchw tr:last').append('<td>' + inactivechw + ' %' + '</td>');
+								var col1 = jQuery.makeArray(response[i].district_name);
 
-								});
+								var col2 = jQuery.makeArray(response[i].cds_name);
 
-								$('#tblchw').DataTable({
-									dom:"<'row'<'col-sm-3'l><'col-sm-4'i><'col-sm-5'f>>" +
-										"<'row'<'col-sm-12'tr>>" +
-										"<'row'<'col-sm-4'B><'col-sm-8'p>>",
-									pagingType: "full_numbers",
-									lengthMenu: [
-							            [10, 25, 50, 100, -1 ],
-							            ['10', '25', '50', '100', 'All' ]
-							        ],
-							        buttons: [
-							            'copy', 'csv', 'excel', 'pdf', 'print'
-							        ]
-								});
+								var col3 = jQuery.makeArray(response[i].colline_name);
+
+								var col4 = jQuery.makeArray(response[i].sub_colline_name);
+
+								var col5 = jQuery.makeArray(response[i].phone_number);
+
+								var col6 = jQuery.makeArray(response[i].last_seen);
+
+								$('#tblCHWs').find('tbody').append('<tr style="cursor:pointer;"></tr>');
+
+								$('#tblCHWs tr:last').append('<td>' + col0 +'</td>');
+								$('#tblCHWs tr:last').append('<td>' + col1 +'</td>');
+								$('#tblCHWs tr:last').append('<td>' + col2 +'</td>');
+								$('#tblCHWs tr:last').append('<td>' + col3 +'</td>');
+								$('#tblCHWs tr:last').append('<td>' + col4 +'</td>');
+								$('#tblCHWs tr:last').append('<td>' + col5 +'</td>');
+								$('#tblCHWs tr:last').append('<td>' + col6 +'</td>');
+								
+
 							}
+
+								$('#tblCHWs').DataTable({
+															dom: "<'row'<'col-sm-3'l><'col-sm-4'i><'col-sm-5'f>>" +
+																"<'row'<'col-sm-12'tr>>" +
+																"<'row'<'col-sm-4'B><'col-sm-8'p>>",
+															pagingType: "full_numbers",
+															lengthMenu: [
+													            [10, 25, 50, 100, -1 ],
+													            ['10', '25', '50', '100', 'All' ]
+													        ],
+													        buttons: [
+													            'copy', 'csv', 'excel', 'pdf', 'print'
+													        ]
+														});
 
 						} else {
 							$('#divchw').append('<p style="color:red;">No records found</p>');
@@ -307,21 +282,6 @@
 				<select id="cmbcds" class="form-control" style="width:140px" onchange="fetchcdsdata()" required="required">
 					<option value="" selected="selected">[ {% trans "Select CDS" %} ]</option>'
 				</select>
-			</div>
-
-			<label for="dstartdate">{% trans "Start Date:" %}</label>
-			<div class="input-group date" data-provide="datepicker">
-			    <input type="text" id="dstartdate" class="form-control datepicker" readonly="readonly" style="width:130px" required="required" onchange="fetchcdsdata()">
-			    <div class="input-group-addon">
-			        <span class="glyphicon glyphicon-th"></span>
-			    </div>
-			</div>
-			<label for="dendtdate">{% trans "End Date:" %}</label>
-			<div class="input-group date" data-provide="datepicker">
-			    <input type="text" id="dendtdate" class="form-control datepicker" readonly="readonly" style="width:130px" required="required" onchange="fetchcdsdata()">
-			    <div class="input-group-addon">
-			        <span class="glyphicon glyphicon-th"></span>
-			    </div>
 			</div>
 		</div>
 
