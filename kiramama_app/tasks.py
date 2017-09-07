@@ -7,7 +7,8 @@ from django.conf import settings
 import requests
 import json
 from kiramama_app.models import *
-import datetime
+#import datetime
+from datetime import datetime, timedelta, time
 
 logger = get_task_logger(__name__)
 
@@ -25,10 +26,13 @@ def send_sms_through_rapidpro(args):
 @periodic_task(run_every=(crontab(minute='*/15')), name="tasks.send_scheduled_messages", ignore_result=True) # Name better be in the format of http://bit.ly/gLye1c
 def send_scheduled_messages():
     logger.info('***BIGIN - Here is in the task****')
+    today = datetime.today().date()
+    today_7 = datetime.today().date() - timedelta(7)
     # Let's filter all mother notifications which are ready to be sent and which are not already sent
     # ready_to_send_mother_messages = NotificationsMother.objects.filter(date_time_for_sending__lte = datetime.now(), is_sent = False)
-    ready_to_send_mother_messages = NotificationsMother.objects.filter(
-        date_time_for_sending__lte=datetime.now(pytz.utc), is_sent=False)
+    #ready_to_send_mother_messages = NotificationsMother.objects.filter(
+        #date_time_for_sending__lte=datetime.now(pytz.utc), is_sent=False)
+    ready_to_send_mother_messages = NotificationsMother.objects.filter(date_time_for_sending__gte = today_7, date_time_for_sending__lte = today, is_sent=False)
     args = {}
     if len(ready_to_send_mother_messages) > 0:
         # There is one or more messages to be sent to one or more mothers
@@ -47,10 +51,11 @@ def send_scheduled_messages():
                 send_sms_through_rapidpro(args)
                 logger.info('***Sent message trough rapidpro****')
 
-    ready_to_send_chw_messages = NotificationsCHW.objects.filter(
-        date_time_for_sending__lte=datetime.now(pytz.utc),
-        is_sent=False
-        )
+    #ready_to_send_chw_messages = NotificationsCHW.objects.filter(
+        #date_time_for_sending__lte=datetime.now(pytz.utc),
+        #is_sent=False
+        #)
+    ready_to_send_chw_messages = NotificationsCHW.objects.filter(date_time_for_sending__gte = today_7, date_time_for_sending__lte = today, is_sent=False)
     if len(ready_to_send_chw_messages) > 0:
         # There is one or more messages to be sent to one or more mothers
         for chw_message in ready_to_send_chw_messages:
@@ -110,12 +115,15 @@ def change_chw_status():
 
     if(time_unit.startswith("m") or time_unit.startswith("M")):
         #The time measuring unit used is minutes
-        limit_time = datetime.datetime.now() - datetime.timedelta(minutes = value_for_time)
+        #limit_time = datetime.datetime.now() - datetime.timedelta(minutes = value_for_time)
+        limit_time = datetime.now() - timedelta(minutes = value_for_time)
     if(time_unit.startswith("h") or time_unit.startswith("H")):
         #The time measuring unit used is hours
-        limit_time = datetime.datetime.now() - datetime.timedelta(hours = value_for_time)
+        #limit_time = datetime.datetime.now() - datetime.timedelta(hours = value_for_time)
+        limit_time = datetime.now() - timedelta(hours = value_for_time)
 
-    if not isinstance(limit_time, datetime.datetime):
+    #if not isinstance(limit_time, datetime.datetime):
+    if not isinstance(limit_time, datetime):
         info = "Something went wrong for limit time"
         return
 
@@ -140,7 +148,8 @@ def change_chw_status():
 
 
             #if(his_last_report.reporting_date < limit_time):
-            if(datetime.datetime.combine(his_last_report.reporting_date, datetime.datetime.now().time()) < limit_time):
+            #if(datetime.datetime.combine(his_last_report.reporting_date, datetime.datetime.now().time()) < limit_time):
+            if(datetime.combine(his_last_report.reporting_date, datetime.now().time()) < limit_time):
                 #This CHW spend many days without giving any report. We change his status from active to inactive
                 chw.is_active = False
                 chw.save()
