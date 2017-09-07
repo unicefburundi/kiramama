@@ -25,9 +25,8 @@ def send_sms_through_rapidpro(args):
 
 @periodic_task(run_every=(crontab(minute='*/15')), name="tasks.send_scheduled_messages", ignore_result=True) # Name better be in the format of http://bit.ly/gLye1c
 def send_scheduled_messages():
-    logger.info('***BIGIN - Here is in the task****')
     today = datetime.today().date()
-    today_7 = datetime.today().date() - timedelta(7)
+    today_7 = datetime.today().date() - timedelta(8)
     # Let's filter all mother notifications which are ready to be sent and which are not already sent
     # ready_to_send_mother_messages = NotificationsMother.objects.filter(date_time_for_sending__lte = datetime.now(), is_sent = False)
     #ready_to_send_mother_messages = NotificationsMother.objects.filter(
@@ -46,10 +45,17 @@ def send_scheduled_messages():
                 args['data'] = data
                 # Changing the message status before calling "send_sms_through_rapidpro" is helpful when the task is running quickly
                 # and run the next time before all messages are sent
+                print("==>Before sending the message :")
+                print(mother_message.message_to_send)
+                print("To :")
+                print(mother_message.mother.phone_number)
+                send_sms_through_rapidpro(args)
                 mother_message.is_sent = True
                 mother_message.save()
-                send_sms_through_rapidpro(args)
-                logger.info('***Sent message trough rapidpro****')
+                print("After sending the message :")
+                print(mother_message.message_to_send)
+                print("To :")
+                print(mother_message.mother.phone_number)
 
     #ready_to_send_chw_messages = NotificationsCHW.objects.filter(
         #date_time_for_sending__lte=datetime.now(pytz.utc),
@@ -60,19 +66,23 @@ def send_scheduled_messages():
         # There is one or more messages to be sent to one or more mothers
         for chw_message in ready_to_send_chw_messages:
             if(chw_message.chw.phone_number):
-                logger.info(chw_message.chw.phone_number)
                 the_contact_phone_number = "tel:"+chw_message.chw.phone_number
                 data = {
                     "urns": [the_contact_phone_number],
                     "text": chw_message.message_to_send
                     }
                 args['data'] = data
+                print("==> Before sending the message :")
+                print(chw_message.message_to_send)
+                print("To :")
+                print(chw_message.chw.phone_number)
+                send_sms_through_rapidpro(args)
                 chw_message.is_sent = True
                 chw_message.save()
-                send_sms_through_rapidpro(args)
-                # chw_message.is_sent = True
-                # chw_message.save()
-                logger.info('***END - Here is in the task****')
+                print("After sending the message :")
+                print(chw_message.message_to_send)
+                print("To :")
+                print(chw_message.chw.phone_number)
 
 
 

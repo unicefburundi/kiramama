@@ -483,14 +483,6 @@ def mother_message_history(request, mother_id):
         else:
             r["reporter_phone_number"] = ""
 
-        '''type_reports_list = ["CPN", "CON", "VAC"]
-
-        print(r["category"])
-
-        if(r["category"] not in type_reports_list):
-            r["report_type"] = r["category"]
-        if(r["category"] == "CPN"):
-            pass'''
 
     return render(request, 'mother_message_history.html', {'rows':rows})
 
