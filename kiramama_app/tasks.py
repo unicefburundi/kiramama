@@ -35,8 +35,8 @@ def send_scheduled_messages():
         #date_time_for_sending__lte=datetime.now(pytz.utc), is_sent=False)
     
     #The below line should be uncommented later
-    #ready_to_send_mother_messages = NotificationsMother.objects.filter(date_time_for_sending__gte = today_7, date_time_for_sending__lte = today, is_sent=False)
-    ready_to_send_mother_messages = NotificationsMother.objects.filter(date_time_for_sending__gte = today_7, date_time_for_sending__lte = today)
+    ready_to_send_mother_messages = NotificationsMother.objects.filter(date_time_for_sending__gte = today_7, date_time_for_sending__lte = today, is_sent=False)
+    #ready_to_send_mother_messages = NotificationsMother.objects.filter(date_time_for_sending__gte = today_7, date_time_for_sending__lte = today)
     args = {}
     if len(ready_to_send_mother_messages) > 0:
         # There is one or more messages to be sent to one or more mothers
@@ -67,8 +67,8 @@ def send_scheduled_messages():
         #is_sent=False
         #)
     #The below line should be uncommented later
-    #ready_to_send_chw_messages = NotificationsCHW.objects.filter(date_time_for_sending__gte = today_7, date_time_for_sending__lte = today, is_sent=False)
-    ready_to_send_chw_messages = NotificationsCHW.objects.filter(date_time_for_sending__gte = today_7, date_time_for_sending__lte = today)
+    ready_to_send_chw_messages = NotificationsCHW.objects.filter(date_time_for_sending__gte = today_7, date_time_for_sending__lte = today, is_sent=False)
+    #ready_to_send_chw_messages = NotificationsCHW.objects.filter(date_time_for_sending__gte = today_7, date_time_for_sending__lte = today)
     if len(ready_to_send_chw_messages) > 0:
         # There is one or more messages to be sent to one or more mothers
         for chw_message in ready_to_send_chw_messages:
