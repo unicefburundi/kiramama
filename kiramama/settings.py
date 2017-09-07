@@ -221,7 +221,7 @@ CELERY_TIMEZONE = 'Africa/Bujumbura'
 # CELERY_ALWAYS_EAGER = True
 CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
 
-RAPIDPRO_BROADCAST_URL = 'https://api.rapidpro.io/api/v1/broadcasts.json'
+RAPIDPRO_BROADCAST_URL = 'https://api.rapidpro.io/api/v2/broadcasts.json'
 
 LOGIN_REDIRECT_URL = 'home'
 LOGIN_URL = '/login/'
