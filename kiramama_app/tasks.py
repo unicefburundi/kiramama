@@ -18,20 +18,25 @@ def send_sms_through_rapidpro(args):
     This function sends messages through rapidpro. Contact(s) and the
     message to send to them must be in args['data']
     '''
+    print("Begin send_sms_through_rapidpro")
     token = getattr(settings, 'TOKEN', '')
     data = args['data']
     response = requests.post(settings.RAPIDPRO_BROADCAST_URL, headers={'Content-type': 'application/json', 'Authorization': 'Token %s' % token}, data=json.dumps(data))
-
+    print("response :")
+    print(response)
 
 @periodic_task(run_every=(crontab(minute='*/15')), name="tasks.send_scheduled_messages", ignore_result=True) # Name better be in the format of http://bit.ly/gLye1c
 def send_scheduled_messages():
     today = datetime.today().date()
-    today_7 = datetime.today().date() - timedelta(10)
+    today_7 = datetime.today().date() - timedelta(7)
     # Let's filter all mother notifications which are ready to be sent and which are not already sent
     # ready_to_send_mother_messages = NotificationsMother.objects.filter(date_time_for_sending__lte = datetime.now(), is_sent = False)
     #ready_to_send_mother_messages = NotificationsMother.objects.filter(
         #date_time_for_sending__lte=datetime.now(pytz.utc), is_sent=False)
-    ready_to_send_mother_messages = NotificationsMother.objects.filter(date_time_for_sending__gte = today_7, date_time_for_sending__lte = today, is_sent=False)
+    
+    #The below line should be uncommented later
+    #ready_to_send_mother_messages = NotificationsMother.objects.filter(date_time_for_sending__gte = today_7, date_time_for_sending__lte = today, is_sent=False)
+    ready_to_send_mother_messages = NotificationsMother.objects.filter(date_time_for_sending__gte = today_7, date_time_for_sending__lte = today)
     args = {}
     if len(ready_to_send_mother_messages) > 0:
         # There is one or more messages to be sent to one or more mothers
@@ -45,14 +50,14 @@ def send_scheduled_messages():
                 args['data'] = data
                 # Changing the message status before calling "send_sms_through_rapidpro" is helpful when the task is running quickly
                 # and run the next time before all messages are sent
-                print("==>Before sending the message :")
+                print("[Part 1]==>Before sending the message :")
                 print(mother_message.message_to_send)
                 print("To :")
                 print(mother_message.mother.phone_number)
                 send_sms_through_rapidpro(args)
                 mother_message.is_sent = True
                 mother_message.save()
-                print("After sending the message :")
+                print("[Part 1]After sending the message :")
                 print(mother_message.message_to_send)
                 print("To :")
                 print(mother_message.mother.phone_number)
@@ -61,7 +66,9 @@ def send_scheduled_messages():
         #date_time_for_sending__lte=datetime.now(pytz.utc),
         #is_sent=False
         #)
-    ready_to_send_chw_messages = NotificationsCHW.objects.filter(date_time_for_sending__gte = today_7, date_time_for_sending__lte = today, is_sent=False)
+    #The below line should be uncommented later
+    #ready_to_send_chw_messages = NotificationsCHW.objects.filter(date_time_for_sending__gte = today_7, date_time_for_sending__lte = today, is_sent=False)
+    ready_to_send_chw_messages = NotificationsCHW.objects.filter(date_time_for_sending__gte = today_7, date_time_for_sending__lte = today)
     if len(ready_to_send_chw_messages) > 0:
         # There is one or more messages to be sent to one or more mothers
         for chw_message in ready_to_send_chw_messages:
@@ -72,14 +79,14 @@ def send_scheduled_messages():
                     "text": chw_message.message_to_send
                     }
                 args['data'] = data
-                print("==> Before sending the message :")
+                print("[Part 2]==> Before sending the message to :")
                 print(chw_message.message_to_send)
                 print("To :")
                 print(chw_message.chw.phone_number)
                 send_sms_through_rapidpro(args)
                 chw_message.is_sent = True
                 chw_message.save()
-                print("After sending the message :")
+                print("[Part 2] After sending the message :")
                 print(chw_message.message_to_send)
                 print("To :")
                 print(chw_message.chw.phone_number)
