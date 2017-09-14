@@ -18,12 +18,14 @@ def send_sms_through_rapidpro(args):
     This function sends messages through rapidpro. Contact(s) and the
     message to send to them must be in args['data']
     '''
-    print("Begin send_sms_through_rapidpro")
+    print("--Begin send_sms_through_rapidpro")
     token = getattr(settings, 'TOKEN', '')
     data = args['data']
+    print(data)
     response = requests.post(settings.RAPIDPRO_BROADCAST_URL, headers={'Content-type': 'application/json', 'Authorization': 'Token %s' % token}, data=json.dumps(data))
     print("response :")
     print(response)
+    print("--Finish send_sms_through_rapidpro")
 
 @periodic_task(run_every=(crontab(minute='*/15')), name="tasks.send_scheduled_messages", ignore_result=True) # Name better be in the format of http://bit.ly/gLye1c
 def send_scheduled_messages():
@@ -174,12 +176,12 @@ def change_chw_status():
 
 
 
-@periodic_task(run_every=(crontab(minute=0, hour='6')), name="tasks.change_chw_status", ignore_result=True) 
+@periodic_task(run_every=(crontab(minute=0, hour='11')), name="tasks.change_chw_status", ignore_result=True) 
 def inform_supersors_on_inactive_chw():
     '''
     This task inform the concerned supervisor if there is a community health work who is not active
     '''
-
+    print("-Begin inform_supersors_on_inactive_chw")
     #Let's update CHW status
     change_chw_status()
 
@@ -198,3 +200,4 @@ def inform_supersors_on_inactive_chw():
         }
         args['data'] = data
         send_sms_through_rapidpro(args)
+    print("-Finish inform_supersors_on_inactive_chw")
