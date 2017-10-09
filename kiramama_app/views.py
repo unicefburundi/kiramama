@@ -109,7 +109,7 @@ def home(request):
         
     # Statistics about VAC
     new_object = {}
-    all_vac = VAC.objects.all()
+    all_vac = VAC.objects.all().order_by("vac_designation")
     if(all_vac):
         for v in all_vac:
             vac = ReportVAC.objects.filter(vac=v)
@@ -117,7 +117,11 @@ def home(request):
                 number_of_such_reports = vac.count()
                 vac_designation = v.vac_designation
                 new_object[vac_designation] = number_of_such_reports
-            
+
+
+    new_object = sorted(new_object.iteritems())
+
+
     d['vac_list'] = new_object
     return render(request, 'home.html', d)
 

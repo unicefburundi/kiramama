@@ -91,7 +91,7 @@
 				<h1><b>{% trans "Vaccinations:" %}</b></h1>
 			</div>
 			<div>
-				{% for mykey, myvalue in vac_list.items %}
+				{% for mykey, myvalue in vac_list %}
 				   <h1> <a href="#" onclick = "displayVaccinationReports(this.text.split(':')[0])"> {{ mykey }} : {{ myvalue }} </a> </h1>
 				{% endfor %}
 			</div>
