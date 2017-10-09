@@ -43,11 +43,11 @@ def home(request):
     d['percentage_of_not_active_chw'] = 0.0
 
     d['total_delivery'] = 0.0
-    d['percentage_delivery_at_home'] = 0.0
-    d['percentage_delivery_on_road'] = 0.0
-    d['percentage_delivery_at_HF'] = 0.0
-    d['percentage_delivery_at_hospital'] = 0.0
-    d['percentage_delivery_at_CDS'] = 0.0
+    d['percentage_delivery_at_home'] = 0
+    d['percentage_delivery_on_road'] = 0
+    d['percentage_delivery_at_HF'] = 0
+    d['percentage_delivery_at_hospital'] = 0
+    d['percentage_delivery_at_CDS'] = 0
 
     d['vac_list'] = []
 
@@ -94,13 +94,17 @@ def home(request):
     if(ReportNSC.objects.all()):
         d['total_delivery'] = ReportNSC.objects.count()
         if(ReportNSC.objects.filter(birth_location__location_category_designation__iexact='HP')):
-            d['percentage_delivery_at_hospital'] = ReportNSC.objects.filter(birth_location__location_category_designation__iexact='HP').count() / float(d['total_delivery']) * 100
+            #d['percentage_delivery_at_hospital'] = ReportNSC.objects.filter(birth_location__location_category_designation__iexact='HP').count() / float(d['total_delivery']) * 100
+            d['percentage_delivery_at_hospital'] = ReportNSC.objects.filter(birth_location__location_category_designation__iexact='HP').count()
         if(ReportNSC.objects.filter(birth_location__location_category_designation__iexact='ME')):
-            d['percentage_delivery_at_home'] = ReportNSC.objects.filter(birth_location__location_category_designation__iexact='ME').count() / float(d['total_delivery']) * 100
+            #d['percentage_delivery_at_home'] = ReportNSC.objects.filter(birth_location__location_category_designation__iexact='ME').count() / float(d['total_delivery']) * 100
+            d['percentage_delivery_at_home'] = ReportNSC.objects.filter(birth_location__location_category_designation__iexact='ME').count()
         if(ReportNSC.objects.filter(birth_location__location_category_designation__iexact='RT')):
-            d['percentage_delivery_on_road'] = ReportNSC.objects.filter(birth_location__location_category_designation__iexact='RT').count() / float(d['total_delivery']) * 100
+            #d['percentage_delivery_on_road'] = ReportNSC.objects.filter(birth_location__location_category_designation__iexact='RT').count() / float(d['total_delivery']) * 100
+            d['percentage_delivery_on_road'] = ReportNSC.objects.filter(birth_location__location_category_designation__iexact='RT').count()
         if(ReportNSC.objects.filter(birth_location__location_category_designation__iexact='CS')):
-            d['percentage_delivery_at_CDS'] = ReportNSC.objects.filter(birth_location__location_category_designation__iexact='CS').count() / float(d['total_delivery']) * 100
+            #d['percentage_delivery_at_CDS'] = ReportNSC.objects.filter(birth_location__location_category_designation__iexact='CS').count() / float(d['total_delivery']) * 100
+            d['percentage_delivery_at_CDS'] = ReportNSC.objects.filter(birth_location__location_category_designation__iexact='CS').count()
         d['percentage_delivery_at_HF'] = d['percentage_delivery_at_CDS'] + d['percentage_delivery_at_hospital']
         
     # Statistics about VAC
