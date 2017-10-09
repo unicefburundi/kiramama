@@ -52,7 +52,8 @@
 	</div>
 	
 	<div class="row">
-		<div class="col-md-4">
+
+		<div class="col-md-6 rounded">
 			<div>
 				<h1><b>{% trans "Registered Mothers" %}: {{ registeredmothers }}</b></h1>
 			</div>
@@ -63,7 +64,8 @@
 				<h1>CPN 4 : {{ cpn4 }} </h1>
 			</div>
 		</div>
-		<div class="col-md-4">
+
+		<div class="col-md-6 rounded">
 			<div>
 				<h1><b>{% trans "Community Health Workers:" %} {{ number_of_chw }}</b></h1>
 			</div>
@@ -72,21 +74,25 @@
 				<h1><a href="#" onclick = "displayInactiveCHWDetails()"> {% trans "Inactive CHWs :" %}	 {{ percentage_of_not_active_chw }} % </a></h1>
 			</div>
 		</div>
-		<div class="col-md-4">
+
+	</div>
+	
+	<hr>
+	
+	<div class="row">
+
+		<div class="col-md-6 rounded">
 			<div>
 				<h1><b>{% trans "Total Delivery :" %} {{ total_delivery }}</b></h1>
 			</div>
 			<div>
 				<h1>{% trans "Delivery at home :" %} {{ percentage_delivery_at_home }}</h1>
 				<h1>{% trans "Delivery on Road :" %} {{ percentage_delivery_on_road }}</h1>
-				<h1>{% trans "Delivery on health facility :" %} {{ percentage_delivery_at_HF }}</h1>
+				<h1>{% trans "Delivery at health facility :" %} {{ percentage_delivery_at_HF }}</h1>
 			</div>
 		</div>
-	</div>
-	
-	<hr style="margin-top:10px; margin-bottom:10px">
-	<div class="row">
-		<div class="col-md-12">
+
+		<div class="col-md-6 rounded">
 			<div>
 				<h1><b>{% trans "Vaccinations:" %}</b></h1>
 			</div>
