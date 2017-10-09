@@ -24,13 +24,14 @@ def default(request):
 def home(request):
     d = {}
     d["pagetitle"] = "Home"
-    d['registeredmothers'] = Mother.objects.count()
+    #d['registeredmothers'] = Mother.objects.count()
+    d['registeredmothers'] = ReportGRO.objects.all().count()
     cpntotal = ReportCPN.objects.count()
 
-    d['cpn1'] = 0.0
-    d['cpn2'] = 0.0
-    d['cpn3'] = 0.0
-    d['cpn4'] = 0.0
+    d['cpn1'] = 0
+    d['cpn2'] = 0
+    d['cpn3'] = 0
+    d['cpn4'] = 0
 
     cpn1 = None
     cpn2 = None
@@ -59,17 +60,25 @@ def home(request):
     if(CPN.objects.filter(cpn_designation="CPN4")):
         cpn4 = CPN.objects.get(cpn_designation="CPN4")
 
-    if (cpn1):
-        d['cpn1'] = float(ReportCPN.objects.filter(concerned_cpn=cpn1).count())/ float(cpntotal) * 100.0
+    #if (cpn1):
+        #d['cpn1'] = float(ReportCPN.objects.filter(concerned_cpn=cpn1).count())/ float(cpntotal) * 100.0
+    d['cpn1'] = ReportGRO.objects.all().count()
+
 
     if (cpn2):
-        d['cpn2'] = float(ReportCPN.objects.filter(concerned_cpn=cpn2).count())/ float(cpntotal) * 100.0
+        #d['cpn2'] = float(ReportCPN.objects.filter(concerned_cpn=cpn2).count())/ float(cpntotal) * 100.0
+        d['cpn2'] = ReportCPN.objects.filter(concerned_cpn=cpn2).count()
+
 
     if (cpn3):
-        d['cpn3'] = float(ReportCPN.objects.filter(concerned_cpn=cpn3).count())/ float(cpntotal) * 100.0
+        #d['cpn3'] = float(ReportCPN.objects.filter(concerned_cpn=cpn3).count())/ float(cpntotal) * 100.0
+        d['cpn3'] = ReportCPN.objects.filter(concerned_cpn=cpn3).count()
+
 
     if (cpn4):
-        d['cpn4'] = float(ReportCPN.objects.filter(concerned_cpn=cpn4).count())/ float(cpntotal) * 100.0
+        #d['cpn4'] = float(ReportCPN.objects.filter(concerned_cpn=cpn4).count())/ float(cpntotal) * 100.0
+        d['cpn4'] = ReportCPN.objects.filter(concerned_cpn=cpn4).count()
+
 
     # What is the percentage of active and inactive CHWs
     if(CHW.objects.all()):
