@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+#  -*- coding: utf-8 -*-
 from celery.task.schedules import crontab
 from celery.decorators import periodic_task
 from celery.utils.log import get_task_logger
@@ -7,7 +7,7 @@ from django.conf import settings
 import requests
 import json
 from kiramama_app.models import *
-#import datetime
+# import datetime
 from datetime import datetime, timedelta, time
 
 logger = get_task_logger(__name__)
@@ -27,21 +27,21 @@ def send_sms_through_rapidpro(args):
     print(response)
     print("--Finish send_sms_through_rapidpro")
 
-@periodic_task(run_every=(crontab(minute='*/15')), name="tasks.send_scheduled_messages", ignore_result=True) # Name better be in the format of http://bit.ly/gLye1c
+@periodic_task(run_every=(crontab(minute='*/15')), name="send_scheduled_messages", ignore_result=True) #  Name better be in the format of http://bit.ly/gLye1c
 def send_scheduled_messages():
     today = datetime.today().date()
     today_7 = datetime.today().date() - timedelta(7)
-    # Let's filter all mother notifications which are ready to be sent and which are not already sent
-    # ready_to_send_mother_messages = NotificationsMother.objects.filter(date_time_for_sending__lte = datetime.now(), is_sent = False)
-    #ready_to_send_mother_messages = NotificationsMother.objects.filter(
-        #date_time_for_sending__lte=datetime.now(pytz.utc), is_sent=False)
+    #  Let's filter all mother notifications which are ready to be sent and which are not already sent
+    #  ready_to_send_mother_messages = NotificationsMother.objects.filter(date_time_for_sending__lte = datetime.now(), is_sent = False)
+    # ready_to_send_mother_messages = NotificationsMother.objects.filter(
+        # date_time_for_sending__lte=datetime.now(pytz.utc), is_sent=False)
     
-    #The below line should be uncommented later
+    # The below line should be uncommented later
     ready_to_send_mother_messages = NotificationsMother.objects.filter(date_time_for_sending__gte = today_7, date_time_for_sending__lte = today, is_sent=False)
-    #ready_to_send_mother_messages = NotificationsMother.objects.filter(date_time_for_sending__gte = today_7, date_time_for_sending__lte = today)
+    # ready_to_send_mother_messages = NotificationsMother.objects.filter(date_time_for_sending__gte = today_7, date_time_for_sending__lte = today)
     args = {}
     if len(ready_to_send_mother_messages) > 0:
-        # There is one or more messages to be sent to one or more mothers
+        #  There is one or more messages to be sent to one or more mothers
         for mother_message in ready_to_send_mother_messages:
             if(mother_message.mother.phone_number):
                 the_contact_phone_number = "tel:"+mother_message.mother.phone_number
@@ -50,8 +50,8 @@ def send_scheduled_messages():
                     "text": mother_message.message_to_send
                     }
                 args['data'] = data
-                # Changing the message status before calling "send_sms_through_rapidpro" is helpful when the task is running quickly
-                # and run the next time before all messages are sent
+                #  Changing the message status before calling "send_sms_through_rapidpro" is helpful when the task is running quickly
+                #  and run the next time before all messages are sent
                 print("[Part 1]==>Before sending the message :")
                 print(mother_message.message_to_send)
                 print("To :")
@@ -64,15 +64,15 @@ def send_scheduled_messages():
                 print("To :")
                 print(mother_message.mother.phone_number)
 
-    #ready_to_send_chw_messages = NotificationsCHW.objects.filter(
-        #date_time_for_sending__lte=datetime.now(pytz.utc),
-        #is_sent=False
-        #)
-    #The below line should be uncommented later
+    # ready_to_send_chw_messages = NotificationsCHW.objects.filter(
+        # date_time_for_sending__lte=datetime.now(pytz.utc),
+        # is_sent=False
+        # )
+    # The below line should be uncommented later
     ready_to_send_chw_messages = NotificationsCHW.objects.filter(date_time_for_sending__gte = today_7, date_time_for_sending__lte = today, is_sent=False)
-    #ready_to_send_chw_messages = NotificationsCHW.objects.filter(date_time_for_sending__gte = today_7, date_time_for_sending__lte = today)
+    # ready_to_send_chw_messages = NotificationsCHW.objects.filter(date_time_for_sending__gte = today_7, date_time_for_sending__lte = today)
     if len(ready_to_send_chw_messages) > 0:
-        # There is one or more messages to be sent to one or more mothers
+        #  There is one or more messages to be sent to one or more mothers
         for chw_message in ready_to_send_chw_messages:
             if(chw_message.chw.phone_number):
                 the_contact_phone_number = "tel:"+chw_message.chw.phone_number
@@ -92,11 +92,6 @@ def send_scheduled_messages():
                 print(chw_message.message_to_send)
                 print("To :")
                 print(chw_message.chw.phone_number)
-
-
-
-
-
 
 
 def change_chw_status():
@@ -120,7 +115,7 @@ def change_chw_status():
 
     value_for_time = one_setting_to_use.setting_value
 
-    #Let's convert value_for_time to a number
+    # Let's convert value_for_time to a number
     try:
         value_for_time = int(value_for_time)
     except:
@@ -133,20 +128,20 @@ def change_chw_status():
 
 
     if(time_unit.startswith("m") or time_unit.startswith("M")):
-        #The time measuring unit used is minutes
-        #limit_time = datetime.datetime.now() - datetime.timedelta(minutes = value_for_time)
+        # The time measuring unit used is minutes
+        # limit_time = datetime.datetime.now() - datetime.timedelta(minutes = value_for_time)
         limit_time = datetime.now() - timedelta(minutes = value_for_time)
     if(time_unit.startswith("h") or time_unit.startswith("H")):
-        #The time measuring unit used is hours
-        #limit_time = datetime.datetime.now() - datetime.timedelta(hours = value_for_time)
+        # The time measuring unit used is hours
+        # limit_time = datetime.datetime.now() - datetime.timedelta(hours = value_for_time)
         limit_time = datetime.now() - timedelta(hours = value_for_time)
 
-    #if not isinstance(limit_time, datetime.datetime):
+    # if not isinstance(limit_time, datetime.datetime):
     if not isinstance(limit_time, datetime):
         info = "Something went wrong for limit time"
         return
 
-    #Let's look for all CHW who didn't send any report for the time specified in settings
+    # Let's look for all CHW who didn't send any report for the time specified in settings
     all_chws = CHW.objects.all()
 
     if len(all_chws) < 1:
@@ -157,19 +152,19 @@ def change_chw_status():
         reports_given_by_the_current_chw = Report.objects.filter(chw = chw)
         
         if len(reports_given_by_the_current_chw) < 1:
-            #This community health work doesn't give any report
-            #We change his status if there is many days (based on limit_time variable) after his/her registration
-            #We will put here the code for changing his status if it is not already changed 
+            # This community health work doesn't give any report
+            # We change his status if there is many days (based on limit_time variable) after his/her registration
+            # We will put here the code for changing his status if it is not already changed 
             pass
         else:
-            #Let's check if this CHW doesn't spend many days (based on limit_time variable) without sending any report
+            # Let's check if this CHW doesn't spend many days (based on limit_time variable) without sending any report
             his_last_report = reports_given_by_the_current_chw.order_by('-id')[0]
 
 
-            #if(his_last_report.reporting_date < limit_time):
-            #if(datetime.datetime.combine(his_last_report.reporting_date, datetime.datetime.now().time()) < limit_time):
+            # if(his_last_report.reporting_date < limit_time):
+            # if(datetime.datetime.combine(his_last_report.reporting_date, datetime.datetime.now().time()) < limit_time):
             if(datetime.combine(his_last_report.reporting_date, datetime.now().time()) < limit_time):
-                #This CHW spend many days without giving any report. We change his status from active to inactive
+                # This CHW spend many days without giving any report. We change his status from active to inactive
                 chw.is_active = False
                 chw.save()
 
@@ -182,7 +177,7 @@ def inform_supersors_on_inactive_chw():
     This task inform the concerned supervisor if there is a community health work who is not active
     '''
     print("-Begin inform_supersors_on_inactive_chw")
-    #Let's update CHW status
+    # Let's update CHW status
     change_chw_status()
 
     all_none_active_chws = CHW.objects.filter(is_active = False)
