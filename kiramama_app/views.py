@@ -86,9 +86,11 @@ def home(request):
 
         if(CHW.objects.filter(is_active=True)):
             d['percentage_of_active_chw'] = CHW.objects.filter(is_active=True).count() / float(d['number_of_chw']) * 100
-
+            d['percentage_of_active_chw'] = "%.2f" % d['percentage_of_active_chw']
+        
         if(CHW.objects.filter(is_active=False)):
             d['percentage_of_not_active_chw'] = CHW.objects.filter(is_active=False).count() / float(d['number_of_chw']) * 100
+            d['percentage_of_not_active_chw'] = "%.2f" % d['percentage_of_not_active_chw']
 
     # Statistics about delivery
     if(ReportNSC.objects.all()):
