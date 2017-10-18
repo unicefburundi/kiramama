@@ -167,6 +167,9 @@ def change_chw_status():
                 # This CHW spend many days without giving any report. We change his status from active to inactive
                 chw.is_active = False
                 chw.save()
+            else:
+                chw.is_active = True
+                chw.save()
 
 
 
