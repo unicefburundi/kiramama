@@ -27,7 +27,9 @@ def send_sms_through_rapidpro(args):
     print(response)
     print("--Finish send_sms_through_rapidpro")
 
-@periodic_task(run_every=(crontab(minute='*/15')), name="send_scheduled_messages", ignore_result=True) #  Name better be in the format of http://bit.ly/gLye1c
+#@periodic_task(run_every=(crontab(minute=30, hour='11')), name="tasks.change_chw_status", ignore_result=True) 
+#@periodic_task(run_every=(crontab(minute='*/15')), name="send_scheduled_messages", ignore_result=True) #  Name better be in the format of http://bit.ly/gLye1c
+@periodic_task(run_every=(crontab(minute=30, hour='11')), name="send_scheduled_messages", ignore_result=True)
 def send_scheduled_messages():
     today = datetime.today().date()
     today_7 = datetime.today().date() - timedelta(7)
