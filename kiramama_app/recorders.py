@@ -1103,43 +1103,28 @@ def record_pregnant_case(args):
 
             created_reminder = NotificationsMother.objects.create(mother = the_created_mother_record, notification = notification_for_mother, date_time_for_sending = time_for_reminder, message_to_send = remind_message_to_send_to_mother)
 
-            print("************")
-            print("expected_delivery_date_time:")
-            print(expected_delivery_date_time)
-            print("number_for_time")
-            print(number_for_time)
-            print("time_measure_unit")
-            print(time_measure_unit)
-            print("datetime.timedelta(hours = number_for_time)")
-            print(datetime.timedelta(hours = number_for_time))
-            print("time_for_reminder:")
-            print(time_for_reminder)
-            print("remind_message_to_send_to_mother:")
-            print(remind_message_to_send_to_mother)
-            print("next_appointment_date_time:")
-            print(next_appointment_date_time)
-            print("------------")
 
     notifications_for_chw = NotificationsForCHW.objects.filter(notification_type = the_acc_notification_type)
     if len(notifications_for_chw) > 0:
-        notification_for_chw = notifications_for_chw[0]
+        #notification_for_chw = notifications_for_chw[0]
+        for notification_for_chw in notifications_for_chw:
+            time_measure_unit = notification_for_chw.time_measuring_unit
+            number_for_time = notification_for_chw.time_number
+            if(time_measure_unit.code.startswith("m") or time_measure_unit.code.startswith("M")):
+                time_for_reminder = expected_delivery_date_time - datetime.timedelta(minutes = number_for_time)
+            if(time_measure_unit.code.startswith("h") or time_measure_unit.code.startswith("H")):
+                time_for_reminder = expected_delivery_date_time - datetime.timedelta(hours = number_for_time)
 
-        time_measure_unit = notification_for_chw.time_measuring_unit
-        number_for_time = notification_for_chw.time_number
-        if(time_measure_unit.code.startswith("m") or time_measure_unit.code.startswith("M")):
-            time_for_reminder = expected_delivery_date_time - datetime.timedelta(minutes = number_for_time)
-        if(time_measure_unit.code.startswith("h") or time_measure_unit.code.startswith("H")):
-            time_for_reminder = expected_delivery_date_time - datetime.timedelta(hours = number_for_time)
 
+            remind_message_to_send_to_chw = notification_for_chw.message_to_send
 
-        remind_message_to_send_to_chw = notification_for_chw.message_to_send
+            if notification_for_chw.word_to_replace_by_the_mother_id_in_the_message_to_send:
+                remind_message_to_send_to_chw = remind_message_to_send_to_chw.replace(notification_for_chw.word_to_replace_by_the_mother_id_in_the_message_to_send, the_created_mother_record.id_mother)
 
-        if notification_for_chw.word_to_replace_by_the_mother_id_in_the_message_to_send:
-            remind_message_to_send_to_chw = remind_message_to_send_to_chw.replace(notification_for_chw.word_to_replace_by_the_mother_id_in_the_message_to_send, the_created_mother_record.id_mother)
+            if notification_for_chw.word_to_replace_by_the_date_in_the_message_to_send:
+                remind_message_to_send_to_chw = remind_message_to_send_to_chw.replace(notification_for_chw.word_to_replace_by_the_date_in_the_message_to_send, expected_delivery_date_time.date().isoformat())        
+            created_reminder = NotificationsCHW.objects.create(chw = args['the_sender'], notification = notification_for_chw, date_time_for_sending = time_for_reminder, message_to_send = remind_message_to_send_to_chw)
 
-        if notification_for_chw.word_to_replace_by_the_date_in_the_message_to_send:
-            remind_message_to_send_to_chw = remind_message_to_send_to_chw.replace(notification_for_chw.word_to_replace_by_the_date_in_the_message_to_send, next_appointment_date_time.date().isoformat())        
-        created_reminder = NotificationsCHW.objects.create(chw = args['the_sender'], notification = notification_for_chw, date_time_for_sending = time_for_reminder, message_to_send = remind_message_to_send_to_chw)
 
     args['valide'] = True
     # args['info_to_contact'] = "La femme enceinte est bien enregistree. Son numero est "+mother_id
