@@ -201,3 +201,4 @@ def inform_supersors_on_inactive_chw():
         args['data'] = data
         send_sms_through_rapidpro(args)
     print("-Finish inform_supersors_on_inactive_chw")
+
