@@ -32,7 +32,7 @@ def send_sms_through_rapidpro(args):
 @periodic_task(run_every=(crontab(minute=30, hour='11')), name="send_scheduled_messages", ignore_result=True)
 def send_scheduled_messages():
     today = datetime.today().date()
-    today_7 = datetime.today().date() - timedelta(7)
+    today_7 = datetime.today().date() - timedelta(2)
     #  Let's filter all mother notifications which are ready to be sent and which are not already sent
     #  ready_to_send_mother_messages = NotificationsMother.objects.filter(date_time_for_sending__lte = datetime.now(), is_sent = False)
     # ready_to_send_mother_messages = NotificationsMother.objects.filter(
@@ -176,7 +176,7 @@ def change_chw_status():
 
 
 
-@periodic_task(run_every=(crontab(minute=30, hour='11')), name="tasks.change_chw_status", ignore_result=True) 
+@periodic_task(run_every=(crontab(minute=30, hour='10')), name="tasks.change_chw_status", ignore_result=True) 
 def inform_supersors_on_inactive_chw():
     '''
     This task inform the concerned supervisor if there is a community health work who is not active
