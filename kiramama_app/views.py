@@ -14,6 +14,13 @@ import django_filters
 from django.views.generic import DetailView
 import unicodedata
 import ast
+from django.db.models import F, Count, Value, Sum, When, Case
+
+
+from django.http import JsonResponse
+
+from django.utils.safestring import mark_safe
+
 
 def default(request):
     d = {}
@@ -286,40 +293,58 @@ def getwanteddata(request):
             elif (level == "national"):
                 cdslist = CDS.objects.all()
 
+
             if (cdslist):
+
                 start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d')
                 new_start_date = start_date - datetime.timedelta(days=300)
                 #Let fix start date to 10 months before the selected start date
                 #grodata = ReportGRO.objects.filter(report__cds__in = cdslist).filter(report__reporting_date__range=[start_date, end_date])
-                grodata = ReportGRO.objects.filter(report__cds__in = cdslist).filter(report__reporting_date__range=[new_start_date, end_date])
+                #grodata = ReportGRO.objects.filter(report__cds__in = cdslist).filter(report__reporting_date__range=[new_start_date, end_date])
 
-        gro_data_seri = serializers.serialize('python', grodata)
-        columns = [g['fields'] for g in gro_data_seri]
-        response_data = json.dumps(columns, default=date_handler)
-        rows = json.loads(response_data)
+                #grodata = ReportGRO.objects.filter(report__cds__in = cdslist).filter(report__reporting_date__range=[new_start_date, end_date]).annotate(cds_id_0 = F('report__cds__id')).annotate(cds_name_0 = F('report__cds__name')).annotate(district_id_0 = F('report__cds__district__id')).annotate(district_name_0 = F('report__cds__district__name')).annotate(bps_id_0 = F('report__cds__district__bps__id')).annotate(bps_name_0 = F('report__cds__district__bps__name')).annotate(reporting_date_0 = F('report__reporting_date')).annotate(derivered = Case(When(F('report__mother__reportnsc_set'), then = "True"), When(F('report__mother__reportnsc_set'), then = "False")))
+                grodata = ReportGRO.objects.filter(report__cds__in = cdslist).filter(report__reporting_date__range=[new_start_date, end_date]).annotate(cds_id = F('report__cds__id')).annotate(cds_name = F('report__cds__name')).annotate(district_id = F('report__cds__district__id')).annotate(district_name = F('report__cds__district__name')).annotate(bps_id = F('report__cds__district__bps__id')).annotate(bps_name = F('report__cds__district__bps__name')).annotate(reporting_date = F('report__reporting_date'))
+                rows = grodata.values()
+                rows = json.dumps(list(rows), default=date_handler)
+                rows = json.loads(rows)
+                rows = json.dumps(rows, default=date_handler)
 
-        for r in rows:
-            report = Report.objects.get(id = r['report'])
-            r["cds_id"] = report.cds.id
-            r["cds_name"] = report.cds.name
-            r["district_id"] = report.cds.district.id
-            r["district_name"] = report.cds.district.name
-            r["bps_id"] = report.cds.district.bps.id
-            r["bps_name"] = report.cds.district.bps.name
-            r["reporting_date"] = report.reporting_date
+        #columns = [g['fields'] for g in gro_data_seri]
 
-            concerned_mother = report.mother
+        #response_data = json.dumps(columns, default=date_handler)
+        #print response_data
 
-            if not (ReportNSC.objects.filter(report__mother = concerned_mother)):
-                #This mother not yet reported as derivered
-                r["derivered"] = False
-                r["birth_date"] = ""
-            else:
-                r["derivered"] = True
-                r["birth_date"] = ReportNSC.objects.filter(report__mother = concerned_mother)[0].birth_date
+        #rows = json.dumps(rows, default=date_handler)
 
-        rows = json.dumps(rows, default=date_handler)
+        #rows = json.loads(rows)
+
+
+        #for r in rows:
+            #print r
+            #report = Report.objects.get(id = r['report'])
+            #r["cds_id"] = report.cds.id
+            #r["cds_name"] = report.cds.name
+            #r["district_id"] = report.cds.district.id
+            #r["district_name"] = report.cds.district.name
+            #r["bps_id"] = report.cds.district.bps.id
+            #r["bps_name"] = report.cds.district.bps.name
+            #r["reporting_date"] = report.reporting_date
+
+            #concerned_mother = report.mother
+        '''
+        if not (ReportNSC.objects.filter(report__mother = concerned_mother)):
+            #This mother not yet reported as derivered
+            r["derivered"] = False
+            r["birth_date"] = ""
+        else:
+            r["derivered"] = True
+            r["birth_date"] = ReportNSC.objects.filter(report__mother = concerned_mother)[0].birth_date
+            '''
+
+        #rows = json.dumps(rows, default=date_handler)
+
         return HttpResponse(rows, content_type="application/json")
+        #return JsonResponse(serializers.serialize('json', rows), safe=False)
 
 
 def vaccination_reports(request, vac):
@@ -385,27 +410,15 @@ def registered_preg_details (request, location_name):
         concerned_cdss = CDS.objects.filter(name__iexact = location_name)
 
 
-    concerned_report_gro = ReportGRO.objects.filter(report__cds__in = concerned_cdss, report__reporting_date__range=[start_date, end_date])
-    
-    concerned_report_gro = serializers.serialize('python', concerned_report_gro)
-    columns = [g['fields'] for g in concerned_report_gro]
-    response_data = json.dumps(columns, default=date_handler)
-    rows = json.loads(response_data)
+    #concerned_report_gro = ReportGRO.objects.filter(report__cds__in = concerned_cdss, report__reporting_date__range=[start_date, end_date])
+    concerned_report_gro = ReportGRO.objects.filter(report__cds__in = concerned_cdss, report__reporting_date__range=[start_date, end_date]).annotate(sous_coline = F('report__sub_hill__name')).annotate(colline = F('report__sub_hill__colline__name')).annotate(commune = F('report__sub_hill__colline__commune__name')).annotate(cds_name = F('report__cds__name')).annotate(district = F('report__cds__district__name')).annotate(province = F('report__sub_hill__colline__commune__province__name')).annotate(reporter_phone_number = F('report__chw__phone_number')).annotate(mother_id = F('report__mother__id_mother')).annotate(mother_phone_number = F('report__mother__phone_number')).annotate(report_text = F('report__text')).annotate(risk_level_name = F('risk_level__risk_level_meaning')).annotate(lieu_de_consultation = F('consultation_location__location_category_designation'))
 
-    for r in rows:
-        report = Report.objects.get(id = r['report'])
-        r["sous_coline"] = report.sub_hill.name
-        r["colline"] = report.sub_hill.colline.name
-        r["commune"] = report.sub_hill.colline.commune.name
-        r["cds_name"] = report.cds.name
-        r["district"] = report.cds.district.name
-        r["province"] = report.sub_hill.colline.commune.province.name
-        r["reporter_phone_number"] = report.chw.phone_number
-        r["risk_level_name"] = RiskLevel.objects.get(id = r['risk_level']).risk_level_meaning
-        r["lieu_de_consultation"] = Lieu.objects.get(id = r['consultation_location']).location_category_description
-        r["mother_id"] = report.mother.id_mother
-        r["mother_phone_number"] = report.mother.phone_number
-        r["report_text"] = report.text
+    rows = concerned_report_gro.values()
+    rows = json.dumps(list(rows), default=date_handler)
+    rows = json.loads(rows)
+    rows = json.dumps(rows, default=date_handler)
+
+
     return render(request, 'registered_pregnancies_details.html', {'rows':rows})
 
 

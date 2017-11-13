@@ -21,7 +21,6 @@
 			if ((".diverror").length) {
 				$(".diverror").fadeIn('slow').animate({opacity: 1.0}, 1500).effect("pulsate", { times: 2 }, 800); 
 			}
-		
 		displayRegisteredPregDetails();
 
 		});
@@ -42,27 +41,42 @@
 								'<tbody>' +
 									
 								'</tbody>');
+								var registered_pregnancies = "{{rows|escapejs}}";
+								//var registered_pregnancies = json_parse("{{rows|escapejs}}");
+								//var rows = "{{rows}}";
+								//rows = $.parseJSON(JSON.stringify(rows));
+								//console.log(rows);
+								//console.log(typeof(rows));
+								//var registered_pregnancies = $.parseJSON(JSON.stringify(rows));
+								//var registered_pregnancies = "{{rows}}";
 
-								var registered_pregnancies = "{{rows|safe}}";
+
+								//var registered_pregnancies = rows;
+
 								var province;
 								var district;
 								var cds;
 								var colline;
 								var sous_colline;
 
+
+
 								registered_pregnancies = registered_pregnancies.split("},");
 								for(i=0; i<registered_pregnancies.length; i++){
 									one_row = registered_pregnancies[i];
-									var col0 = one_row.split(",")[10].split(":")[1];
-									col0 = col0.replace("u","").replace("}]","");
 
-									province = one_row.split(",")[7].split(":")[1].replace("u","");
+									
+
+									province = one_row.split(",")[3].split(":")[1].replace("u","");
 									district = one_row.split(",")[4].split(":")[1].replace("u","");
 									cds = one_row.split(",")[16].split(":")[1].replace("u","").replace("}]","");
-									colline = one_row.split(",")[11].split(":")[1].replace("u","");
-									sous_colline = one_row.split(",")[15].split(":")[1].replace("u","");
-									var col1 = province+", "+district+", "+cds+", "+colline+", "+sous_colline
+									colline = one_row.split(",")[10].split(":")[1].replace("u","");
+									sous_colline = one_row.split(",")[6].split(":")[1].replace("u","");
 
+									var col0 = one_row.split(",")[15].split(":")[1];
+									col0 = col0.replace("u","").replace("}]","");
+
+									var col1 = province+", "+district+", "+cds+", "+colline+", "+sous_colline;
 
 									var col2 = one_row.split(",")[5].split(":")[1];
 									col2 = col2.replace("u","");
@@ -70,10 +84,10 @@
 									var col3 = one_row.split(",")[0].split(":")[1];
 									col3 = col3.replace("u","");
 
-									var col4 = one_row.split(",")[8].split(":")[1];
+									var col4 = one_row.split(",")[9].split(":")[1];
 									col4 = col4.replace("u","");
 
-									var col5 = one_row.split(",")[2].split(":")[1];
+									var col5 = one_row.split(",")[7].split(":")[1];
 									col5 = col5.replace("u","").replace("}]","");
 
 									var col6 = one_row.split(",")[12].split(":")[1];

@@ -198,6 +198,10 @@
 		                				}
 		                			}
 		                		}
+
+		                		console.log("111");
+		                		console.log(response)
+
 		                		for (var i = 0; i < response.length; i++){
 		                			location_name = response[i][location_column];
 		                			if((response[i]["reporting_date"] >= $('#dstartdate').val()) && (response[i]["reporting_date"] <= $('#dendtdate').val())){
