@@ -496,7 +496,8 @@ def inactive_chw(request):
 def mother_message_history(request, mother_id):
 
     rows = {}
-    mother_id = str(request.GET.get('mother_id', '')).replace("'","").strip()
+
+    mother_id = str(request.GET.get('mother_id', '')).replace("\"","").strip()
 
     concerned_mother = Mother.objects.filter(id_mother = mother_id)[0]
 
