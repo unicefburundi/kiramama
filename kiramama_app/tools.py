@@ -135,3 +135,29 @@ def reajust_chw_scheduled_delivery_messages():
 				
 
 
+def delete_test_mothers():
+	'''
+	This function is used to delete mothers whose reports are
+	deleted
+	'''
+	all_mothers = Mother.objects.all()
+
+	for m in all_mothers:
+		if(len(m.report_set.all()) < 1):
+			#A report linked to this mother have been deleted
+			print "The mother with below id is going to be deleted :"
+			print m.id_mother
+			m.delete()
+
+
+
+
+
+def delete_test_notifications():
+	'''
+	This function is used to delete notifications whose mothers are
+	deleted
+	'''
+	chw_noti = NotificationsCHW.objects.filter(is_sent = False)
+
+	
