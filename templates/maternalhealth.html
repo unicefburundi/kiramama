@@ -223,7 +223,7 @@
 		                					dict[location_name] = [0,0,1,0,0,0,0];
 		                				}
 										
-										if(response[i]["risk_level"] > 1){
+										if(response[i]["risk_level_id"] > 1){
 											dict[location_name][3] += 1;
 										}
 									}
@@ -252,7 +252,7 @@
 		                				}else{
 		                					dict[location_name] = [0,0,0,0,0,1,0];
 		                				}
-		                				if(response[i]["risk_level"] > 1){
+		                				if(response[i]["risk_level_id"] > 1){
 											dict[location_name][6] += 1;
 										}
 									}
@@ -426,7 +426,7 @@
 			end_date = $('#dendtdate').val();
 
 			
-			window.open('registered_preg_details/?location_name='+location_name+'&location_level='+location_level+'&start_date='+start_date+'&end_date='+end_date,'','fullscreen=yes');
+			window.open('hr_expected_delivery_details/?location_name='+location_name+'&location_level='+location_level+'&start_date='+start_date+'&end_date='+end_date,'','fullscreen=yes');
 			}
 
 			function displayPWSEDDetails(key=0){
