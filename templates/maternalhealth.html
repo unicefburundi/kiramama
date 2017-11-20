@@ -210,10 +210,11 @@
 		                			}else{
 		                				dict[location_name] = [1,0,0,0,0,0,0];
 		                			}
-		                			if(response[i]["risk_level"] > 1){
+		                			if(response[i]["risk_level_id"] > 1){
 		                				//Let's take risk level greater than one is high risk
 		                				dict[location_name][1] += 1;
 		                			}}
+
 
 		                			if((response[i]["expected_delivery_date"] >= $('#dstartdate').val()) && (response[i]["expected_delivery_date"] <= $('#dendtdate').val())){
 		                				if (dict.hasOwnProperty(location_name)){
