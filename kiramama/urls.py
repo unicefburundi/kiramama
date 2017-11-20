@@ -47,7 +47,7 @@ urlpatterns = [
     url(r'^home/active_chw', kiramama_app.views.active_chw, name='active_chw'),
     url(r'^home/inactive_chw', kiramama_app.views.inactive_chw, name='inactive_chw'),
     url(r'^h_r_registered_preg_details/(?P<location_name>)$', kiramama_app.views.h_r_registered_preg_details, name='h_r_registered_preg_details'),
-
+    url(r'^expected_delivery_details/(?P<location_name>)$', kiramama_app.views.expected_delivery_details, name='expected_delivery_details'),
 ]
 #   )
 
