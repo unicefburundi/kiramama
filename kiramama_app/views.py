@@ -14,7 +14,7 @@ import django_filters
 from django.views.generic import DetailView
 import unicodedata
 import ast
-from django.db.models import F, Count, Value, Sum, When, Case
+from django.db.models import F, Count, Value, Sum, When, Case, Q
 
 
 from django.http import JsonResponse
@@ -401,7 +401,7 @@ def registered_preg_details (request, location_name):
     end_date = str(request.GET.get('end_date', '')).strip()
     start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d')
     end_date = datetime.datetime.strptime(end_date, '%Y-%m-%d')
-    
+
     if(location_level == "PROVINCE"):
         concerned_cdss = CDS.objects.filter(district__bps__name__iexact = location_name)
     if(location_level == "DISTRICT"):
@@ -409,8 +409,6 @@ def registered_preg_details (request, location_name):
     if(location_level == "CDS"):
         concerned_cdss = CDS.objects.filter(name__iexact = location_name)
 
-
-    #concerned_report_gro = ReportGRO.objects.filter(report__cds__in = concerned_cdss, report__reporting_date__range=[start_date, end_date])
     concerned_report_gro = ReportGRO.objects.filter(report__cds__in = concerned_cdss, report__reporting_date__range=[start_date, end_date]).annotate(sous_coline = F('report__sub_hill__name')).annotate(colline = F('report__sub_hill__colline__name')).annotate(commune = F('report__sub_hill__colline__commune__name')).annotate(cds_name = F('report__cds__name')).annotate(district = F('report__cds__district__name')).annotate(province = F('report__sub_hill__colline__commune__province__name')).annotate(reporter_phone_number = F('report__chw__phone_number')).annotate(mother_id = F('report__mother__id_mother')).annotate(mother_phone_number = F('report__mother__phone_number')).annotate(report_text = F('report__text')).annotate(risk_level_name = F('risk_level__risk_level_meaning')).annotate(lieu_de_consultation = F('consultation_location__location_category_designation'))
 
     rows = concerned_report_gro.values()
@@ -420,6 +418,33 @@ def registered_preg_details (request, location_name):
 
 
     return render(request, 'registered_pregnancies_details.html', {'rows':rows})
+
+
+def h_r_registered_preg_details(request, location_name):
+    location_name = str(request.GET.get('location_name', '')).strip()
+    location_level = str(request.GET.get('location_level', '')).strip()
+    start_date = str(request.GET.get('start_date', '')).strip()
+    end_date = str(request.GET.get('end_date', '')).strip()
+    start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d')
+    end_date = datetime.datetime.strptime(end_date, '%Y-%m-%d')
+    
+    if(location_level == "PROVINCE"):
+        concerned_cdss = CDS.objects.filter(district__bps__name__iexact = location_name)
+    if(location_level == "DISTRICT"):
+        concerned_cdss = CDS.objects.filter(district__name__iexact = location_name)
+    if(location_level == "CDS"):
+        concerned_cdss = CDS.objects.filter(name__iexact = location_name)
+
+    concerned_report_gro = ReportGRO.objects.filter(report__cds__in = concerned_cdss, risk_level__risk_designation__iregex = r'^[234]$', report__reporting_date__range=[start_date, end_date]).annotate(sous_coline = F('report__sub_hill__name')).annotate(colline = F('report__sub_hill__colline__name')).annotate(commune = F('report__sub_hill__colline__commune__name')).annotate(cds_name = F('report__cds__name')).annotate(district = F('report__cds__district__name')).annotate(province = F('report__sub_hill__colline__commune__province__name')).annotate(reporter_phone_number = F('report__chw__phone_number')).annotate(mother_id = F('report__mother__id_mother')).annotate(mother_phone_number = F('report__mother__phone_number')).annotate(report_text = F('report__text')).annotate(risk_level_name = F('risk_level__risk_level_meaning')).annotate(lieu_de_consultation = F('consultation_location__location_category_designation'))
+
+    rows = concerned_report_gro.values()
+    rows = json.dumps(list(rows), default=date_handler)
+    rows = json.loads(rows)
+    rows = json.dumps(rows, default=date_handler)
+
+
+    return render(request, 'registered_pregnancies_details.html', {'rows':rows})
+
 
 
 def active_chw(request):

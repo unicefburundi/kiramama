@@ -290,14 +290,12 @@
 	
 
 										$('#tblmh tr:last').append('<td><a href="#" onclick = "displayRegPreDetails(this)">'+ number_registered +'</a></td>');
-
-
-										$('#tblmh tr:last').append('<td>' + number_high_risk + '</td>');
-										$('#tblmh tr:last').append('<td>' + number_expected_deri + '</td>');
-										$('#tblmh tr:last').append('<td>' + number_hred + '</td>');
-										$('#tblmh tr:last').append('<td>' + pw + '</td>');
-										$('#tblmh tr:last').append('<td>' + pwexp + '</td>');
-										$('#tblmh tr:last').append('<td>' + pwexp_high_risk + '</td>');
+										$('#tblmh tr:last').append('<td><a href="#" onclick = "displayHRRegPreDetails(this)">'+ number_high_risk +'</a></td>');
+										$('#tblmh tr:last').append('<td><a href="#" onclick = "displayExpectedDerivery(this)">'+ number_expected_deri +'</a></td>');
+										$('#tblmh tr:last').append('<td><a href="#" onclick = "displayHREDDetails(this)">'+ number_hred +'</a></td>');
+										$('#tblmh tr:last').append('<td><a href="#" onclick = "displayPWSEDDetails(this)">'+ pw +'</a></td>');
+										$('#tblmh tr:last').append('<td><a href="#" onclick = "displayPWEDNTWDetails(this)">'+ pwexp +'</a></td>');
+										$('#tblmh tr:last').append('<td><a href="#" onclick = "displayHRPWEDNTWDetails(this)">'+ pwexp_high_risk +'</a></td>');
 									});
 
 									
@@ -365,7 +363,133 @@
 
 			
 			window.open('registered_preg_details/?location_name='+location_name+'&location_level='+location_level+'&start_date='+start_date+'&end_date='+end_date,'','fullscreen=yes');
-		}
+			}
+
+			function displayHRRegPreDetails(key=0){
+			location_name = key.closest('tr').getElementsByTagName('td')[0].innerHTML;
+			location_level = null
+			
+			if ($('#cmbprovince').val() == ""){
+				location_level = "PROVINCE";
+			}else{
+				if ($('#cmbdistrict').val() == ""){
+					location_level = "DISTRICT";
+				}else{
+					location_level = "CDS";
+				}
+			}
+
+			start_date = $('#dstartdate').val();
+			end_date = $('#dendtdate').val();
+			
+			window.open('h_r_registered_preg_details/?location_name='+location_name+'&location_level='+location_level+'&start_date='+start_date+'&end_date='+end_date,'','fullscreen=yes');
+			}
+
+			function displayExpectedDerivery(key=0){
+			location_name = key.closest('tr').getElementsByTagName('td')[0].innerHTML;
+			location_level = null
+			
+			if ($('#cmbprovince').val() == ""){
+				location_level = "PROVINCE";
+			}else{
+				if ($('#cmbdistrict').val() == ""){
+					location_level = "DISTRICT";
+				}else{
+					location_level = "CDS";
+				}
+			}
+
+			start_date = $('#dstartdate').val();
+			end_date = $('#dendtdate').val();
+
+			
+			window.open('registered_preg_details/?location_name='+location_name+'&location_level='+location_level+'&start_date='+start_date+'&end_date='+end_date,'','fullscreen=yes');
+			}
+
+
+			function displayHREDDetails(key=0){
+			location_name = key.closest('tr').getElementsByTagName('td')[0].innerHTML;
+			location_level = null
+			
+			if ($('#cmbprovince').val() == ""){
+				location_level = "PROVINCE";
+			}else{
+				if ($('#cmbdistrict').val() == ""){
+					location_level = "DISTRICT";
+				}else{
+					location_level = "CDS";
+				}
+			}
+
+			start_date = $('#dstartdate').val();
+			end_date = $('#dendtdate').val();
+
+			
+			window.open('registered_preg_details/?location_name='+location_name+'&location_level='+location_level+'&start_date='+start_date+'&end_date='+end_date,'','fullscreen=yes');
+			}
+
+			function displayPWSEDDetails(key=0){
+			location_name = key.closest('tr').getElementsByTagName('td')[0].innerHTML;
+			location_level = null
+			
+			if ($('#cmbprovince').val() == ""){
+				location_level = "PROVINCE";
+			}else{
+				if ($('#cmbdistrict').val() == ""){
+					location_level = "DISTRICT";
+				}else{
+					location_level = "CDS";
+				}
+			}
+
+			start_date = $('#dstartdate').val();
+			end_date = $('#dendtdate').val();
+
+			
+			window.open('registered_preg_details/?location_name='+location_name+'&location_level='+location_level+'&start_date='+start_date+'&end_date='+end_date,'','fullscreen=yes');
+			}
+
+			function displayPWEDNTWDetails(key=0){
+			location_name = key.closest('tr').getElementsByTagName('td')[0].innerHTML;
+			location_level = null
+			
+			if ($('#cmbprovince').val() == ""){
+				location_level = "PROVINCE";
+			}else{
+				if ($('#cmbdistrict').val() == ""){
+					location_level = "DISTRICT";
+				}else{
+					location_level = "CDS";
+				}
+			}
+
+			start_date = $('#dstartdate').val();
+			end_date = $('#dendtdate').val();
+
+			
+			window.open('registered_preg_details/?location_name='+location_name+'&location_level='+location_level+'&start_date='+start_date+'&end_date='+end_date,'','fullscreen=yes');
+			}
+
+			function displayHRPWEDNTWDetails(key=0){
+			location_name = key.closest('tr').getElementsByTagName('td')[0].innerHTML;
+			location_level = null
+			
+			if ($('#cmbprovince').val() == ""){
+				location_level = "PROVINCE";
+			}else{
+				if ($('#cmbdistrict').val() == ""){
+					location_level = "DISTRICT";
+				}else{
+					location_level = "CDS";
+				}
+			}
+
+			start_date = $('#dstartdate').val();
+			end_date = $('#dendtdate').val();
+
+			
+			window.open('registered_preg_details/?location_name='+location_name+'&location_level='+location_level+'&start_date='+start_date+'&end_date='+end_date,'','fullscreen=yes');
+			}
 		 
 
 	</script>
