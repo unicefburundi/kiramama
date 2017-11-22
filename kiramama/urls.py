@@ -40,6 +40,7 @@ urlpatterns = [
     url(r'^getcdsindistrict', kiramama_app.views.getcdsindistrict, name='getcdsindistrict'),
     url(r'^getcdsdata', kiramama_app.views.getcdsdata, name='getcdsdata'),
     url(r'^getwanteddata', kiramama_app.views.getwanteddata, name='getwanteddata'),
+    url(r'^get_child_health_data', kiramama_app.views.get_child_health_data, name='get_child_health_data'),
     url(r'^$', kiramama_app.views.default, name='default'),
     url(r'^registered_preg_details/(?P<location_name>)$', kiramama_app.views.registered_preg_details, name='registered_preg_details'),
     url(r'^mother_message_history/(?P<mother_id>)', kiramama_app.views.mother_message_history, name='mother_message_history'),

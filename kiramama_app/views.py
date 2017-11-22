@@ -347,6 +347,54 @@ def getwanteddata(request):
         #return JsonResponse(serializers.serialize('json', rows), safe=False)
 
 
+def get_child_health_data(request):
+    response_data = {}
+    if request.method == 'POST':
+        json_data = json.loads(request.body)
+        level = json_data['level']
+        code = json_data['code']
+        start_date = json_data['start_date']
+        end_date = json_data['end_date']
+        grodata = ""
+        all_data = []
+
+        if (level):
+            cdslist = None
+            if (level == "cds"):
+                cdslist = CDS.objects.filter(code = code)
+
+            elif (level == "district"):
+                districtlist = District.objects.filter(code = code)
+                if (districtlist):
+                    cdslist = CDS.objects.filter(district__in = districtlist)
+                
+            elif (level == "province"):
+                provincelist = BPS.objects.filter(code = code)
+                if (provincelist):
+                    districtlist = District.objects.filter(bps__in = provincelist)
+                    if (districtlist):
+                        cdslist = CDS.objects.filter(district__in = districtlist)
+            elif (level == "national"):
+                cdslist = CDS.objects.all()
+
+
+            if (cdslist):
+
+                start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d')
+                new_start_date = start_date - datetime.timedelta(days=300)
+
+                nsc_data = ReportNSC.objects.filter(report__cds__in = cdslist, birth_date__range = [start_date, end_date]).annotate(cds_id = F('report__cds__id')).annotate(cds_name = F('report__cds__name')).annotate(district_id = F('report__cds__district__id')).annotate(district_name = F('report__cds__district__name')).annotate(bps_id = F('report__cds__district__bps__id')).annotate(bps_name = F('report__cds__district__bps__name'))
+                
+                rows = nsc_data.values()
+                rows = json.dumps(list(rows), default=date_handler)
+                rows = json.loads(rows)
+                rows = json.dumps(rows, default=date_handler)
+
+
+        return HttpResponse(rows, content_type="application/json")
+
+
+
 def vaccination_reports(request, vac):
     d = {}
     submited_vaccination_name = str(request.GET.get('vac', '')).strip()
