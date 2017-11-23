@@ -202,64 +202,42 @@
 		                		for (var i = 0; i < response.length; i++){
 		                			
 		                			location_name = response[i][location_column];
-		                			if((response[i]["birth_date"] >= $('#dstartdate').val()) && (response[i]["birth_date"] <= $('#dendtdate').val())){
+		                			
 		                			if (dict.hasOwnProperty(location_name)){
 		                				dict[location_name][0] += 1;
 		                			}else{
 		                				dict[location_name] = [1,0,0,0,0,0];
 		                			}
-		                			if(response[i]["risk_level_id"] > 1){
-		                				//Let's take risk level greater than one is high risk
+
+
+		                			if(response[i]["birth_location_type_code"].toUpperCase() === "ME"){
 		                				dict[location_name][1] += 1;
-		                			}}
+		                			}
+		                			
+		                			if(response[i]["birth_location_type_code"].toUpperCase() === "RT"){
+		                				dict[location_name][2] += 1;
+		                			}
 
+		                			if((response[i]["birth_location_type_code"].toUpperCase() === "HP") || (response[i]["birth_location_type_code"].toUpperCase() === "CS")){
+		                				dict[location_name][3] += 1;
+		                			}
 
-		                			if((response[i]["expected_delivery_date"] >= $('#dstartdate').val()) && (response[i]["expected_delivery_date"] <= $('#dendtdate').val())){
-		                				if (dict.hasOwnProperty(location_name)){
-		                					dict[location_name][2] += 1;
-		                				}else{
-		                					dict[location_name] = [0,0,1,0,0,0,0];
-		                				}
-										
-										if(response[i]["risk_level_id"] > 1){
-											dict[location_name][3] += 1;
-										}
-									}
-									var exp_der_date = new Date(response[i]["expected_delivery_date"]);
-									var selected_start_date = new Date($('#dstartdate').val());
-									var selected_end_date = new Date($('#dendtdate').val());
-									var end_date = new Date($('#dendtdate').val());
-									end_date.setDate(end_date.getDate() + 14);
-									var reg_gro_date = new Date(response[i]["reporting_date"]);
-									var derivery_date = new Date(response[i]["birth_date"]);
+		                			if(response[i]["breast_feading_time_code"].toUpperCase() === "AL1"){
+		                				dict[location_name][4] += 1;
+		                			}
 
-									if(((reg_gro_date <= selected_end_date) && (derivery_date > selected_end_date)) || ((reg_gro_date <= selected_end_date) && (isNaN(derivery_date))))
-										{
-										if (dict.hasOwnProperty(location_name)){
-		                					dict[location_name][4] += 1;
-		                				}else{
-		                					dict[location_name] = [0,0,0,0,1,0,0];
-		                				}
-									}
+		                			if(response[i]["breast_feading_time_code"].toUpperCase() === "AL0"){
+		                				dict[location_name][5] += 1;
+		                			}
 
-									//if((exp_der_date <= end_date) && (isNaN(derivery_date)))
-									if((exp_der_date >= selected_end_date) && (exp_der_date <= end_date)){
-										if (dict.hasOwnProperty(location_name)){
-		                					dict[location_name][5] += 1;
-		                				}else{
-		                					dict[location_name] = [0,0,0,0,0,1,0];
-		                				}
-		                				if(response[i]["risk_level_id"] > 1){
-											dict[location_name][6] += 1;
-										}
-									}
+		                			
 		                		}
 
 		                		console.log("BBBBB");
 
 		                		if (Object.keys(dict).length > 0){
 		                			console.log("CCCCC");
-		                			$('#divmh').append('<p><b>{% trans "PREGNANCY REPORTS STATISTICS" %}</b></p>' +
+		                			$('#divmh').append('<p><b>{% trans "BIRTHS STATISTICS" %}</b></p>' +
 
 									'<div style="clear:both; height:10px;"></div>' +
 
@@ -278,17 +256,24 @@
 									
 									keys.forEach(function(key){
 
-										var number_registered = parseFloat(dict[key][0]);
+										var number_of_births = parseFloat(dict[key][0]);
+										var number_of_del_at_home = parseFloat(dict[key][1]);
+										var number_of_del_on_road = parseFloat(dict[key][2]);
+										var number_of_del_at_hf = parseFloat(dict[key][3]);
+										var number_of_b_in_first_hour = parseFloat(dict[key][4]);
+										var number_of_b_after_first_hour = parseFloat(dict[key][5]);
+
+
 										$('#tblmh').find('tbody').append('<tr style="cursor:pointer;"></tr>');
 
 										$('#tblmh tr:last').append('<td>' + key +'</td>');
-										$('#tblmh tr:last').append('<td><a href="#" onclick = "displayRegPreDetails(this)">'+ number_registered +'</a></td>');
+										$('#tblmh tr:last').append('<td><a href="#" onclick = "displayRegPreDetails(this)">'+ number_of_births +'</a></td>');
 
-										$('#tblmh tr:last').append('<td><a href="#" onclick = "displayRegPreDetails(this)">'+ number_registered +'</a></td>');
-										$('#tblmh tr:last').append('<td><a href="#" onclick = "displayRegPreDetails(this)">'+ number_registered +'</a></td>');
-										$('#tblmh tr:last').append('<td><a href="#" onclick = "displayRegPreDetails(this)">'+ number_registered +'</a></td>');
-										$('#tblmh tr:last').append('<td><a href="#" onclick = "displayRegPreDetails(this)">'+ number_registered +'</a></td>');
-										$('#tblmh tr:last').append('<td><a href="#" onclick = "displayRegPreDetails(this)">'+ number_registered +'</a></td>');
+										$('#tblmh tr:last').append('<td><a href="#" onclick = "displayRegPreDetails(this)">'+ number_of_del_at_home +'</a></td>');
+										$('#tblmh tr:last').append('<td><a href="#" onclick = "displayRegPreDetails(this)">'+ number_of_del_on_road +'</a></td>');
+										$('#tblmh tr:last').append('<td><a href="#" onclick = "displayRegPreDetails(this)">'+ number_of_del_at_hf +'</a></td>');
+										$('#tblmh tr:last').append('<td><a href="#" onclick = "displayRegPreDetails(this)">'+ number_of_b_in_first_hour +'</a></td>');
+										$('#tblmh tr:last').append('<td><a href="#" onclick = "displayRegPreDetails(this)">'+ number_of_b_after_first_hour +'</a></td>');
 
 									});
 

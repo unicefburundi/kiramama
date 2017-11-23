@@ -383,7 +383,7 @@ def get_child_health_data(request):
                 start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d')
                 new_start_date = start_date - datetime.timedelta(days=300)
 
-                nsc_data = ReportNSC.objects.filter(report__cds__in = cdslist, birth_date__range = [start_date, end_date]).annotate(cds_id = F('report__cds__id')).annotate(cds_name = F('report__cds__name')).annotate(district_id = F('report__cds__district__id')).annotate(district_name = F('report__cds__district__name')).annotate(bps_id = F('report__cds__district__bps__id')).annotate(bps_name = F('report__cds__district__bps__name'))
+                nsc_data = ReportNSC.objects.filter(report__cds__in = cdslist, birth_date__range = [start_date, end_date]).annotate(cds_id = F('report__cds__id')).annotate(cds_name = F('report__cds__name')).annotate(district_id = F('report__cds__district__id')).annotate(district_name = F('report__cds__district__name')).annotate(bps_id = F('report__cds__district__bps__id')).annotate(bps_name = F('report__cds__district__bps__name')).annotate(birth_location_type_name = F('birth_location__location_category_description')).annotate(breast_feading_time_designation = F('breast_feading__breast_feed_option_description')).annotate(birth_location_type_code = F('birth_location__location_category_designation')).annotate(breast_feading_time_code = F('breast_feading__breast_feed_option_name'))
                 
                 rows = nsc_data.values()
                 rows = json.dumps(list(rows), default=date_handler)
