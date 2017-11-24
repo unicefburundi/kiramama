@@ -271,7 +271,7 @@
 
 										$('#tblmh tr:last').append('<td><a href="#" onclick = "displayHomeBirthsDetails(this)">'+ number_of_del_at_home +'</a></td>');
 										$('#tblmh tr:last').append('<td><a href="#" onclick = "displayRoadBirthsDetails(this)">'+ number_of_del_on_road +'</a></td>');
-										$('#tblmh tr:last').append('<td><a href="#" onclick = "displayRegPreDetails(this)">'+ number_of_del_at_hf +'</a></td>');
+										$('#tblmh tr:last').append('<td><a href="#" onclick = "displayHFBirthsDetails(this)">'+ number_of_del_at_hf +'</a></td>');
 										$('#tblmh tr:last').append('<td><a href="#" onclick = "displayRegPreDetails(this)">'+ number_of_b_in_first_hour +'</a></td>');
 										$('#tblmh tr:last').append('<td><a href="#" onclick = "displayRegPreDetails(this)">'+ number_of_b_after_first_hour +'</a></td>');
 
@@ -387,7 +387,7 @@
 			}
 
 
-			function displayHREDDetails(key=0){
+			function displayHFBirthsDetails(key=0){
 			location_name = key.closest('tr').getElementsByTagName('td')[0].innerHTML;
 			location_level = null
 			
@@ -405,7 +405,7 @@
 			end_date = $('#dendtdate').val();
 
 			
-			window.open('hr_expected_delivery_details/?location_name='+location_name+'&location_level='+location_level+'&start_date='+start_date+'&end_date='+end_date,'','fullscreen=yes');
+			window.open('health_facility_births_details/?location_name='+location_name+'&location_level='+location_level+'&start_date='+start_date+'&end_date='+end_date,'','fullscreen=yes');
 			}
 
 			function displayPWSEDDetails(key=0){
