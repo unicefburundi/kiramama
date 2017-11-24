@@ -269,7 +269,7 @@
 										$('#tblmh tr:last').append('<td>' + key +'</td>');
 										$('#tblmh tr:last').append('<td><a href="#" onclick = "displayRegBirthsDetails(this)">'+ number_of_births +'</a></td>');
 
-										$('#tblmh tr:last').append('<td><a href="#" onclick = "displayRegPreDetails(this)">'+ number_of_del_at_home +'</a></td>');
+										$('#tblmh tr:last').append('<td><a href="#" onclick = "displayHomeBirthsDetails(this)">'+ number_of_del_at_home +'</a></td>');
 										$('#tblmh tr:last').append('<td><a href="#" onclick = "displayRegPreDetails(this)">'+ number_of_del_on_road +'</a></td>');
 										$('#tblmh tr:last').append('<td><a href="#" onclick = "displayRegPreDetails(this)">'+ number_of_del_at_hf +'</a></td>');
 										$('#tblmh tr:last').append('<td><a href="#" onclick = "displayRegPreDetails(this)">'+ number_of_b_in_first_hour +'</a></td>');
@@ -345,7 +345,7 @@
 			window.open('registered_births_details/?location_name='+location_name+'&location_level='+location_level+'&start_date='+start_date+'&end_date='+end_date,'','fullscreen=yes');
 			}
 
-			function displayHRRegPreDetails(key=0){
+			function displayHomeBirthsDetails(key=0){
 			location_name = key.closest('tr').getElementsByTagName('td')[0].innerHTML;
 			location_level = null
 			
@@ -362,7 +362,7 @@
 			start_date = $('#dstartdate').val();
 			end_date = $('#dendtdate').val();
 			
-			window.open('h_r_registered_preg_details/?location_name='+location_name+'&location_level='+location_level+'&start_date='+start_date+'&end_date='+end_date,'','fullscreen=yes');
+			window.open('home_births_details/?location_name='+location_name+'&location_level='+location_level+'&start_date='+start_date+'&end_date='+end_date,'','fullscreen=yes');
 			}
 
 			function displayExpectedDerivery(key=0){
