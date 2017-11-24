@@ -574,6 +574,59 @@ def health_facility_births_details(request, location_name):
 
 
 
+def breastf_in_first_hour_details(request, location_name):
+    #d = {}
+    location_name = str(request.GET.get('location_name', '')).strip()
+    location_level = str(request.GET.get('location_level', '')).strip()
+    start_date = str(request.GET.get('start_date', '')).strip()
+    end_date = str(request.GET.get('end_date', '')).strip()
+    start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d')
+    end_date = datetime.datetime.strptime(end_date, '%Y-%m-%d')
+
+    if(location_level == "PROVINCE"):
+        concerned_cdss = CDS.objects.filter(district__bps__name__iexact = location_name)
+    if(location_level == "DISTRICT"):
+        concerned_cdss = CDS.objects.filter(district__name__iexact = location_name)
+    if(location_level == "CDS"):
+        concerned_cdss = CDS.objects.filter(name__iexact = location_name)
+
+    concerned_birth_reports = ReportNSC.objects.filter(report__cds__in = concerned_cdss, birth_date__range=[start_date, end_date], breast_feading__breast_feed_option_name = "AL1").annotate(sous_coline = F('report__sub_hill__name')).annotate(colline = F('report__sub_hill__colline__name')).annotate(commune = F('report__sub_hill__colline__commune__name')).annotate(cds_name = F('report__cds__name')).annotate(district = F('report__cds__district__name')).annotate(province = F('report__sub_hill__colline__commune__province__name')).annotate(reporter_phone_number = F('report__chw__phone_number')).annotate(mother_id = F('report__mother__id_mother')).annotate(mother_phone_number = F('report__mother__phone_number')).annotate(report_text = F('report__text')).annotate(child_number_code = F('child_number__child_code_designation')).annotate(lieu_de_naissance = F('birth_location__location_category_description')).annotate(genre = F('gender__gender_code_meaning')).annotate(allaitement = F('breast_feading__breast_feed_option_description'))
+
+    rows = concerned_birth_reports.values()
+    rows = json.dumps(list(rows), default=date_handler)
+    rows = json.loads(rows)
+    rows = json.dumps(rows, default=date_handler)
+
+    return render(request, 'breastfeed_in_first_hour_details.html', {'rows':rows})
+
+
+def breastf_after_first_hour_details(request, location_name):
+    #d = {}
+    location_name = str(request.GET.get('location_name', '')).strip()
+    location_level = str(request.GET.get('location_level', '')).strip()
+    start_date = str(request.GET.get('start_date', '')).strip()
+    end_date = str(request.GET.get('end_date', '')).strip()
+    start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d')
+    end_date = datetime.datetime.strptime(end_date, '%Y-%m-%d')
+
+    if(location_level == "PROVINCE"):
+        concerned_cdss = CDS.objects.filter(district__bps__name__iexact = location_name)
+    if(location_level == "DISTRICT"):
+        concerned_cdss = CDS.objects.filter(district__name__iexact = location_name)
+    if(location_level == "CDS"):
+        concerned_cdss = CDS.objects.filter(name__iexact = location_name)
+
+    concerned_birth_reports = ReportNSC.objects.filter(report__cds__in = concerned_cdss, birth_date__range=[start_date, end_date], breast_feading__breast_feed_option_name = "AL0").annotate(sous_coline = F('report__sub_hill__name')).annotate(colline = F('report__sub_hill__colline__name')).annotate(commune = F('report__sub_hill__colline__commune__name')).annotate(cds_name = F('report__cds__name')).annotate(district = F('report__cds__district__name')).annotate(province = F('report__sub_hill__colline__commune__province__name')).annotate(reporter_phone_number = F('report__chw__phone_number')).annotate(mother_id = F('report__mother__id_mother')).annotate(mother_phone_number = F('report__mother__phone_number')).annotate(report_text = F('report__text')).annotate(child_number_code = F('child_number__child_code_designation')).annotate(lieu_de_naissance = F('birth_location__location_category_description')).annotate(genre = F('gender__gender_code_meaning')).annotate(allaitement = F('breast_feading__breast_feed_option_description'))
+
+    rows = concerned_birth_reports.values()
+    rows = json.dumps(list(rows), default=date_handler)
+    rows = json.loads(rows)
+    rows = json.dumps(rows, default=date_handler)
+
+    return render(request, 'breastfeed_after_first_hour_details.html', {'rows':rows})
+
+
+
 def h_r_registered_preg_details(request, location_name):
     location_name = str(request.GET.get('location_name', '')).strip()
     location_level = str(request.GET.get('location_level', '')).strip()

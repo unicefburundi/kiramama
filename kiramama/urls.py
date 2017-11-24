@@ -57,6 +57,8 @@ urlpatterns = [
     url(r'^home_births_details/(?P<location_name>)$', kiramama_app.views.home_births_details, name='home_births_details'),
     url(r'^road_births_details/(?P<location_name>)$', kiramama_app.views.road_births_details, name='road_births_details'),
     url(r'^health_facility_births_details/(?P<location_name>)$', kiramama_app.views.health_facility_births_details, name='health_facility_births_details'),
+    url(r'^breastf_in_first_hour_details/(?P<location_name>)$', kiramama_app.views.breastf_in_first_hour_details, name='breastf_in_first_hour_details'),
+    url(r'^breastf_after_first_hour_details/(?P<location_name>)$', kiramama_app.views.breastf_after_first_hour_details, name='breastf_after_first_hour_details'),
 ]
 #   )
 
