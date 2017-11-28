@@ -295,7 +295,47 @@
 		                		}
 
 		                	}else {
-		                		$('#divmh').append('<p style="color:red;">No records found</p>');
+
+
+		                			$('#divmh').append('<p><b>{% trans "BIRTHS STATISTICS" %}</b></p>' +
+
+									'<div style="clear:both; height:10px;"></div>' +
+
+									'<table id="tblmh" class="table table-striped table-bordered table-condensed">');
+									
+									$('#tblmh').append('<thead>' +
+										'<th>{% trans "Location" %}</th><th>{% trans "Number of births" %}</th><th>{% trans "Delivery at home" %}</th><th>{% trans "Delivery on road" %}</th><th>{% trans "Delivery at health facility" %}</th><th>{% trans "Breastfeeding within 60 min" %}</th><th>{% trans "Breastfeeding after 60 min" %}</th>' +
+									'</thead>' +
+										
+									'<tbody>' +
+										
+									'</tbody>');
+
+									var v = 0;
+
+									$('#tblmh').find('tbody').append('<tr style="cursor:pointer;"></tr>');
+									$('#tblmh tr:last').append('<td>' + v +'</td>');
+									$('#tblmh tr:last').append('<td><a href="#" onclick = "displayRegBirthsDetails(this)">'+ v +'</a></td>');
+									$('#tblmh tr:last').append('<td><a href="#" onclick = "displayHomeBirthsDetails(this)">'+ v +'</a></td>');
+									$('#tblmh tr:last').append('<td><a href="#" onclick = "displayRoadBirthsDetails(this)">'+ v +'</a></td>');
+									$('#tblmh tr:last').append('<td><a href="#" onclick = "displayHFBirthsDetails(this)">'+ v +'</a></td>');
+									$('#tblmh tr:last').append('<td><a href="#" onclick = "displayBrInFirstHourDetails(this)">'+ v +'</a></td>');
+									$('#tblmh tr:last').append('<td><a href="#" onclick = "displayBrAfterFirstHourDetails(this)">'+ v +'</a></td>');
+
+									$('#tblmh').DataTable({
+										dom: "<'row'<'col-sm-3'l><'col-sm-4'i><'col-sm-5'f>>" +
+											"<'row'<'col-sm-12'tr>>" +
+											"<'row'<'col-sm-4'B><'col-sm-8'p>>",
+										pagingType: "full_numbers",
+										lengthMenu: [
+								            [10, 25, 50, 100, -1 ],
+								            ['10', '25', '50', '100', 'All' ]
+								        ],
+								        buttons: [
+								            'copy', 'csv', 'excel', 'pdf', 'print'
+								        ]
+									});
+
 		                	}
 		                }
 
