@@ -126,6 +126,7 @@ class Symptom(models.Model):
     ''' In this model will be stored symptom designations '''
     symtom_designation = models.CharField(max_length=50)
     symtom_code_meaning = models.CharField(max_length=50)
+    is_red_symptom = models.BooleanField(default=False)
 
     def __unicode__(self):
         return "{0} - {1}".format(self.symtom_designation, self.symtom_code_meaning)
