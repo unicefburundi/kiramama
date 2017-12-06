@@ -9,17 +9,20 @@ import datetime
 import requests
 import json
 from django.conf import settings
+import unicodedata
 
 
 def send_sms_through_rapidpro(args):
     ''' This function sends messages through rapidpro. Contact(s) and the message to send to them must be in args['data'] '''
-    url = 'https://api.rapidpro.io/api/v1/broadcasts.json'
+    url = 'https://api.rapidpro.io/api/v2/broadcasts.json'
     token = getattr(settings, 'TOKEN', '')
 
     data = args['data']
-
+    print "==="
+    print data
     response = requests.post(url, headers={'Content-type': 'application/json', 'Authorization': 'Token %s' % token}, data = json.dumps(data))
-
+    print response
+    print "---"
 
 def check_supervisor_phone_number_not_for_this_contact(args):
     '''This function checks if the contact didn't send his/her phone number in the place of the supervisor phone number'''
@@ -725,6 +728,20 @@ def check_has_already_session(args):
     else:
         args['valide'] = True
         args['info_to_contact'] = "Ok."
+
+
+def get_national_sup_phone_number():
+    urns = []
+    national_supervisors = AllSupervisor.objects.filter(is_national_supervisor = True)
+    if(len(national_supervisors) > 0):
+        for n_s in national_supervisors:
+            phone_number = n_s.phone_number
+            if len(phone_number) == 8:
+                phone_number = "+257"+phone_number
+            phone_number = "tel:"+phone_number
+            #phone_number = unicodedata.normalize('NFKD', phone_number).encode('ascii','ignore')
+            urns.append(phone_number)
+    return urns
 
 
 def temporary_record_reporter(args):
@@ -2108,6 +2125,9 @@ def record_risk_report(args):
     string_of_symptoms = ""
     first_symptom = True
 
+    string_of_red_symptoms = ""
+    first_red_symptom = True
+
     for one_symbol in args['checked_symptoms_list']:
         one_symptom = Symptom.objects.filter(symtom_designation__iexact = one_symbol)[0]
         created_report_symptom_connection = RIS_Report_Symptom.objects.create(ris_report = created_ris_report, symptom = one_symptom)
@@ -2116,6 +2136,14 @@ def record_risk_report(args):
             first_symptom = False
         else:
             string_of_symptoms = string_of_symptoms+", "+one_symptom.symtom_designation
+        
+        if one_symptom.is_red_symptom:
+            string_of_red_symptoms = string_of_red_symptoms+one_symptom.symtom_designation
+            first_red_symptom = False
+        else:
+            string_of_red_symptoms = string_of_red_symptoms+", "+one_symptom.symtom_designation
+
+
     if(args['ris_type'] == "RIS_CHILD"):
         # Let's record informations related to the child
         report_ris_bebe = ReportRISBebe.objects.create(ris_report = created_ris_report, concerned_child = args['concerned_child'])
@@ -2135,14 +2163,28 @@ def record_risk_report(args):
         # args['info_to_contact'] = "Le rapport de risque de la maman '"+args['concerned_mother'].id_mother+"' est bien enregistre."
         args['info_to_contact'] = "Mesaje warungitse yerekeye ibimenyetso vy indwara ku mupfasoni '"+args['concerned_mother'].id_mother+"' yashitse neza"
         # args['info_to_supervisors'] = "La maman '"+args['concerned_mother'].id_mother+"' presente les symptomes suivants : "+string_of_symptoms
-        args['info_to_supervisors'] = "Umupfasoni '"+args['concerned_mother'].id_mother+"' afise ibimenyetso vy indwara bikurikira : "+string_of_symptoms
+        args['info_to_supervisors'] = "Umupfasoni '"+args['concerned_mother'].id_mother+"' afise ibimenyetso bikurikira : "+string_of_symptoms
 
     the_contact_phone_number = "tel:"+args['supervisor_phone_number']
     data = {"urns": [the_contact_phone_number],"text": args['info_to_supervisors']}
     args['data'] = data
     send_sms_through_rapidpro(args)
 
+    if len(string_of_red_symptoms) > 1:
+        #We need to inform national supervisors
+        if(args['ris_type'] == "RIS_CHILD"):
+            args['info_to_supervisors'] = "Umwana '" +args['child_number'].child_code_designation+"' w umupfasoni '"+args['concerned_mother'].id_mother+"', CDS '"+args['the_sender'].cds.name+"', District '"+args['the_sender'].cds.district.name+"', BPS '"+args['the_sender'].cds.district.bps.name+"' afise ibimenyetso bikurikira : "+string_of_red_symptoms
 
+        if(args['ris_type'] == "RIS_WOMAN"):
+            args['info_to_supervisors'] = "Umupfasoni '"+args['concerned_mother'].id_mother+"' CDS '"+args['the_sender'].cds.name+"', district '"+args['the_sender'].cds.district.name+"', BPS '"+args['the_sender'].cds.district.bps.name+"' afise ibimenyetso bikurikira : "+string_of_red_symptoms
+
+        national_sup_phone_numbers = get_national_sup_phone_number()
+
+        print national_sup_phone_numbers
+
+        data = {"urns": [national_sup_phone_numbers],"text": args['info_to_supervisors']}
+        args['data'] = data
+        send_sms_through_rapidpro(args)
 
 
 def modify_record_risk_report(args):
