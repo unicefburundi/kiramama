@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from django.db import models
-from health_administration_structure_app.models import CDS
+from health_administration_structure_app.models import CDS, District
 from public_administration_structure_app.models import SousColline
 
 
@@ -413,3 +413,21 @@ class NotificationsCHW(models.Model):
 
     def __unicode__(self):
         return "{0} - {1}".format(self.chw, self.notification)
+
+
+class AllSupervisor(models.Model):
+    first_name = models.CharField(max_length=50)
+    last_name = models.CharField(max_length=50)
+    phone_number = models.CharField(max_length=15)
+    is_national_supervisor = models.BooleanField(default=False)
+
+    def __unicode__(self):
+        return "{0} {1} {2} {3}".format(self.first_name, self.last_name, self.phone_number, self.is_national_supervisor)
+
+
+class DistrictSupervisor(models.Model):
+    district = models.ForeignKey(District)
+    supervisor = models.ForeignKey(AllSupervisor)
+
+    def __unicode__(self):
+        return "{0} {1} Supervise {2}".format(self.supervisor.first_name, self.supervisor.last_name, self.district.name)
