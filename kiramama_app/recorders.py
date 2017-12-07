@@ -2270,6 +2270,9 @@ def modify_record_risk_report(args):
     string_of_symptoms = ""
     first_symptom = True
 
+    string_of_red_symptoms = ""
+    first_red_symptom = True
+
     for one_symbol in args['checked_symptoms_list']:
         one_symptom = Symptom.objects.filter(symtom_designation__iexact = one_symbol)[0]
         created_report_symptom_connection = RIS_Report_Symptom.objects.create(ris_report = the_one_corresponding_risreport, symptom = one_symptom)
@@ -2278,6 +2281,16 @@ def modify_record_risk_report(args):
             first_symptom = False
         else:
             string_of_symptoms = string_of_symptoms+", "+one_symptom.symtom_designation
+
+
+        if one_symptom.is_red_symptom:
+            if first_red_symptom:
+                string_of_red_symptoms = string_of_red_symptoms+one_symptom.symtom_designation
+                first_red_symptom = False
+            else:
+                string_of_red_symptoms = string_of_red_symptoms+", "+one_symptom.symtom_designation
+
+
 
     if(args['ris_type'] == "RIS_CHILD"):
         # Let's record informations related to the child
@@ -2298,6 +2311,22 @@ def modify_record_risk_report(args):
     data = {"urns": [the_contact_phone_number],"text": args['info_to_supervisors']}
     args['data'] = data
     send_sms_through_rapidpro(args)
+
+    if len(string_of_red_symptoms) > 1:
+        #We need to inform national supervisors
+        if(args['ris_type'] == "RIS_CHILD"):
+            args['info_to_supervisors'] = "Mesaje yo gukosora. Umwana '" +args['child_number'].child_code_designation+"' w umupfasoni '"+args['concerned_mother'].id_mother+"', wo muri CDS '"+args['the_sender'].cds.name+"', District '"+args['the_sender'].cds.district.name+"', BPS '"+args['the_sender'].cds.district.bps.name+"' afise ibimenyetso bikurikira : "+string_of_red_symptoms
+
+        if(args['ris_type'] == "RIS_WOMAN"):
+            args['info_to_supervisors'] = "Mesaje yo gukosora. Umupfasoni '"+args['concerned_mother'].id_mother+"', wo muri CDS '"+args['the_sender'].cds.name+"', district '"+args['the_sender'].cds.district.name+"', BPS '"+args['the_sender'].cds.district.bps.name+"' afise ibimenyetso bikurikira : "+string_of_red_symptoms
+
+        national_sup_phone_numbers = get_national_sup_phone_number()
+
+        print national_sup_phone_numbers
+
+        data = {"urns": national_sup_phone_numbers,"text": args['info_to_supervisors']}
+        args['data'] = data
+        send_sms_through_rapidpro(args)
 # -----------------------------------------------------------------
 
 
