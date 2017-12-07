@@ -2138,10 +2138,11 @@ def record_risk_report(args):
             string_of_symptoms = string_of_symptoms+", "+one_symptom.symtom_designation
         
         if one_symptom.is_red_symptom:
-            string_of_red_symptoms = string_of_red_symptoms+one_symptom.symtom_designation
-            first_red_symptom = False
-        else:
-            string_of_red_symptoms = string_of_red_symptoms+", "+one_symptom.symtom_designation
+            if first_red_symptom:
+                string_of_red_symptoms = string_of_red_symptoms+one_symptom.symtom_designation
+                first_red_symptom = False
+            else:
+                string_of_red_symptoms = string_of_red_symptoms+", "+one_symptom.symtom_designation
 
 
     if(args['ris_type'] == "RIS_CHILD"):
@@ -2173,16 +2174,16 @@ def record_risk_report(args):
     if len(string_of_red_symptoms) > 1:
         #We need to inform national supervisors
         if(args['ris_type'] == "RIS_CHILD"):
-            args['info_to_supervisors'] = "Umwana '" +args['child_number'].child_code_designation+"' w umupfasoni '"+args['concerned_mother'].id_mother+"', CDS '"+args['the_sender'].cds.name+"', District '"+args['the_sender'].cds.district.name+"', BPS '"+args['the_sender'].cds.district.bps.name+"' afise ibimenyetso bikurikira : "+string_of_red_symptoms
+            args['info_to_supervisors'] = "Umwana '" +args['child_number'].child_code_designation+"' w umupfasoni '"+args['concerned_mother'].id_mother+"', wo muri CDS '"+args['the_sender'].cds.name+"', District '"+args['the_sender'].cds.district.name+"', BPS '"+args['the_sender'].cds.district.bps.name+"' afise ibimenyetso bikurikira : "+string_of_red_symptoms
 
         if(args['ris_type'] == "RIS_WOMAN"):
-            args['info_to_supervisors'] = "Umupfasoni '"+args['concerned_mother'].id_mother+"' CDS '"+args['the_sender'].cds.name+"', district '"+args['the_sender'].cds.district.name+"', BPS '"+args['the_sender'].cds.district.bps.name+"' afise ibimenyetso bikurikira : "+string_of_red_symptoms
+            args['info_to_supervisors'] = "Umupfasoni '"+args['concerned_mother'].id_mother+"', wo muri CDS '"+args['the_sender'].cds.name+"', district '"+args['the_sender'].cds.district.name+"', BPS '"+args['the_sender'].cds.district.bps.name+"' afise ibimenyetso bikurikira : "+string_of_red_symptoms
 
         national_sup_phone_numbers = get_national_sup_phone_number()
 
         print national_sup_phone_numbers
 
-        data = {"urns": [national_sup_phone_numbers],"text": args['info_to_supervisors']}
+        data = {"urns": national_sup_phone_numbers,"text": args['info_to_supervisors']}
         args['data'] = data
         send_sms_through_rapidpro(args)
 
