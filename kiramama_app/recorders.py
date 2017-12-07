@@ -2543,9 +2543,18 @@ def record_death_report(args):
     if(args['dec_type'] == "DEC_CHILD"):
         # args['info_to_contact'] = "Le rapport de deces du bebe '" +args['child_number'].child_code_designation+"' de la maman '"+args['concerned_mother'].id_mother+"' est bien enregistre."
         args['info_to_contact'] = "Mesaje ivuga urupfu rw umwana '" +args['child_number'].child_code_designation+"' w umupfasoni '"+args['concerned_mother'].id_mother+"' yashitse"
+        args['info_to_supervisors'] = "Umuremesha kiyago akoresha '"+args['phone']+"' ahejeje gutanga mesaje ivuga urupfu rw umwana '" +args['child_number'].child_code_designation+"' w umupfasoni '"+args['concerned_mother'].id_mother+"'."
     if(args['dec_type'] == "DEC_WOMAN"):
         # args['info_to_contact'] = "Le rapport de deces de la maman '"+args['concerned_mother'].id_mother+"' est bien enregistre."
         args['info_to_contact'] = "Mesaje ivuga urupfu rw umupfasoni '"+args['concerned_mother'].id_mother+"' yashitse"
+        args['info_to_supervisors'] = "Umuremesha kiyago akoresha '"+args['phone']+"' ahejeje gutanga mesaje ivuga urupfu rw umupfasoni '"+args['concerned_mother'].id_mother+"'"
+
+    
+    the_contact_phone_number = "tel:"+args['supervisor_phone_number']
+    data = {"urns": [the_contact_phone_number],"text": args['info_to_supervisors']}
+    args['data'] = data
+    send_sms_through_rapidpro(args)
+
 
 
 # Modify
@@ -2653,10 +2662,17 @@ def modify_record_death_report(args):
     if(args['dec_type'] == "DEC_CHILD"):
         # args['info_to_contact'] = "Mise a jour du rapport de deces du bebe '" +args['child_number'].child_code_designation+"' de la maman '"+args['concerned_mother'].id_mother+"' a reussie."
         args['info_to_contact'] = "Mesaje ikosora iyari yatanzwe yerekeye urupfu rw umwana '" +args['child_number'].child_code_designation+"' w umupfasoni '"+args['concerned_mother'].id_mother+"' yashitse"
+        args['info_to_supervisors'] = "Mesaje ikosora iyari yatanzwe : Umuremesha kiyago akoresha '"+args['phone']+"' ahejeje gutanga mesaje ivuga urupfu rw umwana '" +args['child_number'].child_code_designation+"' w umupfasoni '"+args['concerned_mother'].id_mother+"'."
     if(args['dec_type'] == "DEC_WOMAN"):
         # args['info_to_contact'] = "Mise a jour du rapport de deces de la maman '"+args['concerned_mother'].id_mother+"' a reussie."
         args['info_to_contact'] = "Mesaje ikosora iyari yatanzwe yerekeye urupfu rw umupfasoni '"+args['concerned_mother'].id_mother+"' yashitse"
+        args['info_to_supervisors'] = "Mesaje ikosora iyari yatanzwe : Umuremesha kiyago akoresha '"+args['phone']+"' ahejeje gutanga mesaje ivuga urupfu rw umupfasoni '"+args['concerned_mother'].id_mother+"'"
 
+
+    the_contact_phone_number = "tel:"+args['supervisor_phone_number']
+    data = {"urns": [the_contact_phone_number],"text": args['info_to_supervisors']}
+    args['data'] = data
+    send_sms_through_rapidpro(args)
 
 # -----------------------------------------------------------------
 
