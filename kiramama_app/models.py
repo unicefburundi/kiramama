@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from django.db import models
-from health_administration_structure_app.models import CDS, District
-from public_administration_structure_app.models import SousColline
+from health_administration_structure_app.models import *
+from public_administration_structure_app.models import *
 
 
 class CHW(models.Model):
@@ -424,6 +424,15 @@ class AllSupervisor(models.Model):
 
     def __unicode__(self):
         return "{0} {1} {2} {3}".format(self.first_name, self.last_name, self.phone_number, self.is_national_supervisor)
+
+
+class ProvinceSupervisor(models.Model):
+    province = models.ForeignKey(Province)
+    supervisor = models.ForeignKey(AllSupervisor)
+
+    def __unicode__(self):
+        return "{0} {1} Supervise {2}".format(self.supervisor.first_name, self.supervisor.last_name, self.province.name)
+
 
 
 class DistrictSupervisor(models.Model):
