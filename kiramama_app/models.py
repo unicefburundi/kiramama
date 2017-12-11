@@ -126,6 +126,7 @@ class Symptom(models.Model):
     ''' In this model will be stored symptom designations '''
     symtom_designation = models.CharField(max_length=50)
     symtom_code_meaning = models.CharField(max_length=50)
+    kirundi_name = models.CharField(max_length=50, default="")
     is_red_symptom = models.BooleanField(default=False)
 
     def __unicode__(self):
