@@ -310,7 +310,7 @@ def check_if_is_reporter(args):
         args['valide'] = False
         args['info_to_contact'] = "Exception. Votre site n est pas enregistre dans le systeme. Veuillez contacter l administrateur du systeme"
         return
-
+    
     args['the_sender'] = one_concerned_chw
     args['facility'] = one_concerned_chw.cds
     args['supervisor_phone_number'] = one_concerned_chw.supervisor_phone_number
@@ -536,6 +536,12 @@ def check_symptoms(args):
     # Symptoms are separated by comma. Let's put them in a list.
     sent_symptoms_list = sent_symptoms.split(",")
 
+    symptoms_kirundi_names = ""
+    first_symptom = True
+
+    red_symptoms_kirundi_names = ""
+    red_first_symptom = True
+
     # Let's assume that all symbols are correct
     valid = True
 
@@ -549,10 +555,30 @@ def check_symptoms(args):
                 args['valide'] = False
                 # args['info_to_contact'] = "Erreur. Le symptome '"+not_valid_symptom+"' n existe pas dans le systeme. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
                 args['info_to_contact'] = "Ikosa. Ikimenyetso '"+not_valid_symptom+"' ntikibaho. Mu gukosora, subira urungike iyo mesaje itangurwa na '"+args['mot_cle']+"' yanditse neza"
+            else:
+                one_symptom = symptoms[0]
+                kir_symptom_name = one_symptom.kirundi_name
+
+                if first_symptom:
+                    symptoms_kirundi_names = symptoms_kirundi_names+""+kir_symptom_name
+                    first_symptom = False
+                else:
+                    symptoms_kirundi_names = symptoms_kirundi_names+", "+kir_symptom_name
+
+                if one_symptom.is_red_symptom:
+                    if red_first_symptom:
+                        red_symptoms_kirundi_names = red_symptoms_kirundi_names+""+kir_symptom_name
+                        red_first_symptom = False
+                    else:
+                        red_symptoms_kirundi_names = red_symptoms_kirundi_names+", "+kir_symptom_name
+                    
+
 
     if(valid is True):
         # All sent symptoms are known in the system
         args['checked_symptoms_list'] = sent_symptoms_list
+        args['kirundi_symptoms_names'] = symptoms_kirundi_names
+        args['kirundi_red_symptoms_names'] = red_symptoms_kirundi_names
         args['valide'] = True
         args['info_to_contact'] = "La liste des symboles envoyes est valide"
 
@@ -2122,7 +2148,7 @@ def record_risk_report(args):
     the_created_report = Report.objects.create(chw = args['the_sender'], sub_hill = args['sub_colline'], cds = args['facility'], mother = args['concerned_mother'], reporting_date = datetime.datetime.now().date(), text = args['text'], category = args['mot_cle'])
     created_ris_report = ReportRIS.objects.create(report = the_created_report)
 
-    string_of_symptoms = ""
+    '''string_of_symptoms = ""
     first_symptom = True
 
     string_of_red_symptoms = ""
@@ -2143,7 +2169,7 @@ def record_risk_report(args):
                 first_red_symptom = False
             else:
                 string_of_red_symptoms = string_of_red_symptoms+", "+one_symptom.symtom_designation
-
+                '''
 
     if(args['ris_type'] == "RIS_CHILD"):
         # Let's record informations related to the child
@@ -2158,34 +2184,34 @@ def record_risk_report(args):
         # args['info_to_contact'] = "Le rapport de risque pour le bebe '" +args['child_number'].child_code_designation+"' de la maman '"+args['concerned_mother'].id_mother+"' est bien enregistre."
         args['info_to_contact'] = "Mesaje warungitse yerekeye ibimenyetse vy indwara kumwana '" +args['child_number'].child_code_designation+"' w umupfasoni '"+args['concerned_mother'].id_mother+"' yashitse neza"
         # args['info_to_supervisors'] = "L enfant '" +args['child_number'].child_code_designation+"' de la maman '"+args['concerned_mother'].id_mother+"' presente les symptomes suivants : "+string_of_symptoms
-        args['info_to_supervisors'] = "Umwana '" +args['child_number'].child_code_designation+"' w umupfasoni '"+args['concerned_mother'].id_mother+"' afise ibimenyetso bikurikira : "+string_of_symptoms
+        args['info_to_supervisors'] = "Umwana '" +args['child_number'].child_code_designation+"' w umupfasoni '"+args['concerned_mother'].id_mother+"' afise ikimenyetso mburizi : "+args['kirundi_symptoms_names']
 
     if(args['ris_type'] == "RIS_WOMAN"):
         # args['info_to_contact'] = "Le rapport de risque de la maman '"+args['concerned_mother'].id_mother+"' est bien enregistre."
         args['info_to_contact'] = "Mesaje warungitse yerekeye ibimenyetso vy indwara ku mupfasoni '"+args['concerned_mother'].id_mother+"' yashitse neza"
         # args['info_to_supervisors'] = "La maman '"+args['concerned_mother'].id_mother+"' presente les symptomes suivants : "+string_of_symptoms
-        args['info_to_supervisors'] = "Umupfasoni '"+args['concerned_mother'].id_mother+"' afise ibimenyetso bikurikira : "+string_of_symptoms
+        args['info_to_supervisors'] = "Umupfasoni '"+args['concerned_mother'].id_mother+"' afise ikimenyetso mburizi : "+args['kirundi_symptoms_names']
 
     the_contact_phone_number = "tel:"+args['supervisor_phone_number']
     data = {"urns": [the_contact_phone_number],"text": args['info_to_supervisors']}
     args['data'] = data
     send_sms_through_rapidpro(args)
 
-    if len(string_of_red_symptoms) > 1:
-        #We need to inform national supervisors
-        if(args['ris_type'] == "RIS_CHILD"):
-            args['info_to_supervisors'] = "Umwana '" +args['child_number'].child_code_designation+"' w umupfasoni '"+args['concerned_mother'].id_mother+"', wo muri CDS '"+args['the_sender'].cds.name+"', District '"+args['the_sender'].cds.district.name+"', BPS '"+args['the_sender'].cds.district.bps.name+"' afise ibimenyetso bikurikira : "+string_of_red_symptoms
+    #if len(string_of_red_symptoms) > 1:
+    #We need to inform national supervisors
+    if(args['ris_type'] == "RIS_CHILD"):
+        args['info_to_supervisors'] = "Umwana '" +args['child_number'].child_code_designation+"' w umupfasoni '"+args['concerned_mother'].id_mother+"', wo mu gacimbiri '"+args['sub_colline'].name+"' ko muri '"+args['the_sender'].cds.name+"', '"+args['the_sender'].cds.district.name+"', BPS '"+args['the_sender'].cds.district.bps.name+"' afise ikimenyetso mburizi : "+args['kirundi_red_symptoms_names']
 
-        if(args['ris_type'] == "RIS_WOMAN"):
-            args['info_to_supervisors'] = "Umupfasoni '"+args['concerned_mother'].id_mother+"', wo muri CDS '"+args['the_sender'].cds.name+"', district '"+args['the_sender'].cds.district.name+"', BPS '"+args['the_sender'].cds.district.bps.name+"' afise ibimenyetso bikurikira : "+string_of_red_symptoms
+    if(args['ris_type'] == "RIS_WOMAN"):
+        args['info_to_supervisors'] = "Umupfasoni '"+args['concerned_mother'].id_mother+"', wo mu gacimbiri '"+args['sub_colline'].name+"' ko muri '"+args['the_sender'].cds.name+"', '"+args['the_sender'].cds.district.name+"', BPS '"+args['the_sender'].cds.district.bps.name+"' afise ikimenyetso mburizi : "+args['kirundi_red_symptoms_names']
 
-        national_sup_phone_numbers = get_national_sup_phone_number()
+    national_sup_phone_numbers = get_national_sup_phone_number()
 
-        print national_sup_phone_numbers
+    print national_sup_phone_numbers
 
-        data = {"urns": national_sup_phone_numbers,"text": args['info_to_supervisors']}
-        args['data'] = data
-        send_sms_through_rapidpro(args)
+    data = {"urns": national_sup_phone_numbers,"text": args['info_to_supervisors']}
+    args['data'] = data
+    send_sms_through_rapidpro(args)
 
 
 def modify_record_risk_report(args):
@@ -2267,7 +2293,7 @@ def modify_record_risk_report(args):
         for one_ris_report_symptom_connection in all_ris_report_symptom_connections:
             one_ris_report_symptom_connection.delete()
 
-    string_of_symptoms = ""
+    '''string_of_symptoms = ""
     first_symptom = True
 
     string_of_red_symptoms = ""
@@ -2289,7 +2315,7 @@ def modify_record_risk_report(args):
                 first_red_symptom = False
             else:
                 string_of_red_symptoms = string_of_red_symptoms+", "+one_symptom.symtom_designation
-
+                '''
 
 
     if(args['ris_type'] == "RIS_CHILD"):
@@ -2300,11 +2326,11 @@ def modify_record_risk_report(args):
     if(args['ris_type'] == "RIS_CHILD"):
         # args['info_to_contact'] = "Mise a jour du rapport de risque pour le bebe '" +args['child_number'].child_code_designation+"' de la maman '"+args['concerned_mother'].id_mother+"' a reussie."
         args['info_to_contact'] = "Mesaje ikosora iyari yarungitswe yerekeye ibimenyetso vy indwara kumwana '" +args['child_number'].child_code_designation+"' w umupfasoni '"+args['concerned_mother'].id_mother+"' yashitse neza"
-        args['info_to_supervisors'] = "Mesaje yo gukosora. Umwana '" +args['child_number'].child_code_designation+"' w umupfasoni '"+args['concerned_mother'].id_mother+"' afise ibimenyetso bikurikira : "+string_of_symptoms
+        args['info_to_supervisors'] = "Mesaje yo gukosora. Umwana '" +args['child_number'].child_code_designation+"' w umupfasoni '"+args['concerned_mother'].id_mother+"' afise ikimenyetso mburizi : "+string_of_symptoms
     if(args['ris_type'] == "RIS_WOMAN"):
         # args['info_to_contact'] = "Mise a jour du rapport de risque de la maman '"+args['concerned_mother'].id_mother+"' a reussie."
         args['info_to_contact'] = "Mesaje ikosora iyari yarungitswe yerekeye ibimenyetso vy indwara ku mupfasoni '"+args['concerned_mother'].id_mother+"' yashitse neza"
-        args['info_to_supervisors'] = "Mesaje yo gukosora. Umupfasoni '"+args['concerned_mother'].id_mother+"' afise ibimenyetso vy indwara bikurikira : "+string_of_symptoms
+        args['info_to_supervisors'] = "Mesaje yo gukosora. Umupfasoni '"+args['concerned_mother'].id_mother+"' afise ikimenyetso mburizi : "+string_of_symptoms
 
 
     the_contact_phone_number = "tel:"+args['supervisor_phone_number']
@@ -2312,21 +2338,22 @@ def modify_record_risk_report(args):
     args['data'] = data
     send_sms_through_rapidpro(args)
 
-    if len(string_of_red_symptoms) > 1:
-        #We need to inform national supervisors
-        if(args['ris_type'] == "RIS_CHILD"):
-            args['info_to_supervisors'] = "Mesaje yo gukosora. Umwana '" +args['child_number'].child_code_designation+"' w umupfasoni '"+args['concerned_mother'].id_mother+"', wo muri CDS '"+args['the_sender'].cds.name+"', District '"+args['the_sender'].cds.district.name+"', BPS '"+args['the_sender'].cds.district.bps.name+"' afise ibimenyetso bikurikira : "+string_of_red_symptoms
+    #if len(string_of_red_symptoms) > 1:
+    #We need to inform national supervisors
+    if(args['ris_type'] == "RIS_CHILD"):
+        args['info_to_supervisors'] = "Mesaje yo gukosora. Umwana '" +args['child_number'].child_code_designation+"' w umupfasoni '"+args['concerned_mother'].id_mother+"', wo mu gacimbiri '"+args['sub_colline'].name+"' ko muri '"+args['the_sender'].cds.name+"', '"+args['the_sender'].cds.district.name+"', BPS '"+args['the_sender'].cds.district.bps.name+"' afise ikimenyetso mburizi : "+args['kirundi_red_symptoms_names']
 
-        if(args['ris_type'] == "RIS_WOMAN"):
-            args['info_to_supervisors'] = "Mesaje yo gukosora. Umupfasoni '"+args['concerned_mother'].id_mother+"', wo muri CDS '"+args['the_sender'].cds.name+"', district '"+args['the_sender'].cds.district.name+"', BPS '"+args['the_sender'].cds.district.bps.name+"' afise ibimenyetso bikurikira : "+string_of_red_symptoms
+    if(args['ris_type'] == "RIS_WOMAN"):
+        args['info_to_supervisors'] = "Mesaje yo gukosora. Umupfasoni '"+args['concerned_mother'].id_mother+"', wo mu gacimbiri '"+args['sub_colline'].name+"' ko muri '"+args['the_sender'].cds.name+"', '"+args['the_sender'].cds.district.name+"', BPS '"+args['the_sender'].cds.district.bps.name+"' afise ikimenyetso mburizi : "+args['kirundi_red_symptoms_names']
 
-        national_sup_phone_numbers = get_national_sup_phone_number()
 
-        print national_sup_phone_numbers
+    national_sup_phone_numbers = get_national_sup_phone_number()
 
-        data = {"urns": national_sup_phone_numbers,"text": args['info_to_supervisors']}
-        args['data'] = data
-        send_sms_through_rapidpro(args)
+    print national_sup_phone_numbers
+
+    data = {"urns": national_sup_phone_numbers,"text": args['info_to_supervisors']}
+    args['data'] = data
+    send_sms_through_rapidpro(args)
 # -----------------------------------------------------------------
 
 
