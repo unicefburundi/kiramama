@@ -2583,6 +2583,21 @@ def record_death_report(args):
     send_sms_through_rapidpro(args)
 
 
+    #We need to inform national supervisors
+    if(args['dec_type'] == "DEC_CHILD"):
+        args['info_to_supervisors'] = "Umuremesha kiyago akoresha '"+args['phone']+"', wo mu gacimbiri '"+args['sub_colline'].name+"' ko muri '"+args['the_sender'].cds.name+"', '"+args['the_sender'].cds.district.name+"', BPS '"+args['the_sender'].cds.district.bps.name+"' ahejeje gutanga mesaje ivuga urupfu rw umwana '" +args['child_number'].child_code_designation+"' w umupfasoni '"+args['concerned_mother'].id_mother+"'."
+    if(args['dec_type'] == "DEC_WOMAN"):
+        args['info_to_supervisors'] = "Umuremesha kiyago akoresha '"+args['phone']+"', wo mu gacimbiri '"+args['sub_colline'].name+"' ko muri '"+args['the_sender'].cds.name+"', '"+args['the_sender'].cds.district.name+"', BPS '"+args['the_sender'].cds.district.bps.name+"' ahejeje gutanga mesaje ivuga urupfu rw umupfasoni '"+args['concerned_mother'].id_mother+"'"
+
+    national_sup_phone_numbers = get_national_sup_phone_number()
+
+    print national_sup_phone_numbers
+
+    data = {"urns": national_sup_phone_numbers,"text": args['info_to_supervisors']}
+    args['data'] = data
+    send_sms_through_rapidpro(args)
+
+
 
 # Modify
 def modify_record_death_report(args):
@@ -2698,6 +2713,21 @@ def modify_record_death_report(args):
 
     the_contact_phone_number = "tel:"+args['supervisor_phone_number']
     data = {"urns": [the_contact_phone_number],"text": args['info_to_supervisors']}
+    args['data'] = data
+    send_sms_through_rapidpro(args)
+
+
+    #We need to inform national supervisors
+    if(args['dec_type'] == "DEC_CHILD"):
+        args['info_to_supervisors'] = "Mesaje ikosora iyari yatanzwe. Umuremesha kiyago akoresha '"+args['phone']+"', wo mu gacimbiri '"+args['sub_colline'].name+"' ko muri '"+args['the_sender'].cds.name+"', '"+args['the_sender'].cds.district.name+"', BPS '"+args['the_sender'].cds.district.bps.name+"' ahejeje gutanga mesaje ivuga urupfu rw umwana '" +args['child_number'].child_code_designation+"' w umupfasoni '"+args['concerned_mother'].id_mother+"'."
+    if(args['dec_type'] == "DEC_WOMAN"):
+        args['info_to_supervisors'] = "Mesaje ikosora iyari yatanzwe. Umuremesha kiyago akoresha '"+args['phone']+"', wo mu gacimbiri '"+args['sub_colline'].name+"' ko muri '"+args['the_sender'].cds.name+"', '"+args['the_sender'].cds.district.name+"', BPS '"+args['the_sender'].cds.district.bps.name+"' ahejeje gutanga mesaje ivuga urupfu rw umupfasoni '"+args['concerned_mother'].id_mother+"'"
+
+    national_sup_phone_numbers = get_national_sup_phone_number()
+
+    print national_sup_phone_numbers
+
+    data = {"urns": national_sup_phone_numbers,"text": args['info_to_supervisors']}
     args['data'] = data
     send_sms_through_rapidpro(args)
 
