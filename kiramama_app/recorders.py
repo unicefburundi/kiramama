@@ -2184,13 +2184,13 @@ def record_risk_report(args):
         # args['info_to_contact'] = "Le rapport de risque pour le bebe '" +args['child_number'].child_code_designation+"' de la maman '"+args['concerned_mother'].id_mother+"' est bien enregistre."
         args['info_to_contact'] = "Mesaje warungitse yerekeye ibimenyetse vy indwara kumwana '" +args['child_number'].child_code_designation+"' w umupfasoni '"+args['concerned_mother'].id_mother+"' yashitse neza"
         # args['info_to_supervisors'] = "L enfant '" +args['child_number'].child_code_designation+"' de la maman '"+args['concerned_mother'].id_mother+"' presente les symptomes suivants : "+string_of_symptoms
-        args['info_to_supervisors'] = "Umwana '" +args['child_number'].child_code_designation+"' w umupfasoni '"+args['concerned_mother'].id_mother+"' afise ikimenyetso mburizi : "+args['kirundi_symptoms_names']
+        args['info_to_supervisors'] = "Umwana '" +args['child_number'].child_code_designation+"' w umupfasoni nomero '"+args['concerned_mother'].id_mother+"', akurikiranwa n umuremesha kiyago '"+args['the_sender'].phone_number+"', wo mu gacimbiri '"+args['sub_colline'].name+"' afise ikimenyetso mburizi : "+args['kirundi_red_symptoms_names']
 
     if(args['ris_type'] == "RIS_WOMAN"):
         # args['info_to_contact'] = "Le rapport de risque de la maman '"+args['concerned_mother'].id_mother+"' est bien enregistre."
         args['info_to_contact'] = "Mesaje warungitse yerekeye ibimenyetso vy indwara ku mupfasoni '"+args['concerned_mother'].id_mother+"' yashitse neza"
         # args['info_to_supervisors'] = "La maman '"+args['concerned_mother'].id_mother+"' presente les symptomes suivants : "+string_of_symptoms
-        args['info_to_supervisors'] = "Umupfasoni '"+args['concerned_mother'].id_mother+"' afise ikimenyetso mburizi : "+args['kirundi_symptoms_names']
+        args['info_to_supervisors'] = "Umupfasoni nomero '"+args['concerned_mother'].id_mother+"', akurikiranwa n umuremesha kiyago '"+args['the_sender'].phone_number+"', wo mu gacimbiri '"+args['sub_colline'].name+"' afise ikimenyetso mburizi : "+args['kirundi_red_symptoms_names']
 
     the_contact_phone_number = "tel:"+args['supervisor_phone_number']
     data = {"urns": [the_contact_phone_number],"text": args['info_to_supervisors']}
@@ -2326,11 +2326,11 @@ def modify_record_risk_report(args):
     if(args['ris_type'] == "RIS_CHILD"):
         # args['info_to_contact'] = "Mise a jour du rapport de risque pour le bebe '" +args['child_number'].child_code_designation+"' de la maman '"+args['concerned_mother'].id_mother+"' a reussie."
         args['info_to_contact'] = "Mesaje ikosora iyari yarungitswe yerekeye ibimenyetso vy indwara kumwana '" +args['child_number'].child_code_designation+"' w umupfasoni '"+args['concerned_mother'].id_mother+"' yashitse neza"
-        args['info_to_supervisors'] = "Mesaje yo gukosora. Umwana '" +args['child_number'].child_code_designation+"' w umupfasoni '"+args['concerned_mother'].id_mother+"' afise ikimenyetso mburizi : "+string_of_symptoms
+        args['info_to_supervisors'] = "Mesaje yo gukosora. Umwana '" +args['child_number'].child_code_designation+"' w umupfasoni nomero '"+args['concerned_mother'].id_mother+"', akurikiranwa n umuremesha kiyago '"+args['the_sender'].phone_number+"', wo mu gacimbiri '"+args['sub_colline'].name+"' afise ikimenyetso mburizi : "+args['kirundi_red_symptoms_names']
     if(args['ris_type'] == "RIS_WOMAN"):
         # args['info_to_contact'] = "Mise a jour du rapport de risque de la maman '"+args['concerned_mother'].id_mother+"' a reussie."
         args['info_to_contact'] = "Mesaje ikosora iyari yarungitswe yerekeye ibimenyetso vy indwara ku mupfasoni '"+args['concerned_mother'].id_mother+"' yashitse neza"
-        args['info_to_supervisors'] = "Mesaje yo gukosora. Umupfasoni '"+args['concerned_mother'].id_mother+"' afise ikimenyetso mburizi : "+string_of_symptoms
+        args['info_to_supervisors'] = "Mesaje yo gukosora. Umupfasoni nomero '"+args['concerned_mother'].id_mother+"', akurikiranwa n umuremesha kiyago '"+args['the_sender'].phone_number+"', wo mu gacimbiri '"+args['sub_colline'].name+"' afise ikimenyetso mburizi : "+args['kirundi_red_symptoms_names']
 
 
     the_contact_phone_number = "tel:"+args['supervisor_phone_number']
