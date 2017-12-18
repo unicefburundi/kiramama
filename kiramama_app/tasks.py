@@ -126,7 +126,7 @@ def change_chw_status():
         return
 
     # Let's look for all CHW who didn't send any report for the time specified in settings
-    all_chws = CHW.objects.all()
+    all_chws = CHW.objects.filter(is_deleted=False)
 
     if len(all_chws) < 1:
         info = "No community health worker recorded in the system"
@@ -168,7 +168,7 @@ def inform_supersors_on_inactive_chw():
     # Let's update CHW status
     change_chw_status()
 
-    all_none_active_chws = CHW.objects.filter(is_active = False)
+    all_none_active_chws = CHW.objects.filter(is_active = False, is_deleted=False)
 
     if len(all_none_active_chws) < 1:
         return

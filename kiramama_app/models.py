@@ -13,6 +13,7 @@ class CHW(models.Model):
     supervisor_phone_number = models.CharField(max_length=20)
     is_active = models.BooleanField(default=True)
     reg_date = models.DateTimeField(auto_now_add=True)
+    is_deleted = models.BooleanField(default=False)
 
     def __unicode__(self):
         return self.phone_number

@@ -89,14 +89,14 @@ def home(request):
 
     # What is the percentage of active and inactive CHWs
     if(CHW.objects.all()):
-        d['number_of_chw'] = CHW.objects.count()
+        d['number_of_chw'] = CHW.objects.filter(is_deleted=False).count()
 
-        if(CHW.objects.filter(is_active=True)):
-            d['percentage_of_active_chw'] = CHW.objects.filter(is_active=True).count() / float(d['number_of_chw']) * 100
+        if(CHW.objects.filter(is_active=True, is_deleted=False)):
+            d['percentage_of_active_chw'] = CHW.objects.filter(is_active=True, is_deleted=False).count() / float(d['number_of_chw']) * 100
             d['percentage_of_active_chw'] = "%.2f" % d['percentage_of_active_chw']
         
-        if(CHW.objects.filter(is_active=False)):
-            d['percentage_of_not_active_chw'] = CHW.objects.filter(is_active=False).count() / float(d['number_of_chw']) * 100
+        if(CHW.objects.filter(is_active=False, is_deleted=False)):
+            d['percentage_of_not_active_chw'] = CHW.objects.filter(is_active=False, is_deleted=False).count() / float(d['number_of_chw']) * 100
             d['percentage_of_not_active_chw'] = "%.2f" % d['percentage_of_not_active_chw']
 
     # Statistics about delivery
@@ -792,7 +792,7 @@ def h_r_p_w_e_d_next_2_w_details(request, location_name):
 
 
 def active_chw(request):
-    data = CHW.objects.filter(is_active = True)
+    data = CHW.objects.filter(is_active = True, is_deleted=False)
 
     data = serializers.serialize('python', data)
     columns = [d['fields'] for d in data]
@@ -828,7 +828,7 @@ def active_chw(request):
 
 
 def inactive_chw(request):
-    data = CHW.objects.filter(is_active = False)
+    data = CHW.objects.filter(is_active = False, is_deleted=False)
 
     data = serializers.serialize('python', data)
     columns = [d['fields'] for d in data]
