@@ -175,44 +175,40 @@
 			<div class="fitcontent" class="container" style="width:100%; padding: 0px">
 				<nav class="navbar navbar-default" style="width:100%;">
 					<div class="container-fluid" style="width:100%;">
-						<div class="navbar-header" style="width:100%;">
-							<button class="navbar-toggle collapsed" aria-controls="navbar" aria-expanded="false" data-target="#navbar" data-toggle="collapse" type="button">
-								<span class="sr-only">{% trans "Toggle navigation" %}</span>
-								<span class="icon-bar"></span>
-								<span class="icon-bar"></span>
-								<span class="icon-bar"></span>
-							</button>
-						</div>
-						
-						<div id="navbar" class="navbar-collapse collapse" aria-expanded="false" style="width:100%; padding-top:10px; background-color: #99ffff;">
-							<ul class="nav navbar-nav navbar" style="width:100%">
-								<h1 class="bet-logo">
-									<a href="/">
-										<div class="col-sm-1" style="padding-left:5px; padding-right:5px;">
-											<img class="noborder size-full aligncenter" src="{% static 'images/kiramama.png' %}" scale="0">
-										</div>
-									</a>
-										<div class="col-sm-8 verticallineseparator" style="text-align:center;">
-											<span class="brand-app" style="text-align:center;"><a href="/"><font face="times new roman">Kiramama</font></a></span>
-											<span style="color:#000000; text-align:center;"> - <font face="times new roman">{% trans "Suivi des premiers 1000 Jours de la vie, prévention des décès  inutiles des mères et des nouveau-nés" %}</font></span>
-										</div>
-										<div class="col-sm-1" >
-											<img class="noborder size-full aligncenter" src="{% static 'images/burundi.png' %}" scale="0">
-										</div>
-										{% if user.is_authenticated %}
-										<!--<div class="col-sm-1" >
-												<li><a role="button" href="{% url 'home' %}">{% trans "Home" %}</a></li>
-										</div>-->
-										<div class="col-sm-1" >
-												<li><a role="button" href="/logout">{% trans "Logout" %}</a></li>
-										</div>
-											{% else %}
-												<li><a role="button" href="/login">{% trans "Login" %}</a></li>
-											{% endif %}
-										</div>
-									</a>
-								</h1>
-							</ul>
+						<div id="navbar" class="navbar-collapse collapse" aria-expanded="false" style="width:100%; padding-top:10px; background-color: #aeeaae; font-size: 200%;">
+
+
+							<div class="col-sm-1" style="padding-left:5px; padding-right:5px;">
+								<a href="/">
+									<img class="noborder size-full aligncenter" src="{% static 'images/kiramama.png' %}" scale="0">
+								</a>
+							</div>
+
+							<div class="col-sm-9" style="text-align:center;">
+								<div class="brand-app" style="text-align:center;"><a href="/"><font face="times new roman">Kiramama</font></a></div>
+								<br>
+								<div style="color:#000000; text-align:center;"><font face="times new roman" size="3">
+								<!--<marquee>-->
+								<!--{% trans "Suivi des premiers 1000 jours de la vie, prévention des décès  inutiles des mères et des nouveau-nés" %}-->
+								<!--</marquee>-->
+								</font></div>
+							</div>
+
+							<div class="col-sm-1" >
+								<img class="noborder size-full aligncenter" src="{% static 'images/burundi.png' %}" scale="0">
+							</div>
+
+							<div class="col-sm-1" >
+								<font face="times new roman" size="3">
+								{% if user.is_authenticated %}
+									<a role="button" href="/logout">{% trans "Logout" %}</a>
+								{% else %}
+									<a role="button" href="/login">{% trans "Login" %}</a>
+								{% endif %}
+								</font>
+							</div>
+
+
 						</div>
 					</div>
 				</nav>
