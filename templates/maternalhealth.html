@@ -198,6 +198,10 @@
 		                				}
 		                			}
 		                		}
+
+		                		console.log("111");
+		                		console.log(response)
+
 		                		for (var i = 0; i < response.length; i++){
 		                			location_name = response[i][location_column];
 		                			if((response[i]["reporting_date"] >= $('#dstartdate').val()) && (response[i]["reporting_date"] <= $('#dendtdate').val())){
@@ -206,10 +210,11 @@
 		                			}else{
 		                				dict[location_name] = [1,0,0,0,0,0,0];
 		                			}
-		                			if(response[i]["risk_level"] > 1){
+		                			if(response[i]["risk_level_id"] > 1){
 		                				//Let's take risk level greater than one is high risk
 		                				dict[location_name][1] += 1;
 		                			}}
+
 
 		                			if((response[i]["expected_delivery_date"] >= $('#dstartdate').val()) && (response[i]["expected_delivery_date"] <= $('#dendtdate').val())){
 		                				if (dict.hasOwnProperty(location_name)){
@@ -218,7 +223,7 @@
 		                					dict[location_name] = [0,0,1,0,0,0,0];
 		                				}
 										
-										if(response[i]["risk_level"] > 1){
+										if(response[i]["risk_level_id"] > 1){
 											dict[location_name][3] += 1;
 										}
 									}
@@ -247,7 +252,7 @@
 		                				}else{
 		                					dict[location_name] = [0,0,0,0,0,1,0];
 		                				}
-		                				if(response[i]["risk_level"] > 1){
+		                				if(response[i]["risk_level_id"] > 1){
 											dict[location_name][6] += 1;
 										}
 									}
@@ -261,7 +266,7 @@
 									'<table id="tblmh" class="table table-striped table-bordered table-condensed">');
 									
 									$('#tblmh').append('<thead>' +
-										'<th>{% trans "Location" %}</th><th>{% trans "Registered Pregnancy" %}</th><th>{% trans "High Risk Registered pregnancy" %}</th><th>{% trans "Expected Derivery" %}</th><th>{% trans "High Risk Expected Derivery" %}</th><th>{% trans "Pregnant Women on Selected end date" %}</th><th>{% trans "Pregnant Women Expected to deriver next 2 weeks from selected end date" %}</th><th>{% trans "High Risk Pregnant Women Expected to deriver next 2 weeks from selected end date" %}</th>' +
+										'<th>{% trans "Location" %}</th><th>{% trans "Registered Pregnancy" %}</th><th>{% trans "High Risk Registered pregnancy" %}</th><th>{% trans "Expected Delivery" %}</th><th>{% trans "High Risk Expected Delivery" %}</th><th>{% trans "Pregnant Women on Selected end date" %}</th><th>{% trans "Pregnant Women Expected to deliver next 2 weeks from selected end date" %}</th><th>{% trans "High Risk Pregnant Women Expected to deliver next 2 weeks from selected end date" %}</th>' +
 									'</thead>' +
 										
 									'<tbody>' +
@@ -282,18 +287,14 @@
 										
 										$('#tblmh').find('tbody').append('<tr style="cursor:pointer;"></tr>');
 
-										$('#tblmh tr:last').append('<td>' + key +'</td>');
-	
-
-										$('#tblmh tr:last').append('<td><a href="#" onclick = "displayRegPreDetails(this)">'+ number_registered +'</a></td>');
-
-
-										$('#tblmh tr:last').append('<td>' + number_high_risk + '</td>');
-										$('#tblmh tr:last').append('<td>' + number_expected_deri + '</td>');
-										$('#tblmh tr:last').append('<td>' + number_hred + '</td>');
-										$('#tblmh tr:last').append('<td>' + pw + '</td>');
-										$('#tblmh tr:last').append('<td>' + pwexp + '</td>');
-										$('#tblmh tr:last').append('<td>' + pwexp_high_risk + '</td>');
+										$('#tblmh tr:last').append('<td align="center">' + key +'</td>');
+										$('#tblmh tr:last').append('<td align="center"><a href="#" onclick = "displayRegPreDetails(this)">'+ number_registered +'</a></td>');
+										$('#tblmh tr:last').append('<td align="center"><a href="#" onclick = "displayHRRegPreDetails(this)">'+ number_high_risk +'</a></td>');
+										$('#tblmh tr:last').append('<td align="center"><a href="#" onclick = "displayExpectedDerivery(this)">'+ number_expected_deri +'</a></td>');
+										$('#tblmh tr:last').append('<td align="center"><a href="#" onclick = "displayHREDDetails(this)">'+ number_hred +'</a></td>');
+										$('#tblmh tr:last').append('<td align="center"><a href="#" onclick = "displayPWSEDDetails(this)">'+ pw +'</a></td>');
+										$('#tblmh tr:last').append('<td align="center"><a href="#" onclick = "displayPWEDNTWDetails(this)">'+ pwexp +'</a></td>');
+										$('#tblmh tr:last').append('<td align="center"><a href="#" onclick = "displayHRPWEDNTWDetails(this)">'+ pwexp_high_risk +'</a></td>');
 									});
 
 									
@@ -361,7 +362,133 @@
 
 			
 			window.open('registered_preg_details/?location_name='+location_name+'&location_level='+location_level+'&start_date='+start_date+'&end_date='+end_date,'','fullscreen=yes');
-		}
+			}
+
+			function displayHRRegPreDetails(key=0){
+			location_name = key.closest('tr').getElementsByTagName('td')[0].innerHTML;
+			location_level = null
+			
+			if ($('#cmbprovince').val() == ""){
+				location_level = "PROVINCE";
+			}else{
+				if ($('#cmbdistrict').val() == ""){
+					location_level = "DISTRICT";
+				}else{
+					location_level = "CDS";
+				}
+			}
+
+			start_date = $('#dstartdate').val();
+			end_date = $('#dendtdate').val();
+			
+			window.open('h_r_registered_preg_details/?location_name='+location_name+'&location_level='+location_level+'&start_date='+start_date+'&end_date='+end_date,'','fullscreen=yes');
+			}
+
+			function displayExpectedDerivery(key=0){
+			location_name = key.closest('tr').getElementsByTagName('td')[0].innerHTML;
+			location_level = null
+			
+			if ($('#cmbprovince').val() == ""){
+				location_level = "PROVINCE";
+			}else{
+				if ($('#cmbdistrict').val() == ""){
+					location_level = "DISTRICT";
+				}else{
+					location_level = "CDS";
+				}
+			}
+
+			start_date = $('#dstartdate').val();
+			end_date = $('#dendtdate').val();
+
+			
+			window.open('expected_delivery_details/?location_name='+location_name+'&location_level='+location_level+'&start_date='+start_date+'&end_date='+end_date,'','fullscreen=yes');
+			}
+
+
+			function displayHREDDetails(key=0){
+			location_name = key.closest('tr').getElementsByTagName('td')[0].innerHTML;
+			location_level = null
+			
+			if ($('#cmbprovince').val() == ""){
+				location_level = "PROVINCE";
+			}else{
+				if ($('#cmbdistrict').val() == ""){
+					location_level = "DISTRICT";
+				}else{
+					location_level = "CDS";
+				}
+			}
+
+			start_date = $('#dstartdate').val();
+			end_date = $('#dendtdate').val();
+
+			
+			window.open('hr_expected_delivery_details/?location_name='+location_name+'&location_level='+location_level+'&start_date='+start_date+'&end_date='+end_date,'','fullscreen=yes');
+			}
+
+			function displayPWSEDDetails(key=0){
+			location_name = key.closest('tr').getElementsByTagName('td')[0].innerHTML;
+			location_level = null
+			
+			if ($('#cmbprovince').val() == ""){
+				location_level = "PROVINCE";
+			}else{
+				if ($('#cmbdistrict').val() == ""){
+					location_level = "DISTRICT";
+				}else{
+					location_level = "CDS";
+				}
+			}
+
+			start_date = $('#dstartdate').val();
+			end_date = $('#dendtdate').val();
+
+			
+			window.open('p_w_s_e_d_details/?location_name='+location_name+'&location_level='+location_level+'&start_date='+start_date+'&end_date='+end_date,'','fullscreen=yes');
+			}
+
+			function displayPWEDNTWDetails(key=0){
+			location_name = key.closest('tr').getElementsByTagName('td')[0].innerHTML;
+			location_level = null
+			
+			if ($('#cmbprovince').val() == ""){
+				location_level = "PROVINCE";
+			}else{
+				if ($('#cmbdistrict').val() == ""){
+					location_level = "DISTRICT";
+				}else{
+					location_level = "CDS";
+				}
+			}
+
+			start_date = $('#dstartdate').val();
+			end_date = $('#dendtdate').val();
+
+			
+			window.open('p_w_e_d_next_2_w_details/?location_name='+location_name+'&location_level='+location_level+'&start_date='+start_date+'&end_date='+end_date,'','fullscreen=yes');
+			}
+
+			function displayHRPWEDNTWDetails(key=0){
+			location_name = key.closest('tr').getElementsByTagName('td')[0].innerHTML;
+			location_level = null
+			
+			if ($('#cmbprovince').val() == ""){
+				location_level = "PROVINCE";
+			}else{
+				if ($('#cmbdistrict').val() == ""){
+					location_level = "DISTRICT";
+				}else{
+					location_level = "CDS";
+				}
+			}
+
+			start_date = $('#dstartdate').val();
+			end_date = $('#dendtdate').val();
+
+			
+			window.open('h_r_p_w_e_d_next_2_w_details/?location_name='+location_name+'&location_level='+location_level+'&start_date='+start_date+'&end_date='+end_date,'','fullscreen=yes');
+			}
 		 
 
 	</script>

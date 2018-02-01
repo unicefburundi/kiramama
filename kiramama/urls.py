@@ -40,13 +40,25 @@ urlpatterns = [
     url(r'^getcdsindistrict', kiramama_app.views.getcdsindistrict, name='getcdsindistrict'),
     url(r'^getcdsdata', kiramama_app.views.getcdsdata, name='getcdsdata'),
     url(r'^getwanteddata', kiramama_app.views.getwanteddata, name='getwanteddata'),
+    url(r'^get_child_health_data', kiramama_app.views.get_child_health_data, name='get_child_health_data'),
     url(r'^$', kiramama_app.views.default, name='default'),
     url(r'^registered_preg_details/(?P<location_name>)$', kiramama_app.views.registered_preg_details, name='registered_preg_details'),
     url(r'^mother_message_history/(?P<mother_id>)', kiramama_app.views.mother_message_history, name='mother_message_history'),
     url(r'^child_message_history/(?P<child_id>)', kiramama_app.views.child_message_history, name='child_message_history'),
     url(r'^home/active_chw', kiramama_app.views.active_chw, name='active_chw'),
     url(r'^home/inactive_chw', kiramama_app.views.inactive_chw, name='inactive_chw'),
-
+    url(r'^h_r_registered_preg_details/(?P<location_name>)$', kiramama_app.views.h_r_registered_preg_details, name='h_r_registered_preg_details'),
+    url(r'^expected_delivery_details/(?P<location_name>)$', kiramama_app.views.expected_delivery_details, name='expected_delivery_details'),
+    url(r'^hr_expected_delivery_details/(?P<location_name>)$', kiramama_app.views.hr_expected_delivery_details, name='hr_expected_delivery_details'),
+    url(r'^p_w_s_e_d_details/(?P<location_name>)$', kiramama_app.views.p_w_s_e_d_details, name='p_w_s_e_d_details'),
+    url(r'^p_w_e_d_next_2_w_details/(?P<location_name>)$', kiramama_app.views.p_w_e_d_next_2_w_details, name='p_w_e_d_next_2_w_details'),
+    url(r'^h_r_p_w_e_d_next_2_w_details/(?P<location_name>)$', kiramama_app.views.h_r_p_w_e_d_next_2_w_details, name='h_r_p_w_e_d_next_2_w_details'),
+    url(r'^registered_births_details/(?P<location_name>)$', kiramama_app.views.registered_births_details, name='registered_births_details'),
+    url(r'^home_births_details/(?P<location_name>)$', kiramama_app.views.home_births_details, name='home_births_details'),
+    url(r'^road_births_details/(?P<location_name>)$', kiramama_app.views.road_births_details, name='road_births_details'),
+    url(r'^health_facility_births_details/(?P<location_name>)$', kiramama_app.views.health_facility_births_details, name='health_facility_births_details'),
+    url(r'^breastf_in_first_hour_details/(?P<location_name>)$', kiramama_app.views.breastf_in_first_hour_details, name='breastf_in_first_hour_details'),
+    url(r'^breastf_after_first_hour_details/(?P<location_name>)$', kiramama_app.views.breastf_after_first_hour_details, name='breastf_after_first_hour_details'),
 ]
 #   )
 

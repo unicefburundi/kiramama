@@ -1,106 +1,554 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% load static %}
 
 {% block title %}
 	<title> {{ pagetitle }}</title>
 {% endblock %}
 
-{% block pagename %}{% trans "CHILD HEALTH" %}{% endblock %}
+{% block pagename %}pagename{% endblock %}
 
 {% block head %}
-<script type="text/javascript">
-	$(document).ready(function() {
-		$('.datepicker').datepicker({
-		    dateFormat: 'yy-mm-dd',
-		    startDate: '-3d'
+	<script language="JavaScript">
+		var messimsg;
+		var messititle;
+		var titleanimation;
+		
+		$(document).ready(function() {
+			$('.datepicker').datepicker({
+			    dateFormat: 'yy-mm-dd',
+			    startDate: '-3d'
+			});
+
+			$(".datepicker").datepicker("setDate", new Date());
+			
+			if ((".divmessage").length) {
+				$(".divmessage").fadeIn('slow').animate({opacity: 1.0}, 1500).effect("pulsate", { times: 2 }, 800).fadeOut('slow'); 
+			}
+			
+			if ((".diverror").length) {
+				$(".diverror").fadeIn('slow').animate({opacity: 1.0}, 1500).effect("pulsate", { times: 2 }, 800); 
+			}
+
+			if ("{{ provinces }}") {
+				{% for c in provinces %}
+					$('#cmbprovince').append('<option value="{{ c.code }}">{{ c.name }}</option>');
+				{% endfor %}
+			}
+
+			fetchwanteddata()
+
 		});
 		
-		$(".datepicker").datepicker("setDate", new Date());
-	});
 
-	
-</script>
+		<!-- ajax call to database -->
+		function fetchdistricts(code) {
+			$("#cmbdistrict option").each(function(){
+        		if ($(this).val()) {
+        			$(this).remove();
+        		}
+		    });
+		    $("#cmbcds option").each(function(){
+        		if ($(this).val()) {
+        			$(this).remove();
+        		}
+		    });
 
+		    $('#divmh').empty();
+			if (code) {
+				//initializesonic();
+
+				ajaxurl = 'getdistrictsinprovince';
+	            data = JSON.stringify({ 'code': code });
+
+	            ajaxpostbackfunction = "fetchdistricts";
+	            ajaxpost(ajaxurl, data);
+	        }
+		}
+
+
+		<!-- ajax call to database -->
+		function fetchCDS(code) {
+			$("#cmbcds option").each(function(){
+        		if ($(this).val()) {
+        			$(this).remove();
+        		}
+		    });
+
+			$('#divmh').empty();
+			if (code) {
+				//initializesonic();
+
+				ajaxurl = 'getcdsindistrict';
+	            data = JSON.stringify({ 'code': code });
+
+	            ajaxpostbackfunction = "fetchcds";
+	            ajaxpost(ajaxurl, data);
+	        }
+		}
+
+
+		function fetchwanteddata() {
+			console.log("======Debut  fetchwanteddata====")
+			if (new Date($('#dstartdate').val()) > new Date($('#dendtdate').val())) {
+                messimsg = "Start date cannot e more than End date";
+                messititle = "Invalid Date Selection";
+                titleanimation = "messierror";
+                messiprompt(messimsg, messititle, titleanimation);
+                $('#overlay').remove();
+                return;
+			}
+	    	initializesonic();
+	    	
+	    	ajaxurl = 'get_child_health_data';
+    		var level = null;
+    		var code = null;
+    		var start_date = null;
+    		var end_date = null;
+
+    		if ($('#cmbprovince').val() != "") {
+    			level = "province";
+    			code = $('#cmbprovince').val();
+    		}else{
+    			level = "national";
+    			code = -1;
+    		}
+    		if ($('#cmbdistrict').val() != "") {
+    			level = "district";
+    			code = $('#cmbdistrict').val();
+    		}
+    		if ($('#cmbcds').val() != "") {
+    			level = "cds";
+    			code = $('#cmbcds').val();
+    		}
+
+    		if ($('#dstartdate').val() != "") {
+    			start_date = $('#dstartdate').val();
+    		}
+
+    		if ($('#dendtdate').val() != "") {
+    			end_date = $('#dendtdate').val();
+    		}
+
+			$('#divmh').empty();
+
+    		if (level && code && start_date && end_date) {
+		        data = JSON.stringify({ 'level': level, 'code': code, 'start_date': start_date, 'end_date': end_date });
+
+	            ajaxpostbackfunction = "get_child_health_data";
+	            ajaxpost(ajaxurl, data);
+
+	        } else {
+	        	$('#overlay').remove();
+	        }
+	    }
+
+
+		function ajaxpost(posturl, data) {
+		        ajaxresults = null;
+		        $.ajax({
+		        	beforeSend: function(xhr, settings) {
+				        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+				            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+				        }
+				    },
+		            type: 'POST',
+		            url: posturl,
+		            data: data,
+		            contentType: 'application/json; charset=utf-8',
+		            dataType: 'json',
+
+		            success: function (response) {
+		                if (ajaxpostbackfunction == "fetchdistricts") {
+		                	for (i = 0; i < response.length; i++) {
+		                		var code = jQuery.makeArray(response[i].fields)[0].code;
+		                		var name = jQuery.makeArray(response[i].fields)[0].name;
+		                		
+		                		$('#cmbdistrict').append('<option value=' + code +'>' + name + '</option>');
+    						}
+    						// fetch wanted data
+		                	fetchwanteddata();
+		                } else if (ajaxpostbackfunction == "fetchcds") {
+		                	for (i = 0; i < response.length; i++) {
+		                		var code = jQuery.makeArray(response[i].fields)[0].code;
+		                		var name = jQuery.makeArray(response[i].fields)[0].name;
+		                		
+		                		$('#cmbcds').append('<option value=' + code +'>' + name + '</option>');
+    						}
+
+    						// fetch wanted data
+		                	fetchwanteddata();
+
+		                } else if (ajaxpostbackfunction == "get_child_health_data") {
+		                	if (response.length > 0) {
+		                		var dict = {};
+		                		if($('#cmbprovince').val() == ""){
+		                			// We will list provinces in the table
+		                			location_column = "bps_name";
+		                		}else{
+		                			if($('#cmbdistrict').val() == ""){
+		                				// We will list districts in the table
+		                				location_column = "district_name";
+		                			}else{
+		                				if($('#cmbcds').val() == ""){
+		                					// We will list CDSs in the table
+		                					location_column = "cds_name";
+		                				}else{
+		                					//We will show one CDS in the table
+		                					location_column = "cds_name";
+		                				}
+		                			}
+		                		}
+
+		                		for (var i = 0; i < response.length; i++){
+		                			
+		                			location_name = response[i][location_column];
+		                			
+		                			if (dict.hasOwnProperty(location_name)){
+		                				dict[location_name][0] += 1;
+		                			}else{
+		                				dict[location_name] = [1,0,0,0,0,0];
+		                			}
+
+
+		                			if(response[i]["birth_location_type_code"].toUpperCase() === "ME"){
+		                				dict[location_name][1] += 1;
+		                			}
+		                			
+		                			if(response[i]["birth_location_type_code"].toUpperCase() === "RT"){
+		                				dict[location_name][2] += 1;
+		                			}
+
+		                			if((response[i]["birth_location_type_code"].toUpperCase() === "HP") || (response[i]["birth_location_type_code"].toUpperCase() === "CS")){
+		                				dict[location_name][3] += 1;
+		                			}
+
+		                			if(response[i]["breast_feading_time_code"].toUpperCase() === "AL1"){
+		                				dict[location_name][4] += 1;
+		                			}
+
+		                			if(response[i]["breast_feading_time_code"].toUpperCase() === "AL0"){
+		                				dict[location_name][5] += 1;
+		                			}
+
+		                			
+		                		}
+
+		                		console.log("BBBBB");
+
+		                		if (Object.keys(dict).length > 0){
+		                			console.log("CCCCC");
+		                			$('#divmh').append('<p><b>{% trans "BIRTHS STATISTICS" %}</b></p>' +
+
+									'<div style="clear:both; height:10px;"></div>' +
+
+									'<table id="tblmh" class="table table-striped table-bordered table-condensed">');
+									
+									$('#tblmh').append('<thead>' +
+										'<th>{% trans "Location" %}</th><th>{% trans "Number of births" %}</th><th>{% trans "Delivery at home" %}</th><th>{% trans "Delivery on road" %}</th><th>{% trans "Delivery at health facility" %}</th><th>{% trans "Breastfeeding within 60 min" %}</th><th>{% trans "Breastfeeding after 60 min" %}</th>' +
+									'</thead>' +
+										
+									'<tbody>' +
+										
+									'</tbody>');
+
+									var keys = Object.keys(dict);
+
+									
+									keys.forEach(function(key){
+
+										var number_of_births = parseFloat(dict[key][0]);
+										var number_of_del_at_home = parseFloat(dict[key][1]);
+										var number_of_del_on_road = parseFloat(dict[key][2]);
+										var number_of_del_at_hf = parseFloat(dict[key][3]);
+										var number_of_b_in_first_hour = parseFloat(dict[key][4]);
+										var number_of_b_after_first_hour = parseFloat(dict[key][5]);
+
+
+										$('#tblmh').find('tbody').append('<tr style="cursor:pointer;"></tr>');
+
+										$('#tblmh tr:last').append('<td align="center">' + key +'</td>');
+										$('#tblmh tr:last').append('<td align="center"><a href="#" onclick = "displayRegBirthsDetails(this)">'+ number_of_births +'</a></td>');
+										$('#tblmh tr:last').append('<td align="center"><a href="#" onclick = "displayHomeBirthsDetails(this)">'+ number_of_del_at_home +'</a></td>');
+										$('#tblmh tr:last').append('<td align="center"><a href="#" onclick = "displayRoadBirthsDetails(this)">'+ number_of_del_on_road +'</a></td>');
+										$('#tblmh tr:last').append('<td align="center"><a href="#" onclick = "displayHFBirthsDetails(this)">'+ number_of_del_at_hf +'</a></td>');
+										$('#tblmh tr:last').append('<td align="center"><a href="#" onclick = "displayBrInFirstHourDetails(this)">'+ number_of_b_in_first_hour +'</a></td>');
+										$('#tblmh tr:last').append('<td align="center"><a href="#" onclick = "displayBrAfterFirstHourDetails(this)">'+ number_of_b_after_first_hour +'</a></td>');
+
+									});
+
+
+									
+									$('#tblmh').DataTable({
+										dom: "<'row'<'col-sm-3'l><'col-sm-4'i><'col-sm-5'f>>" +
+											"<'row'<'col-sm-12'tr>>" +
+											"<'row'<'col-sm-4'B><'col-sm-8'p>>",
+										pagingType: "full_numbers",
+										lengthMenu: [
+								            [10, 25, 50, 100, -1 ],
+								            ['10', '25', '50', '100', 'All' ]
+								        ],
+								        buttons: [
+								            'copy', 'csv', 'excel', 'pdf', 'print'
+								        ]
+									});
+		                		}
+
+		                	}else {
+
+
+		                			$('#divmh').append('<p><b>{% trans "BIRTHS STATISTICS" %}</b></p>' +
+
+									'<div style="clear:both; height:10px;"></div>' +
+
+									'<table id="tblmh" class="table table-striped table-bordered table-condensed">');
+									
+									$('#tblmh').append('<thead>' +
+										'<th>{% trans "Location" %}</th><th>{% trans "Number of births" %}</th><th>{% trans "Delivery at home" %}</th><th>{% trans "Delivery on road" %}</th><th>{% trans "Delivery at health facility" %}</th><th>{% trans "Breastfeeding within 60 min" %}</th><th>{% trans "Breastfeeding after 60 min" %}</th>' +
+									'</thead>' +
+										
+									'<tbody>' +
+										
+									'</tbody>');
+
+									var v = 0;
+
+									$('#tblmh').find('tbody').append('<tr style="cursor:pointer;"></tr>');
+									$('#tblmh tr:last').append('<td align="center">' + v +'</td>');
+									$('#tblmh tr:last').append('<td align="center"><a href="#" onclick = "displayRegBirthsDetails(this)">'+ v +'</a></td>');
+									$('#tblmh tr:last').append('<td align="center"><a href="#" onclick = "displayRegBirthsDetails(this)">'+ v +'</a></td>');
+									$('#tblmh tr:last').append('<td align="center"><a href="#" onclick = "displayRegBirthsDetails(this)">'+ v +'</a></td>');
+									$('#tblmh tr:last').append('<td align="center"><a href="#" onclick = "displayRegBirthsDetails(this)">'+ v +'</a></td>');
+									$('#tblmh tr:last').append('<td align="center"><a href="#" onclick = "displayRegBirthsDetails(this)">'+ v +'</a></td>');
+									$('#tblmh tr:last').append('<td align="center"><a href="#" onclick = "displayRegBirthsDetails(this)">'+ v +'</a></td>');
+
+									$('#tblmh').DataTable({
+										dom: "<'row'<'col-sm-3'l><'col-sm-4'i><'col-sm-5'f>>" +
+											"<'row'<'col-sm-12'tr>>" +
+											"<'row'<'col-sm-4'B><'col-sm-8'p>>",
+										pagingType: "full_numbers",
+										lengthMenu: [
+								            [10, 25, 50, 100, -1 ],
+								            ['10', '25', '50', '100', 'All' ]
+								        ],
+								        buttons: [
+								            'copy', 'csv', 'excel', 'pdf', 'print'
+								        ]
+									});
+
+		                	}
+		                }
+
+		                $('#overlay').remove();
+		            },
+
+		            failure: function (json) {
+		                messimsg = "Error";
+		                messititle = "Error";
+		                titleanimation = "messierror";
+		                messiprompt(messimsg, messititle, titleanimation);
+		               $('#overlay').remove();
+		            },
+
+		            error: function (jqXHR, exception) {
+		                messimsg = getajaxerrormessage(jqXHR, exception); //jqXHR.responseText;
+		                messititle = "error";
+		                titleanimation = "messierror";
+		                messiprompt(messimsg, messititle, titleanimation);
+		                $('#overlay').remove();
+		            }
+		        });
+		        
+		        return false;
+		    }
+
+
+
+		    function displayRegBirthsDetails(key=0){
+			location_name = key.closest('tr').getElementsByTagName('td')[0].innerHTML;
+			location_level = null
+			
+			if ($('#cmbprovince').val() == ""){
+				location_level = "PROVINCE";
+			}else{
+				if ($('#cmbdistrict').val() == ""){
+					location_level = "DISTRICT";
+				}else{
+					location_level = "CDS";
+				}
+			}
+
+			start_date = $('#dstartdate').val();
+			end_date = $('#dendtdate').val();
+
+			
+			window.open('registered_births_details/?location_name='+location_name+'&location_level='+location_level+'&start_date='+start_date+'&end_date='+end_date,'','fullscreen=yes');
+			}
+
+			function displayHomeBirthsDetails(key=0){
+			location_name = key.closest('tr').getElementsByTagName('td')[0].innerHTML;
+			location_level = null
+			
+			if ($('#cmbprovince').val() == ""){
+				location_level = "PROVINCE";
+			}else{
+				if ($('#cmbdistrict').val() == ""){
+					location_level = "DISTRICT";
+				}else{
+					location_level = "CDS";
+				}
+			}
+
+			start_date = $('#dstartdate').val();
+			end_date = $('#dendtdate').val();
+			
+			window.open('home_births_details/?location_name='+location_name+'&location_level='+location_level+'&start_date='+start_date+'&end_date='+end_date,'','fullscreen=yes');
+			}
+
+			function displayRoadBirthsDetails(key=0){
+			location_name = key.closest('tr').getElementsByTagName('td')[0].innerHTML;
+			location_level = null
+			
+			if ($('#cmbprovince').val() == ""){
+				location_level = "PROVINCE";
+			}else{
+				if ($('#cmbdistrict').val() == ""){
+					location_level = "DISTRICT";
+				}else{
+					location_level = "CDS";
+				}
+			}
+
+			start_date = $('#dstartdate').val();
+			end_date = $('#dendtdate').val();
+
+			
+			window.open('road_births_details/?location_name='+location_name+'&location_level='+location_level+'&start_date='+start_date+'&end_date='+end_date,'','fullscreen=yes');
+			}
+
+
+			function displayHFBirthsDetails(key=0){
+			location_name = key.closest('tr').getElementsByTagName('td')[0].innerHTML;
+			location_level = null
+			
+			if ($('#cmbprovince').val() == ""){
+				location_level = "PROVINCE";
+			}else{
+				if ($('#cmbdistrict').val() == ""){
+					location_level = "DISTRICT";
+				}else{
+					location_level = "CDS";
+				}
+			}
+
+			start_date = $('#dstartdate').val();
+			end_date = $('#dendtdate').val();
+
+			
+			window.open('health_facility_births_details/?location_name='+location_name+'&location_level='+location_level+'&start_date='+start_date+'&end_date='+end_date,'','fullscreen=yes');
+			}
+
+			function displayBrInFirstHourDetails(key=0){
+			location_name = key.closest('tr').getElementsByTagName('td')[0].innerHTML;
+			location_level = null
+			
+			if ($('#cmbprovince').val() == ""){
+				location_level = "PROVINCE";
+			}else{
+				if ($('#cmbdistrict').val() == ""){
+					location_level = "DISTRICT";
+				}else{
+					location_level = "CDS";
+				}
+			}
+
+			start_date = $('#dstartdate').val();
+			end_date = $('#dendtdate').val();
+
+			
+			window.open('breastf_in_first_hour_details/?location_name='+location_name+'&location_level='+location_level+'&start_date='+start_date+'&end_date='+end_date,'','fullscreen=yes');
+			}
+
+			function displayBrAfterFirstHourDetails(key=0){
+			location_name = key.closest('tr').getElementsByTagName('td')[0].innerHTML;
+			location_level = null
+			
+			if ($('#cmbprovince').val() == ""){
+				location_level = "PROVINCE";
+			}else{
+				if ($('#cmbdistrict').val() == ""){
+					location_level = "DISTRICT";
+				}else{
+					location_level = "CDS";
+				}
+			}
+
+			start_date = $('#dstartdate').val();
+			end_date = $('#dendtdate').val();
+
+			
+			window.open('breastf_after_first_hour_details/?location_name='+location_name+'&location_level='+location_level+'&start_date='+start_date+'&end_date='+end_date,'','fullscreen=yes');
+			}
+
+
+		 
+
+	</script>
 {% endblock %}
 
+
 {% block container %}
-    <link rel="stylesheet" href="{% static "js/angular-datatables/css/angular-datatables.min.css" %}">
-    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.2.2/css/buttons.dataTables.min.css">
-	<script type="text/javascript" src="{% static "js/angular.min.js" %}"></script>
-    <script type="text/javascript" src="{% static "js/angular-sanitize.min.js" %}"></script>
-    <script type="text/javascript" src="{% static "js/childhealth.js" %}"></script>
-    <script type="text/javascript" src="{% static "js/angular-datatables/angular-datatables.min.js" %}"></script>
-    <script src="{% static "js/angular-datatables/plugins/buttons/dataTables.buttons.min.js" %}"></script>
-	<script src="{% static "js/angular-datatables/plugins/buttons/buttons.colVis.min.js" %}"></script>
-	<script src="{% static "js/angular-datatables/plugins/buttons/buttons.html5.min.js" %}"></script>
-	<script src="{% static "js/angular-datatables/plugins/buttons/buttons.print.min.js" %}"></script>
-    <script type="text/javascript" src="{% static "js/angular-datatables/plugins/buttons/angular-datatables.buttons.min.js" %}"></script>
-    
-	<div ng-app="ChildApp" ng-controller="ChildCtrl">
+	<div>
+		{% if msg %}
+			<div class="divmessage"><p>{{ msg }}</p></div>
+		{% endif %}
+		{% if err %}
+			<div class="diverror"><p>{{ err }}</p></div>
+		{% endif %}
+	</div>
+	
+	<div>
 		<div class="form-inline" style="padding-left :5px; padding-right :5px;">
 			<div class="form-group">
-				<label for="province">{% trans "Province:" %}</label>
-				<select id="province" class="form-control" style="width:140px"  ng-model="province" ng-options="x.name for x in provinces track by x.code" ng-change="update_province()"><option value="">[ {% trans "Select Province" %} ]</option></select>
-			</div>
-			<div class="form-group">
-				<label for="district">{% trans "District:" %}</label>
-				<select id="district" class="form-control" style="width:140px" ng-model="district" ng-options="x.name for x in districts track by x.code" ng-change="update_district()"><option value="" selected="selected">[ {% trans "Select District" %} ]</option>'
+				<label for="cmbprovince">{% trans "Province:" %}</label>
+				<select id="cmbprovince" class="form-control" style="width:140px" onchange="fetchdistricts(this.value)" required="required">
+					<option value="" selected="selected">[ {% trans "Select Province" %} ]</option>
 				</select>
 			</div>
 			<div class="form-group">
-				<label for="cds">{% trans "CDS:" %}</label>
-				<select id="cds" class="form-control" style="width:140px" ng-model="cds" ng-options="x.name for x in cdss track by x.code" ng-change="update_cds()">
+				<label for="cmbdistrict">District:</label>
+				<select id="cmbdistrict" class="form-control" style="width:140px" onchange="fetchCDS(this.value)" required="required">
+					<option value="" selected="selected">[ {% trans "Select District" %} ]</option>'
+				</select>
+			</div>
+			<div class="form-group">
+				<label for="cmbcds">CDS:</label>
+				<select id="cmbcds" class="form-control" style="width:140px" onchange="fetchwanteddata()" required="required">
 					<option value="" selected="selected">[ {% trans "Select CDS" %} ]</option>'
 				</select>
 			</div>
-			<label for="dstartdate">{% trans "Start Date" %}:</label>
+
+			<label for="dstartdate">{% trans "Start Date:" %}</label>
 			<div class="input-group date" data-provide="datepicker">
-			    <input type="text" id="startdate" class="form-control datepicker" readonly="readonly" style="width:130px" ng-model="startdate" ng-change="get_bydate()">
+			    <input type="text" id="dstartdate" class="form-control datepicker" readonly="readonly" style="width:130px" required="required" onchange="fetchwanteddata()">
 			    <div class="input-group-addon">
 			        <span class="glyphicon glyphicon-th"></span>
 			    </div>
 			</div>
-			<label for="dendtdate">{% trans "End Date" %}:</label>
+
+			<label for="dendtdate">{% trans "End Date:" %}</label>
 			<div class="input-group date" data-provide="datepicker">
-			    <input type="text" id="endtdate" class="form-control datepicker" readonly="readonly" style="width:130px" ng-model="enddate" ng-change="get_bydate()">
+			    <input type="text" id="dendtdate" class="form-control datepicker" readonly="readonly" style="width:130px" required="required" onchange="fetchwanteddata()">
 			    <div class="input-group-addon">
 			        <span class="glyphicon glyphicon-th"></span>
 			    </div>
 			</div>
-		<hr style="margin-top:20px; margin-bottom:20px">
 		</div>
-		<div class="contain" >
-			<div class="table-responsive" >
-				<table class="table" data-toggle="table" datatable="ng" dt-options="dtOptions">
-					<thead>
-						<tr>
-					        <th>{% trans "Birth ID" %}</th>
-					        <th>{% trans "Date of Birth" %}</th>
-					        <th>{% trans "Location" %}</th>
-					        <th>{% trans "Child Number" %}</th>
-					        <th>{% trans "Mother ID" %}</th>
-					        <th>{% trans "Gender" %}</th>
-					        <th>{% trans "Weight(Kg)" %}</th>
-					        <th>{% trans "Breastfeeding" %}</th>
-					    </tr>
-					</thead>
-					<tbody>
-					{% verbatim %}
-						<tr ng-repeat="y in results">
-                        	<td>{{ y.id }}</td>
-                        	<td>{{ y.birth_date }}</td>
-                        	<td>{{ y.birth_location }}</td>
-                        	<td>{{ y.child_number }}</td>
-                        	<td><a href="/kiramama/mother/{{y.mother_id}}">{{ y.mother_id }}</a></td>
-                        	<td>{{ y.gender }}</td>
-                        	<td>{{ y.weight }}</td>
-                        	<td>{{ y.breast_feading }}</td>
-                        </tr>
-					{% endverbatim %}
-					</tbody>
-				</table>
-			</div>
+
+		<hr style="margin-top:10px; margin-bottom:10px">
+		
+		<div id="divmh" class="form-inline" style="padding-left :5px; padding-right :5px;">
+
 		</div>
+
 	</div>
 {% endblock %}

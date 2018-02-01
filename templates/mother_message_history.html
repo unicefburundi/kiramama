@@ -55,6 +55,40 @@
 
 									var col0 = one_row.split(",")[0].split(":")[1];
 									col0 = col0.replace("u","");
+									col0 = col0.replace(/'/g,"").trim();
+
+									switch(String(col0)) {
+										case "GRO":
+											col0 = "Enregistrement de la maman";
+											break;
+										case "CPN":
+											col0 = "Consultation prénatale";
+											break;
+										case "NSC":
+											col0 = "Naissance du bébé";
+											break;
+										case "CON":
+											col0 = "Soins postnatals";
+											break;
+										case "VAC":
+											col0 = "Vaccination";
+											break;
+										case "RIS":
+											col0 = "Risque";
+											break;
+										case "RER":
+											col0 = "Réponse à un risque";
+											break;
+										case "DEC":
+											col0 = "Décès";
+											break;
+										case "DEP":
+											col0 = "Départ";
+											break;
+										default:
+											col0 = " - ";
+									}
+
 
 									var col1 = one_row.split(",")[7].split(":")[1];
 									col1 = col1.replace("u","").replace("}]","");

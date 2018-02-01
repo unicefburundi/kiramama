@@ -89,6 +89,7 @@ a img {
 	width: 100%;
 	text-align: center;
 	display: inline-block;
+	margin-top: 4px;
 }
 
 .float-left {
@@ -288,7 +289,6 @@ aside {
 	margin: 0 auto;
 	overflow: hidden;
 	padding: 0 0 0;
-    height: 300px;
 }
 
 #footer-widgets .wrap {
@@ -362,7 +362,7 @@ aside {
 .footer-widgets-2 {
 	float: left;
     color: #737374;
-    margin-top: 40px;
+    margin-top: 10px;
     font-weight: bold;
 }
 
@@ -580,3 +580,38 @@ aside {
    z-index: 99999;
 }
 
+.rounded {
+  border:1px solid #000;
+  background-color: #f0f0f0;
+  border-radius: 10px;
+  height: 100px;
+}
+
+.rounded_2 {
+  border:1px solid #000;
+  background-color: #f0f0f0;
+  border-radius: 10px;
+  padding-left:15px;
+  height: 215px;
+}
+
+.block {
+    border: 1px solid red;
+    text-align: center;
+    vertical-align: middle;
+}
+.circle {
+    background: red;
+    border-radius: 200px;
+    color: white;
+    height: 200px;
+    font-weight: bold;
+    width: 200px;
+    display: table;
+    margin: 10px auto;
+    text-align: center;
+}
+.circle p {
+    vertical-align: middle;
+    display: table-cell;
+}

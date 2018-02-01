@@ -9,17 +9,20 @@ import datetime
 import requests
 import json
 from django.conf import settings
+import unicodedata
 
 
 def send_sms_through_rapidpro(args):
     ''' This function sends messages through rapidpro. Contact(s) and the message to send to them must be in args['data'] '''
-    url = 'https://api.rapidpro.io/api/v1/broadcasts.json'
+    url = 'https://api.rapidpro.io/api/v2/broadcasts.json'
     token = getattr(settings, 'TOKEN', '')
 
     data = args['data']
-
+    print "==="
+    print data
     response = requests.post(url, headers={'Content-type': 'application/json', 'Authorization': 'Token %s' % token}, data = json.dumps(data))
-
+    print response
+    print "---"
 
 def check_supervisor_phone_number_not_for_this_contact(args):
     '''This function checks if the contact didn't send his/her phone number in the place of the supervisor phone number'''
@@ -307,7 +310,7 @@ def check_if_is_reporter(args):
         args['valide'] = False
         args['info_to_contact'] = "Exception. Votre site n est pas enregistre dans le systeme. Veuillez contacter l administrateur du systeme"
         return
-
+    
     args['the_sender'] = one_concerned_chw
     args['facility'] = one_concerned_chw.cds
     args['supervisor_phone_number'] = one_concerned_chw.supervisor_phone_number
@@ -533,6 +536,12 @@ def check_symptoms(args):
     # Symptoms are separated by comma. Let's put them in a list.
     sent_symptoms_list = sent_symptoms.split(",")
 
+    symptoms_kirundi_names = ""
+    first_symptom = True
+
+    red_symptoms_kirundi_names = ""
+    red_first_symptom = True
+
     # Let's assume that all symbols are correct
     valid = True
 
@@ -546,10 +555,30 @@ def check_symptoms(args):
                 args['valide'] = False
                 # args['info_to_contact'] = "Erreur. Le symptome '"+not_valid_symptom+"' n existe pas dans le systeme. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
                 args['info_to_contact'] = "Ikosa. Ikimenyetso '"+not_valid_symptom+"' ntikibaho. Mu gukosora, subira urungike iyo mesaje itangurwa na '"+args['mot_cle']+"' yanditse neza"
+            else:
+                one_symptom = symptoms[0]
+                kir_symptom_name = one_symptom.kirundi_name
+
+                if first_symptom:
+                    symptoms_kirundi_names = symptoms_kirundi_names+""+kir_symptom_name
+                    first_symptom = False
+                else:
+                    symptoms_kirundi_names = symptoms_kirundi_names+", "+kir_symptom_name
+
+                if one_symptom.is_red_symptom:
+                    if red_first_symptom:
+                        red_symptoms_kirundi_names = red_symptoms_kirundi_names+""+kir_symptom_name
+                        red_first_symptom = False
+                    else:
+                        red_symptoms_kirundi_names = red_symptoms_kirundi_names+", "+kir_symptom_name
+                    
+
 
     if(valid is True):
         # All sent symptoms are known in the system
         args['checked_symptoms_list'] = sent_symptoms_list
+        args['kirundi_symptoms_names'] = symptoms_kirundi_names
+        args['kirundi_red_symptoms_names'] = red_symptoms_kirundi_names
         args['valide'] = True
         args['info_to_contact'] = "La liste des symboles envoyes est valide"
 
@@ -725,6 +754,20 @@ def check_has_already_session(args):
     else:
         args['valide'] = True
         args['info_to_contact'] = "Ok."
+
+
+def get_national_sup_phone_number():
+    urns = []
+    national_supervisors = AllSupervisor.objects.filter(is_national_supervisor = True)
+    if(len(national_supervisors) > 0):
+        for n_s in national_supervisors:
+            phone_number = n_s.phone_number
+            if len(phone_number) == 8:
+                phone_number = "+257"+phone_number
+            phone_number = "tel:"+phone_number
+            #phone_number = unicodedata.normalize('NFKD', phone_number).encode('ascii','ignore')
+            urns.append(phone_number)
+    return urns
 
 
 def temporary_record_reporter(args):
@@ -1086,43 +1129,45 @@ def record_pregnant_case(args):
 
     notifications_for_mother = NotificationsForMother.objects.filter(notification_type = the_acc_notification_type)
     if len(notifications_for_mother) > 0:
-        notification_for_mother = notifications_for_mother[0]
+        for notification_for_mother in notifications_for_mother:
+            #notification_for_mother = notifications_for_mother[0]
+            time_measure_unit = notification_for_mother.time_measuring_unit
+            number_for_time = notification_for_mother.time_number
+            if(time_measure_unit.code.startswith("m") or time_measure_unit.code.startswith("M")):
+                time_for_reminder = expected_delivery_date_time - datetime.timedelta(minutes = number_for_time)
+            if(time_measure_unit.code.startswith("h") or time_measure_unit.code.startswith("H")):
+                time_for_reminder = expected_delivery_date_time - datetime.timedelta(hours = number_for_time)
 
-        time_measure_unit = notification_for_mother.time_measuring_unit
-        number_for_time = notification_for_mother.time_number
-        if(time_measure_unit.code.startswith("m") or time_measure_unit.code.startswith("M")):
-            time_for_reminder = expected_delivery_date_time - datetime.timedelta(minutes = number_for_time)
-        if(time_measure_unit.code.startswith("h") or time_measure_unit.code.startswith("H")):
-            time_for_reminder = expected_delivery_date_time - datetime.timedelta(hours = number_for_time)
 
+            remind_message_to_send_to_mother = notification_for_mother.message_to_send
 
-        remind_message_to_send_to_mother = notification_for_mother.message_to_send
+            if notification_for_mother.word_to_replace_by_the_date_in_the_message_to_send:
+                remind_message_to_send_to_mother = remind_message_to_send_to_mother.replace(notification_for_mother.word_to_replace_by_the_date_in_the_message_to_send, expected_delivery_date_time.date().isoformat())
 
-        if notification_for_mother.word_to_replace_by_the_date_in_the_message_to_send:
-            remind_message_to_send_to_mother = remind_message_to_send_to_mother.replace(notification_for_mother.word_to_replace_by_the_date_in_the_message_to_send, next_appointment_date_time.date().isoformat())
+            created_reminder = NotificationsMother.objects.create(mother = the_created_mother_record, notification = notification_for_mother, date_time_for_sending = time_for_reminder, message_to_send = remind_message_to_send_to_mother)
 
-        created_reminder = NotificationsMother.objects.create(mother = the_created_mother_record, notification = notification_for_mother, date_time_for_sending = time_for_reminder, message_to_send = remind_message_to_send_to_mother)
 
     notifications_for_chw = NotificationsForCHW.objects.filter(notification_type = the_acc_notification_type)
     if len(notifications_for_chw) > 0:
-        notification_for_chw = notifications_for_chw[0]
+        #notification_for_chw = notifications_for_chw[0]
+        for notification_for_chw in notifications_for_chw:
+            time_measure_unit = notification_for_chw.time_measuring_unit
+            number_for_time = notification_for_chw.time_number
+            if(time_measure_unit.code.startswith("m") or time_measure_unit.code.startswith("M")):
+                time_for_reminder = expected_delivery_date_time - datetime.timedelta(minutes = number_for_time)
+            if(time_measure_unit.code.startswith("h") or time_measure_unit.code.startswith("H")):
+                time_for_reminder = expected_delivery_date_time - datetime.timedelta(hours = number_for_time)
 
-        time_measure_unit = notification_for_chw.time_measuring_unit
-        number_for_time = notification_for_chw.time_number
-        if(time_measure_unit.code.startswith("m") or time_measure_unit.code.startswith("M")):
-            time_for_reminder = expected_delivery_date_time - datetime.timedelta(minutes = number_for_time)
-        if(time_measure_unit.code.startswith("h") or time_measure_unit.code.startswith("H")):
-            time_for_reminder = expected_delivery_date_time - datetime.timedelta(hours = number_for_time)
 
+            remind_message_to_send_to_chw = notification_for_chw.message_to_send
 
-        remind_message_to_send_to_chw = notification_for_chw.message_to_send
+            if notification_for_chw.word_to_replace_by_the_mother_id_in_the_message_to_send:
+                remind_message_to_send_to_chw = remind_message_to_send_to_chw.replace(notification_for_chw.word_to_replace_by_the_mother_id_in_the_message_to_send, the_created_mother_record.id_mother)
 
-        if notification_for_chw.word_to_replace_by_the_mother_id_in_the_message_to_send:
-            remind_message_to_send_to_chw = remind_message_to_send_to_chw.replace(notification_for_chw.word_to_replace_by_the_mother_id_in_the_message_to_send, the_created_mother_record.id_mother)
+            if notification_for_chw.word_to_replace_by_the_date_in_the_message_to_send:
+                remind_message_to_send_to_chw = remind_message_to_send_to_chw.replace(notification_for_chw.word_to_replace_by_the_date_in_the_message_to_send, expected_delivery_date_time.date().isoformat())        
+            created_reminder = NotificationsCHW.objects.create(chw = args['the_sender'], notification = notification_for_chw, date_time_for_sending = time_for_reminder, message_to_send = remind_message_to_send_to_chw)
 
-        if notification_for_chw.word_to_replace_by_the_date_in_the_message_to_send:
-            remind_message_to_send_to_chw = remind_message_to_send_to_chw.replace(notification_for_chw.word_to_replace_by_the_date_in_the_message_to_send, next_appointment_date_time.date().isoformat())        
-        created_reminder = NotificationsCHW.objects.create(chw = args['the_sender'], notification = notification_for_chw, date_time_for_sending = time_for_reminder, message_to_send = remind_message_to_send_to_chw)
 
     args['valide'] = True
     # args['info_to_contact'] = "La femme enceinte est bien enregistree. Son numero est "+mother_id
@@ -2103,8 +2148,11 @@ def record_risk_report(args):
     the_created_report = Report.objects.create(chw = args['the_sender'], sub_hill = args['sub_colline'], cds = args['facility'], mother = args['concerned_mother'], reporting_date = datetime.datetime.now().date(), text = args['text'], category = args['mot_cle'])
     created_ris_report = ReportRIS.objects.create(report = the_created_report)
 
-    string_of_symptoms = ""
+    '''string_of_symptoms = ""
     first_symptom = True
+
+    string_of_red_symptoms = ""
+    first_red_symptom = True
 
     for one_symbol in args['checked_symptoms_list']:
         one_symptom = Symptom.objects.filter(symtom_designation__iexact = one_symbol)[0]
@@ -2114,6 +2162,15 @@ def record_risk_report(args):
             first_symptom = False
         else:
             string_of_symptoms = string_of_symptoms+", "+one_symptom.symtom_designation
+        
+        if one_symptom.is_red_symptom:
+            if first_red_symptom:
+                string_of_red_symptoms = string_of_red_symptoms+one_symptom.symtom_designation
+                first_red_symptom = False
+            else:
+                string_of_red_symptoms = string_of_red_symptoms+", "+one_symptom.symtom_designation
+                '''
+
     if(args['ris_type'] == "RIS_CHILD"):
         # Let's record informations related to the child
         report_ris_bebe = ReportRISBebe.objects.create(ris_report = created_ris_report, concerned_child = args['concerned_child'])
@@ -2127,20 +2184,36 @@ def record_risk_report(args):
         # args['info_to_contact'] = "Le rapport de risque pour le bebe '" +args['child_number'].child_code_designation+"' de la maman '"+args['concerned_mother'].id_mother+"' est bien enregistre."
         args['info_to_contact'] = "Mesaje warungitse yerekeye ibimenyetse vy indwara kumwana '" +args['child_number'].child_code_designation+"' w umupfasoni '"+args['concerned_mother'].id_mother+"' yashitse neza"
         # args['info_to_supervisors'] = "L enfant '" +args['child_number'].child_code_designation+"' de la maman '"+args['concerned_mother'].id_mother+"' presente les symptomes suivants : "+string_of_symptoms
-        args['info_to_supervisors'] = "Umwana '" +args['child_number'].child_code_designation+"' w umupfasoni '"+args['concerned_mother'].id_mother+"' afise ibimenyetso bikurikira : "+string_of_symptoms
+        args['info_to_supervisors'] = "Umwana '" +args['child_number'].child_code_designation+"' w umupfasoni nomero '"+args['concerned_mother'].id_mother+"', akurikiranwa n umuremesha kiyago '"+args['the_sender'].phone_number+"', wo mu gacimbiri '"+args['sub_colline'].name+"' afise ikimenyetso mburizi : "+args['kirundi_red_symptoms_names']
 
     if(args['ris_type'] == "RIS_WOMAN"):
         # args['info_to_contact'] = "Le rapport de risque de la maman '"+args['concerned_mother'].id_mother+"' est bien enregistre."
         args['info_to_contact'] = "Mesaje warungitse yerekeye ibimenyetso vy indwara ku mupfasoni '"+args['concerned_mother'].id_mother+"' yashitse neza"
         # args['info_to_supervisors'] = "La maman '"+args['concerned_mother'].id_mother+"' presente les symptomes suivants : "+string_of_symptoms
-        args['info_to_supervisors'] = "Umupfasoni '"+args['concerned_mother'].id_mother+"' afise ibimenyetso vy indwara bikurikira : "+string_of_symptoms
+        args['info_to_supervisors'] = "Umupfasoni nomero '"+args['concerned_mother'].id_mother+"', akurikiranwa n umuremesha kiyago '"+args['the_sender'].phone_number+"', wo mu gacimbiri '"+args['sub_colline'].name+"' afise ikimenyetso mburizi : "+args['kirundi_red_symptoms_names']
 
-    the_contact_phone_number = "tel:"+args['supervisor_phone_number']
-    data = {"urns": [the_contact_phone_number],"text": args['info_to_supervisors']}
-    args['data'] = data
-    send_sms_through_rapidpro(args)
+    if len(args['kirundi_red_symptoms_names']) > 1:
+        #We inform red alerts only to supervisors
+        the_contact_phone_number = "tel:"+args['supervisor_phone_number']
+        data = {"urns": [the_contact_phone_number],"text": args['info_to_supervisors']}
+        args['data'] = data
+        send_sms_through_rapidpro(args)
 
+        #if len(string_of_red_symptoms) > 1:
+        #We need to inform national supervisors
+        if(args['ris_type'] == "RIS_CHILD"):
+            args['info_to_supervisors'] = "Umwana '" +args['child_number'].child_code_designation+"' w umupfasoni '"+args['concerned_mother'].id_mother+"', wo mu gacimbiri '"+args['sub_colline'].name+"' ko muri '"+args['the_sender'].cds.name+"', '"+args['the_sender'].cds.district.name+"', BPS '"+args['the_sender'].cds.district.bps.name+"' afise ikimenyetso mburizi : "+args['kirundi_red_symptoms_names']
 
+        if(args['ris_type'] == "RIS_WOMAN"):
+            args['info_to_supervisors'] = "Umupfasoni '"+args['concerned_mother'].id_mother+"', wo mu gacimbiri '"+args['sub_colline'].name+"' ko muri '"+args['the_sender'].cds.name+"', '"+args['the_sender'].cds.district.name+"', BPS '"+args['the_sender'].cds.district.bps.name+"' afise ikimenyetso mburizi : "+args['kirundi_red_symptoms_names']
+
+        national_sup_phone_numbers = get_national_sup_phone_number()
+
+        print national_sup_phone_numbers
+
+        data = {"urns": national_sup_phone_numbers,"text": args['info_to_supervisors']}
+        args['data'] = data
+        send_sms_through_rapidpro(args)
 
 
 def modify_record_risk_report(args):
@@ -2222,8 +2295,11 @@ def modify_record_risk_report(args):
         for one_ris_report_symptom_connection in all_ris_report_symptom_connections:
             one_ris_report_symptom_connection.delete()
 
-    string_of_symptoms = ""
+    '''string_of_symptoms = ""
     first_symptom = True
+
+    string_of_red_symptoms = ""
+    first_red_symptom = True
 
     for one_symbol in args['checked_symptoms_list']:
         one_symptom = Symptom.objects.filter(symtom_designation__iexact = one_symbol)[0]
@@ -2234,6 +2310,16 @@ def modify_record_risk_report(args):
         else:
             string_of_symptoms = string_of_symptoms+", "+one_symptom.symtom_designation
 
+
+        if one_symptom.is_red_symptom:
+            if first_red_symptom:
+                string_of_red_symptoms = string_of_red_symptoms+one_symptom.symtom_designation
+                first_red_symptom = False
+            else:
+                string_of_red_symptoms = string_of_red_symptoms+", "+one_symptom.symtom_designation
+                '''
+
+
     if(args['ris_type'] == "RIS_CHILD"):
         # Let's record informations related to the child
         report_ris_bebe = ReportRISBebe.objects.get_or_create(ris_report = the_one_corresponding_risreport, concerned_child = args['concerned_child'])
@@ -2242,17 +2328,34 @@ def modify_record_risk_report(args):
     if(args['ris_type'] == "RIS_CHILD"):
         # args['info_to_contact'] = "Mise a jour du rapport de risque pour le bebe '" +args['child_number'].child_code_designation+"' de la maman '"+args['concerned_mother'].id_mother+"' a reussie."
         args['info_to_contact'] = "Mesaje ikosora iyari yarungitswe yerekeye ibimenyetso vy indwara kumwana '" +args['child_number'].child_code_designation+"' w umupfasoni '"+args['concerned_mother'].id_mother+"' yashitse neza"
-        args['info_to_supervisors'] = "Mesaje yo gukosora. Umwana '" +args['child_number'].child_code_designation+"' w umupfasoni '"+args['concerned_mother'].id_mother+"' afise ibimenyetso bikurikira : "+string_of_symptoms
+        args['info_to_supervisors'] = "Mesaje yo gukosora. Umwana '" +args['child_number'].child_code_designation+"' w umupfasoni nomero '"+args['concerned_mother'].id_mother+"', akurikiranwa n umuremesha kiyago '"+args['the_sender'].phone_number+"', wo mu gacimbiri '"+args['sub_colline'].name+"' afise ikimenyetso mburizi : "+args['kirundi_red_symptoms_names']
     if(args['ris_type'] == "RIS_WOMAN"):
         # args['info_to_contact'] = "Mise a jour du rapport de risque de la maman '"+args['concerned_mother'].id_mother+"' a reussie."
         args['info_to_contact'] = "Mesaje ikosora iyari yarungitswe yerekeye ibimenyetso vy indwara ku mupfasoni '"+args['concerned_mother'].id_mother+"' yashitse neza"
-        args['info_to_supervisors'] = "Mesaje yo gukosora. Umupfasoni '"+args['concerned_mother'].id_mother+"' afise ibimenyetso vy indwara bikurikira : "+string_of_symptoms
+        args['info_to_supervisors'] = "Mesaje yo gukosora. Umupfasoni nomero '"+args['concerned_mother'].id_mother+"', akurikiranwa n umuremesha kiyago '"+args['the_sender'].phone_number+"', wo mu gacimbiri '"+args['sub_colline'].name+"' afise ikimenyetso mburizi : "+args['kirundi_red_symptoms_names']
+
+    if len(args['kirundi_red_symptoms_names']) > 1:
+        the_contact_phone_number = "tel:"+args['supervisor_phone_number']
+        data = {"urns": [the_contact_phone_number],"text": args['info_to_supervisors']}
+        args['data'] = data
+        send_sms_through_rapidpro(args)
+
+        #if len(string_of_red_symptoms) > 1:
+        #We need to inform national supervisors
+        if(args['ris_type'] == "RIS_CHILD"):
+            args['info_to_supervisors'] = "Mesaje yo gukosora. Umwana '" +args['child_number'].child_code_designation+"' w umupfasoni '"+args['concerned_mother'].id_mother+"', wo mu gacimbiri '"+args['sub_colline'].name+"' ko muri '"+args['the_sender'].cds.name+"', '"+args['the_sender'].cds.district.name+"', BPS '"+args['the_sender'].cds.district.bps.name+"' afise ikimenyetso mburizi : "+args['kirundi_red_symptoms_names']
+
+        if(args['ris_type'] == "RIS_WOMAN"):
+            args['info_to_supervisors'] = "Mesaje yo gukosora. Umupfasoni '"+args['concerned_mother'].id_mother+"', wo mu gacimbiri '"+args['sub_colline'].name+"' ko muri '"+args['the_sender'].cds.name+"', '"+args['the_sender'].cds.district.name+"', BPS '"+args['the_sender'].cds.district.bps.name+"' afise ikimenyetso mburizi : "+args['kirundi_red_symptoms_names']
 
 
-    the_contact_phone_number = "tel:"+args['supervisor_phone_number']
-    data = {"urns": [the_contact_phone_number],"text": args['info_to_supervisors']}
-    args['data'] = data
-    send_sms_through_rapidpro(args)
+        national_sup_phone_numbers = get_national_sup_phone_number()
+
+        print national_sup_phone_numbers
+
+        data = {"urns": national_sup_phone_numbers,"text": args['info_to_supervisors']}
+        args['data'] = data
+        send_sms_through_rapidpro(args)
 # -----------------------------------------------------------------
 
 
@@ -2469,9 +2572,33 @@ def record_death_report(args):
     if(args['dec_type'] == "DEC_CHILD"):
         # args['info_to_contact'] = "Le rapport de deces du bebe '" +args['child_number'].child_code_designation+"' de la maman '"+args['concerned_mother'].id_mother+"' est bien enregistre."
         args['info_to_contact'] = "Mesaje ivuga urupfu rw umwana '" +args['child_number'].child_code_designation+"' w umupfasoni '"+args['concerned_mother'].id_mother+"' yashitse"
+        args['info_to_supervisors'] = "Umuremesha kiyago akoresha '"+args['phone']+"' ahejeje gutanga mesaje ivuga urupfu rw umwana '" +args['child_number'].child_code_designation+"' w umupfasoni '"+args['concerned_mother'].id_mother+"'."
     if(args['dec_type'] == "DEC_WOMAN"):
         # args['info_to_contact'] = "Le rapport de deces de la maman '"+args['concerned_mother'].id_mother+"' est bien enregistre."
         args['info_to_contact'] = "Mesaje ivuga urupfu rw umupfasoni '"+args['concerned_mother'].id_mother+"' yashitse"
+        args['info_to_supervisors'] = "Umuremesha kiyago akoresha '"+args['phone']+"' ahejeje gutanga mesaje ivuga urupfu rw umupfasoni '"+args['concerned_mother'].id_mother+"'"
+
+    
+    the_contact_phone_number = "tel:"+args['supervisor_phone_number']
+    data = {"urns": [the_contact_phone_number],"text": args['info_to_supervisors']}
+    args['data'] = data
+    send_sms_through_rapidpro(args)
+
+
+    #We need to inform national supervisors
+    if(args['dec_type'] == "DEC_CHILD"):
+        args['info_to_supervisors'] = "Umuremesha kiyago akoresha '"+args['phone']+"', wo mu gacimbiri '"+args['sub_colline'].name+"' ko muri '"+args['the_sender'].cds.name+"', '"+args['the_sender'].cds.district.name+"', BPS '"+args['the_sender'].cds.district.bps.name+"' ahejeje gutanga mesaje ivuga urupfu rw umwana '" +args['child_number'].child_code_designation+"' w umupfasoni '"+args['concerned_mother'].id_mother+"'."
+    if(args['dec_type'] == "DEC_WOMAN"):
+        args['info_to_supervisors'] = "Umuremesha kiyago akoresha '"+args['phone']+"', wo mu gacimbiri '"+args['sub_colline'].name+"' ko muri '"+args['the_sender'].cds.name+"', '"+args['the_sender'].cds.district.name+"', BPS '"+args['the_sender'].cds.district.bps.name+"' ahejeje gutanga mesaje ivuga urupfu rw umupfasoni '"+args['concerned_mother'].id_mother+"'"
+
+    national_sup_phone_numbers = get_national_sup_phone_number()
+
+    print national_sup_phone_numbers
+
+    data = {"urns": national_sup_phone_numbers,"text": args['info_to_supervisors']}
+    args['data'] = data
+    send_sms_through_rapidpro(args)
+
 
 
 # Modify
@@ -2579,10 +2706,32 @@ def modify_record_death_report(args):
     if(args['dec_type'] == "DEC_CHILD"):
         # args['info_to_contact'] = "Mise a jour du rapport de deces du bebe '" +args['child_number'].child_code_designation+"' de la maman '"+args['concerned_mother'].id_mother+"' a reussie."
         args['info_to_contact'] = "Mesaje ikosora iyari yatanzwe yerekeye urupfu rw umwana '" +args['child_number'].child_code_designation+"' w umupfasoni '"+args['concerned_mother'].id_mother+"' yashitse"
+        args['info_to_supervisors'] = "Mesaje ikosora iyari yatanzwe : Umuremesha kiyago akoresha '"+args['phone']+"' ahejeje gutanga mesaje ivuga urupfu rw umwana '" +args['child_number'].child_code_designation+"' w umupfasoni '"+args['concerned_mother'].id_mother+"'."
     if(args['dec_type'] == "DEC_WOMAN"):
         # args['info_to_contact'] = "Mise a jour du rapport de deces de la maman '"+args['concerned_mother'].id_mother+"' a reussie."
         args['info_to_contact'] = "Mesaje ikosora iyari yatanzwe yerekeye urupfu rw umupfasoni '"+args['concerned_mother'].id_mother+"' yashitse"
+        args['info_to_supervisors'] = "Mesaje ikosora iyari yatanzwe : Umuremesha kiyago akoresha '"+args['phone']+"' ahejeje gutanga mesaje ivuga urupfu rw umupfasoni '"+args['concerned_mother'].id_mother+"'"
 
+
+    the_contact_phone_number = "tel:"+args['supervisor_phone_number']
+    data = {"urns": [the_contact_phone_number],"text": args['info_to_supervisors']}
+    args['data'] = data
+    send_sms_through_rapidpro(args)
+
+
+    #We need to inform national supervisors
+    if(args['dec_type'] == "DEC_CHILD"):
+        args['info_to_supervisors'] = "Mesaje ikosora iyari yatanzwe. Umuremesha kiyago akoresha '"+args['phone']+"', wo mu gacimbiri '"+args['sub_colline'].name+"' ko muri '"+args['the_sender'].cds.name+"', '"+args['the_sender'].cds.district.name+"', BPS '"+args['the_sender'].cds.district.bps.name+"' ahejeje gutanga mesaje ivuga urupfu rw umwana '" +args['child_number'].child_code_designation+"' w umupfasoni '"+args['concerned_mother'].id_mother+"'."
+    if(args['dec_type'] == "DEC_WOMAN"):
+        args['info_to_supervisors'] = "Mesaje ikosora iyari yatanzwe. Umuremesha kiyago akoresha '"+args['phone']+"', wo mu gacimbiri '"+args['sub_colline'].name+"' ko muri '"+args['the_sender'].cds.name+"', '"+args['the_sender'].cds.district.name+"', BPS '"+args['the_sender'].cds.district.bps.name+"' ahejeje gutanga mesaje ivuga urupfu rw umupfasoni '"+args['concerned_mother'].id_mother+"'"
+
+    national_sup_phone_numbers = get_national_sup_phone_number()
+
+    print national_sup_phone_numbers
+
+    data = {"urns": national_sup_phone_numbers,"text": args['info_to_supervisors']}
+    args['data'] = data
+    send_sms_through_rapidpro(args)
 
 # -----------------------------------------------------------------
 

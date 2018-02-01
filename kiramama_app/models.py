@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from django.db import models
-from health_administration_structure_app.models import CDS
-from public_administration_structure_app.models import SousColline
+from health_administration_structure_app.models import *
+from public_administration_structure_app.models import *
 
 
 class CHW(models.Model):
@@ -13,6 +13,7 @@ class CHW(models.Model):
     supervisor_phone_number = models.CharField(max_length=20)
     is_active = models.BooleanField(default=True)
     reg_date = models.DateTimeField(auto_now_add=True)
+    is_deleted = models.BooleanField(default=False)
 
     def __unicode__(self):
         return self.phone_number
@@ -126,6 +127,8 @@ class Symptom(models.Model):
     ''' In this model will be stored symptom designations '''
     symtom_designation = models.CharField(max_length=50)
     symtom_code_meaning = models.CharField(max_length=50)
+    kirundi_name = models.CharField(max_length=50, default="")
+    is_red_symptom = models.BooleanField(default=False)
 
     def __unicode__(self):
         return "{0} - {1}".format(self.symtom_designation, self.symtom_code_meaning)
@@ -412,3 +415,30 @@ class NotificationsCHW(models.Model):
 
     def __unicode__(self):
         return "{0} - {1}".format(self.chw, self.notification)
+
+
+class AllSupervisor(models.Model):
+    first_name = models.CharField(max_length=50)
+    last_name = models.CharField(max_length=50)
+    phone_number = models.CharField(max_length=15)
+    is_national_supervisor = models.BooleanField(default=False)
+
+    def __unicode__(self):
+        return "{0} {1} {2} {3}".format(self.first_name, self.last_name, self.phone_number, self.is_national_supervisor)
+
+
+class ProvinceSupervisor(models.Model):
+    province = models.ForeignKey(Province)
+    supervisor = models.ForeignKey(AllSupervisor)
+
+    def __unicode__(self):
+        return "{0} {1} Supervise {2}".format(self.supervisor.first_name, self.supervisor.last_name, self.province.name)
+
+
+
+class DistrictSupervisor(models.Model):
+    district = models.ForeignKey(District)
+    supervisor = models.ForeignKey(AllSupervisor)
+
+    def __unicode__(self):
+        return "{0} {1} Supervise {2}".format(self.supervisor.first_name, self.supervisor.last_name, self.district.name)
