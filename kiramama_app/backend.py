@@ -29,8 +29,9 @@ def check_session(args):
 
 
 def eliminate_unnecessary_spaces(args):
-    '''This function eliminate unnecessary spaces in an the incoming message'''
-    the_incoming_message = args['text']
+    the_incoming_message = args['results']['rapport1']['input']
+    print("The text before sub             " + the_incoming_message)
+    # the_new_message = re.sub(' +',' ',the_incoming_message)
 
     #  Messages from RapidPro comes with spaces replaced by '+'
     #  Let's replace those '+' (one or more) by one space
