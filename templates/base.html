@@ -217,13 +217,27 @@
 		
 		{% if user.is_authenticated %}
 			{% block navbar %}
-				<div class="fitcontent" id="nav">
-					<ul id="menu-main_menu">
-						<li><a role="button" href="/home">{% trans "Home" %}</a></li>
-						<li><a role="button" href="/communityhealthworker">{% trans "Community Health Workers" %}</a></li>
-						<li><a role="button" href="/maternalhealth">{% trans "Maternal Health" %}</a></li>
-						<li><a role="button" href="/childhealth">{% trans "Child Health" %}</a></li>
-						<li><a role="button" href="/logout">{% trans "Logout" %}</a></li>
+				<div role="presentation" class="fitcontent" id="nav">
+					<ul id="nav nav-pills">
+						<li role="presentation"><a role="button" href="/home">{% trans "Home" %}</a></li>
+						<li role="presentation"><a role="button" href="/communityhealthworker">{% trans "Community Health Workers" %}</a></li>
+
+
+
+						<li role="presentation" class="dropdown">
+							<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+      {% trans "Maternal Health" %} <span class="caret"></span>
+    						</a>
+    						<ul class="dropdown-menu">
+      							<li><a href="/maternalhealth">{% trans "Maternal Health" %}</a></li>
+      							<li><a href="#">An other menu</a></li>
+    						</ul>
+
+						</li>
+
+						
+						<li role="presentation"><a role="button" href="/childhealth">{% trans "Child Health" %}</a></li>
+						<li role="presentation"><a role="button" href="/logout">{% trans "Logout" %}</a></li>
 						
 					</ul>
 				</div>
