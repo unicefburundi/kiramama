@@ -50,12 +50,22 @@
 
 								mother_message_history = mother_message_history.split("},");
 
+								var col0;
+								var col1;
+								var col2;
+
 								for(i=0; i<mother_message_history.length; i++){
 									one_row = mother_message_history[i];
 
-									var col0 = one_row.split(",")[0].split(":")[1];
+
+									col0 = one_row.split(",")[0].split(":")[1];
 									col0 = col0.replace("u","");
 									col0 = col0.replace(/'/g,"").trim();
+
+									var col0_0;
+
+									var col1_done = false;
+									var col2_done = false;
 
 									switch(String(col0)) {
 										case "GRO":
@@ -63,6 +73,15 @@
 											break;
 										case "CPN":
 											col0 = "Consultation prénatale";
+
+											col0_0 = one_row.split(",")[6].split(":")[1];
+											col0_0 = col0_0.replace("u","");
+											col0_0 = col0_0.replace(/'/g,"").trim();
+											col0 = col0+" - "+col0_0;
+
+											col1 = one_row.split(",")[9].split(":")[1];
+											col1 = col1.replace("u","").replace("}]","");
+											col1_done = true;
 											break;
 										case "NSC":
 											col0 = "Naissance du bébé";
@@ -72,6 +91,14 @@
 											break;
 										case "VAC":
 											col0 = "Vaccination";
+											col0_0 = one_row.split(",")[6].split(":")[1];
+											col0_0 = col0_0.replace("u","");
+											col0_0 = col0_0.replace(/'/g,"").trim();
+											col0 = col0+" - "+col0_0;
+
+											col1 = one_row.split(",")[9].split(":")[1];
+											col1 = col1.replace("u","").replace("}]","");
+											col1_done = true;
 											break;
 										case "RIS":
 											col0 = "Risque";
@@ -89,8 +116,10 @@
 											col0 = " - ";
 									}
 
-									var col1 = one_row.split(",")[7].split(":")[1];
-									col1 = col1.replace("u","").replace("}]","");
+									if(col1_done != true)
+										{col1 = one_row.split(",")[8].split(":")[1];
+										col1 = col1.replace("u","").replace("}]","");
+									}
 
 									var col2 = one_row.split(",")[2].split(":")[1];
 									col2 = col2.replace("u","");

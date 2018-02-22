@@ -48,21 +48,24 @@
 								var chw_phone_number;
 								var date; 
 
+
 								mother_message_history = mother_message_history.split("},");
+
+								var col0;
+								var col1;
+								var col2;
 
 								for(i=0; i<mother_message_history.length; i++){
 									one_row = mother_message_history[i];
 
 									console.log(one_row);
 
-									var col0 = one_row.split(",")[0].split(":")[1];
+									col0 = one_row.split(",")[0].split(":")[1];
 
-									var col1;
-									var col2;
 									var col1_done = false;
 									var col2_done = false;
 
-									var col0_0 = one_row.split(",")[6].split(":")[1];
+									var col0_0;
 									col0 = col0.replace("u","");
 									col0 = col0.replace(/'/g,"").trim();
 
@@ -72,7 +75,7 @@
 											break;
 										case "CPN":
 											col0 = "Consultation prénatale";
-											
+											col0_0 = one_row.split(",")[6].split(":")[1];
 											col0_0 = col0_0.replace("u","");
 											col0_0 = col0_0.replace(/'/g,"").trim();
 											col0 = col0+" - "+col0_0;
@@ -89,6 +92,14 @@
 											break;
 										case "VAC":
 											col0 = "Vaccination";
+											col0_0 = one_row.split(",")[6].split(":")[1];
+											col0_0 = col0_0.replace("u","");
+											col0_0 = col0_0.replace(/'/g,"").trim();
+											col0 = col0+" - "+col0_0;
+
+											col1 = one_row.split(",")[9].split(":")[1];
+											col1 = col1.replace("u","").replace("}]","");
+											col1_done = true;
 											break;
 										case "RIS":
 											col0 = "Risque";
