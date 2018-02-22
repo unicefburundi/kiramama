@@ -872,8 +872,14 @@ def mother_message_history(request, mother_id):
 
     reports_about_this_mother = Report.objects.filter(mother = concerned_mother)
 
+    number_of_reports = reports_about_this_mother.count()
 
     reports_about_this_mother = serializers.serialize('python', reports_about_this_mother)
+    
+    for i in range(0, number_of_reports):
+        pk = reports_about_this_mother[i]['pk']
+        reports_about_this_mother[i]['fields']['pk'] = pk
+
     columns = [g['fields'] for g in reports_about_this_mother]
     reports_about_this_mother = json.dumps(columns, default=date_handler)
     rows = json.loads(reports_about_this_mother)
@@ -885,6 +891,19 @@ def mother_message_history(request, mother_id):
         else:
             r["reporter_phone_number"] = ""
 
+        if (r["category"] == "CPN"):
+            #We have to determine which CPN it is
+            print("***")
+            cpn_name = ReportCPN.objects.filter(report__pk = r["pk"])[0].concerned_cpn.cpn_description
+            r["cpn_name"] = cpn_name
+        if (r["category"] == "VAC"):
+            #We have to determine which VAC it is
+            print("***")
+            cpn_name = ReportVAC.objects.filter(report__pk = r["pk"])[0].vac.vac_designation
+            r["vac_name"] = cpn_name
+
+    print("---")
+    print(rows)
 
     return render(request, 'mother_message_history.html', {'rows':rows})
 
