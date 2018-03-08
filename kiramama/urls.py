@@ -32,14 +32,24 @@ urlpatterns = [
     url(r'^home/vaccination_reports/mother_details/(?P<child>)', kiramama_app.views.mother_details, name='mother_details'),
     url(r'^home/$', kiramama_app.views.home, name='home'),
     url(r'^communityhealthworker', kiramama_app.views.communityhealthworker, name='communityhealthworker'),
+
     url(r'^maternalhealth', kiramama_app.views.maternalhealth, name='maternalhealth'),
+    url(r'^births', kiramama_app.views.births, name='births'),
+    url(r'^risks', kiramama_app.views.risks, name='risks'),
+    url(r'^red_alerts', kiramama_app.views.red_alerts, name='red_alerts'),
+    url(r'^deaths', kiramama_app.views.deaths, name='deaths'),
+    url(r'^reminders', kiramama_app.views.reminders, name='reminders'),
+
     url(r'^childhealth', kiramama_app.views.childhealth, name='childhealth'),
     url(r'^login/$', auth_views.login, name='login'),
     url(r'^logout/$', auth_views.logout, {'next_page': '/'}, name='logout'),
     url(r'^getdistrictsinprovince', kiramama_app.views.getdistrictsinprovince, name='getdistrictsinprovince'),
     url(r'^getcdsindistrict', kiramama_app.views.getcdsindistrict, name='getcdsindistrict'),
     url(r'^getcdsdata', kiramama_app.views.getcdsdata, name='getcdsdata'),
+    
     url(r'^getwanteddata', kiramama_app.views.getwanteddata, name='getwanteddata'),
+    url(r'^get_births_data', kiramama_app.views.get_births_data, name='get_births_data'),
+
     url(r'^get_child_health_data', kiramama_app.views.get_child_health_data, name='get_child_health_data'),
     url(r'^$', kiramama_app.views.default, name='default'),
     url(r'^registered_preg_details/(?P<location_name>)$', kiramama_app.views.registered_preg_details, name='registered_preg_details'),
