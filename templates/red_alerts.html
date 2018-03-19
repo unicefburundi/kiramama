@@ -99,7 +99,7 @@
 			}
 	    	initializesonic();
 	    	
-	    	ajaxurl = 'getwanteddata';
+	    	ajaxurl = 'get_risks_data';
     		var level = null;
     		var code = null;
     		var start_date = null;
@@ -208,93 +208,37 @@
 		                			if (dict.hasOwnProperty(location_name)){
 		                				dict[location_name][0] += 1;
 		                			}else{
-		                				dict[location_name] = [1,0,0,0,0,0,0];
+		                				dict[location_name] = [1];
 		                			}
-		                			if(response[i]["risk_level_id"] > 1){
-		                				//Let's take risk level greater than one is high risk
-		                				dict[location_name][1] += 1;
-		                			}}
-
-
-		                			if((response[i]["expected_delivery_date"] >= $('#dstartdate').val()) && (response[i]["expected_delivery_date"] <= $('#dendtdate').val())){
-		                				if (dict.hasOwnProperty(location_name)){
-		                					dict[location_name][2] += 1;
-		                				}else{
-		                					dict[location_name] = [0,0,1,0,0,0,0];
-		                				}
-										
-										if(response[i]["risk_level_id"] > 1){
-											dict[location_name][3] += 1;
-										}
-									}
-
-									var exp_der_date = new Date(response[i]["expected_delivery_date"]);
-									var selected_start_date = new Date($('#dstartdate').val());
-									var selected_end_date = new Date($('#dendtdate').val());
-									var end_date = new Date($('#dendtdate').val());
-									end_date.setDate(end_date.getDate() + 14);
-									var reg_gro_date = new Date(response[i]["reporting_date"]);
-									var derivery_date = new Date(response[i]["birth_date"]);
-
-									if(((reg_gro_date <= selected_end_date) && (derivery_date > selected_end_date)) || ((reg_gro_date <= selected_end_date) && (isNaN(derivery_date))))
-										{
-										if (dict.hasOwnProperty(location_name)){
-		                					dict[location_name][4] += 1;
-		                				}else{
-		                					dict[location_name] = [0,0,0,0,1,0,0];
-		                				}
-									}
-
-									//if((exp_der_date <= end_date) && (isNaN(derivery_date)))
-									if((exp_der_date >= selected_end_date) && (exp_der_date <= end_date)){
-										if (dict.hasOwnProperty(location_name)){
-		                					dict[location_name][5] += 1;
-		                				}else{
-		                					dict[location_name] = [0,0,0,0,0,1,0];
-		                				}
-		                				if(response[i]["risk_level_id"] > 1){
-											dict[location_name][6] += 1;
-										}
-									}
+		                			}
 		                		}
 
 		                		if (Object.keys(dict).length > 0){
-		                			$('#divmh').append('<p><b>{% trans "PREGNANCY REPORTS STATISTICS" %}</b></p>' +
+		                			console.log("0000000");
+		                			$('#divmh').append('<p><b>{% trans "RED ALERTS" %}</b></p>' +
 
 									'<div style="clear:both; height:10px;"></div>' +
 
 									'<table id="tblmh" class="table table-striped table-bordered table-condensed">');
+
 									
 									$('#tblmh').append('<thead>' +
-										'<th>{% trans "Location" %}</th><th>{% trans "Registered Pregnancy" %}</th><th>{% trans "High Risk Registered pregnancy" %}</th><th>{% trans "Expected Delivery" %}</th><th>{% trans "High Risk Expected Delivery" %}</th><th>{% trans "Pregnant Women on Selected end date" %}</th><th>{% trans "Pregnant Women Expected to deliver next 2 weeks from selected end date" %}</th><th>{% trans "High Risk Pregnant Women Expected to deliver next 2 weeks from selected end date" %}</th>' +
+										'<th>{% trans "Location" %}</th><th>{% trans "Number of risks" %}</th>' +
 									'</thead>' +
 										
 									'<tbody>' +
 										
 									'</tbody>');
-
 									var keys = Object.keys(dict);
 
 									keys.forEach(function(key){
-										var number_registered = parseFloat(dict[key][0]);
-										var number_high_risk = parseFloat(dict[key][1]);
-										var number_expected_deri = parseFloat(dict[key][2]);
-										var number_hred = parseFloat(dict[key][3]);
-
-										var pw = parseFloat(dict[key][4]);
-										var pwexp = parseFloat(dict[key][5]);
-										var pwexp_high_risk = parseFloat(dict[key][6]);
+										var number_risks = parseFloat(dict[key][0]);
+										
 										
 										$('#tblmh').find('tbody').append('<tr style="cursor:pointer;"></tr>');
 
 										$('#tblmh tr:last').append('<td align="center">' + key +'</td>');
-										$('#tblmh tr:last').append('<td align="center"><a href="#" onclick = "displayRegPreDetails(this)">'+ number_registered +'</a></td>');
-										$('#tblmh tr:last').append('<td align="center"><a href="#" onclick = "displayHRRegPreDetails(this)">'+ number_high_risk +'</a></td>');
-										$('#tblmh tr:last').append('<td align="center"><a href="#" onclick = "displayExpectedDerivery(this)">'+ number_expected_deri +'</a></td>');
-										$('#tblmh tr:last').append('<td align="center"><a href="#" onclick = "displayHREDDetails(this)">'+ number_hred +'</a></td>');
-										$('#tblmh tr:last').append('<td align="center"><a href="#" onclick = "displayPWSEDDetails(this)">'+ pw +'</a></td>');
-										$('#tblmh tr:last').append('<td align="center"><a href="#" onclick = "displayPWEDNTWDetails(this)">'+ pwexp +'</a></td>');
-										$('#tblmh tr:last').append('<td align="center"><a href="#" onclick = "displayHRPWEDNTWDetails(this)">'+ pwexp_high_risk +'</a></td>');
+										$('#tblmh tr:last').append('<td align="center"><a href="#" onclick = "displayRedAlertsDetails(this)">'+ number_risks +'</a></td>');
 									});
 
 									
@@ -311,7 +255,9 @@
 								            'copy', 'csv', 'excel', 'pdf', 'print'
 								        ]
 									});
-		                		}
+		                		}else {
+		                				$('#divmh').append('<p style="color:red;">No records found</p>');
+		                			}
 
 		                	}else {
 		                		$('#divmh').append('<p style="color:red;">No records found</p>');
@@ -330,6 +276,7 @@
 		            },
 
 		            error: function (jqXHR, exception) {
+		            	console.log(exception);
 		                messimsg = getajaxerrormessage(jqXHR, exception); //jqXHR.responseText;
 		                messititle = "error";
 		                titleanimation = "messierror";
@@ -343,7 +290,8 @@
 
 
 
-		    function displayRegPreDetails(key=0){
+		    function displayRedAlertsDetails(key=0){
+		    console.log("=====111==========")
 			location_name = key.closest('tr').getElementsByTagName('td')[0].innerHTML;
 			location_level = null
 			
@@ -361,7 +309,8 @@
 			end_date = $('#dendtdate').val();
 
 			
-			window.open('registered_preg_details/?location_name='+location_name+'&location_level='+location_level+'&start_date='+start_date+'&end_date='+end_date,'','fullscreen=yes');
+			window.open('red_alerts_details/?location_name='+location_name+'&location_level='+location_level+'&start_date='+start_date+'&end_date='+end_date,'','fullscreen=yes');
+			console.log("=====222==========")
 			}
 
 			function displayHRRegPreDetails(key=0){

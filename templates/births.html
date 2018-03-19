@@ -214,7 +214,6 @@
 		                		}
 
 		                		if (Object.keys(dict).length > 0){
-		                			console.log("0000000");
 		                			$('#divmh').append('<p><b>{% trans "BIRTHS REPORTS STATISTICS" %}</b></p>' +
 
 									'<div style="clear:both; height:10px;"></div>' +
@@ -238,7 +237,7 @@
 										$('#tblmh').find('tbody').append('<tr style="cursor:pointer;"></tr>');
 
 										$('#tblmh tr:last').append('<td align="center">' + key +'</td>');
-										$('#tblmh tr:last').append('<td align="center"><a href="#" onclick = "displayRegPreDetails(this)">'+ number_births +'</a></td>');
+										$('#tblmh tr:last').append('<td align="center"><a href="#" onclick = "displayRegBirthsDetails(this)">'+ number_births +'</a></td>');
 									});
 
 									
@@ -289,7 +288,7 @@
 
 
 
-		    function displayRegPreDetails(key=0){
+		    function displayRegBirthsDetails(key=0){
 			location_name = key.closest('tr').getElementsByTagName('td')[0].innerHTML;
 			location_level = null
 			
@@ -307,7 +306,7 @@
 			end_date = $('#dendtdate').val();
 
 			
-			window.open('registered_preg_details/?location_name='+location_name+'&location_level='+location_level+'&start_date='+start_date+'&end_date='+end_date,'','fullscreen=yes');
+			window.open('registered_births_details/?location_name='+location_name+'&location_level='+location_level+'&start_date='+start_date+'&end_date='+end_date,'','fullscreen=yes');
 			}
 
 			function displayHRRegPreDetails(key=0){

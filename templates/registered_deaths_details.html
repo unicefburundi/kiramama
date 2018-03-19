@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}
+	<title> {{ pagetitle }}</title>
+{% endblock %}
+
+{% block pagename %}pagename{% endblock %}
+
+{% block head %}
+	<script language="JavaScript">
+		var messimsg;
+		var messititle;
+		var titleanimation;
+		
+		$(document).ready(function() {
+			if ((".divmessage").length) {
+				$(".divmessage").fadeIn('slow').animate({opacity: 1.0}, 1500).effect("pulsate", { times: 2 }, 800).fadeOut('slow'); 
+			}
+			
+			if ((".diverror").length) {
+				$(".diverror").fadeIn('slow').animate({opacity: 1.0}, 1500).effect("pulsate", { times: 2 }, 800); 
+			}
+		displayRegisteredPregDetails();
+
+		});
+
+
+
+		function displayRegisteredPregDetails(){
+			$('#divRegisteredPregDetails').append('<p><b></b></p>' +
+
+								'<div style="clear:both; height:10px;"></div>' +
+
+								'<table id="tblregipreg" class="table table-striped table-bordered table-condensed">');
+			
+								$('#tblregipreg').append('<thead>' +
+									'<th>{% trans "Mother id" %}</th><th>{% trans "Reporting date" %}</th><th>{% trans "Text sent" %}</th><th>{% trans "Mother phone number" %}</th><th>{% trans "CHW phone number" %}</th>' +
+								'</thead>' +
+									
+								'<tbody>' +
+									
+								'</tbody>');
+								var registered_pregnancies = "{{rows|escapejs}}";
+
+								var province;
+								var district;
+								var cds;
+								var colline;
+								var sous_colline;
+
+
+								registered_pregnancies = registered_pregnancies.split("},");
+
+								console.log(registered_pregnancies);
+
+								for(i=0; i<registered_pregnancies.length; i++){
+									one_row = registered_pregnancies[i];
+
+									
+
+									province = one_row.split(",")[0].split(":")[1].replace("u","");
+									district = one_row.split(",")[4].split(":")[1].replace("u","");
+									cds = one_row.split(",")[1].split(":")[1].replace("u","").replace("}]","");
+									colline = one_row.split(",")[2].split(":")[1].replace("u","");
+									sous_colline = one_row.split(",")[6].split(":")[1].replace("u","");
+
+									var col0 = one_row.split(",")[12].split(":")[1];
+									col0 = col0.replace("u","").replace("}]","");
+
+									var col1 = one_row.split(",")[10].split(":")[1];
+									col1 = col1.replace("u","");
+
+									var col2 = one_row.split(",")[8].split(":")[1];
+									col2 = col2.replace("u","");
+
+									var col3 = one_row.split(",")[6].split(":")[1];
+									col3 = col3.replace("u","");
+
+									var col4 = one_row.split(",")[2].split(":")[1];
+									col4 = col4.replace("u","");
+
+
+									$('#tblregipreg').find('tbody').append('<tr style="cursor:pointer;"></tr>');
+									$('#tblregipreg tr:last').append('<td><a href="#" onclick = "displayMotherMessageHistory(this)">' + col0 +'</a></td>');
+									$('#tblregipreg tr:last').append('<td>' + col1 +'</td>');
+									$('#tblregipreg tr:last').append('<td>' + col2 +'</td>');
+									$('#tblregipreg tr:last').append('<td>' + col3 +'</td>');
+									$('#tblregipreg tr:last').append('<td>' + col4 +'</td>');
+								}
+
+								$('#tblregipreg').DataTable({
+										dom: "<'row'<'col-sm-3'l><'col-sm-4'i><'col-sm-5'f>>" +
+											"<'row'<'col-sm-12'tr>>" +
+											"<'row'<'col-sm-4'B><'col-sm-8'p>>",
+										pagingType: "full_numbers",
+										lengthMenu: [
+								            [10, 25, 50, 100, -1 ],
+								            ['10', '25', '50', '100', 'All' ]
+								        ],
+								        buttons: [
+								            'copy', 'csv', 'excel', 'pdf', 'print'
+								        ]
+									});
+
+
+		}
+		function displayMotherMessageHistory(key=0){
+			mother_id = key.closest('tr').getElementsByTagName('a')[0].innerHTML;
+			window.open('/mother_message_history/?mother_id='+mother_id,'','fullscreen=yes');
+		}
+	</script>
+{% endblock %}
+
+
+
+{% block container %}
+	<div>
+		{% if msg %}
+			<div class="divmessage"><p>{{ msg }}</p></div>
+		{% endif %}
+		{% if err %}
+			<div class="diverror"><p>{{ err }}</p></div>
+		{% endif %}
+
+		
+		<div id="divRegisteredPregDetails" class="form-inline" style="padding-left :5px; padding-right :5px;">
+		<p><b>
+		<center>DEATHS DETAILS</center>
+		</b></p>
+		
+		<!--{{rows}}-->
+
+		</div>
+
+	</div>
+{% endblock %}

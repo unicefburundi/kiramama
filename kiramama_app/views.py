@@ -383,15 +383,64 @@ def get_births_data(request):
 
 
             if (cdslist):
+                
+                #start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d')
+                #new_start_date = start_date - datetime.timedelta(days=300)
 
-                start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d')
-                new_start_date = start_date - datetime.timedelta(days=300)
-
-                births = ReportNSC.objects.filter(report__cds__in = cdslist).filter(birth_date__range=[new_start_date, end_date]).annotate(cds_id = F('report__cds__id')).annotate(cds_name = F('report__cds__name')).annotate(district_id = F('report__cds__district__id')).annotate(district_name = F('report__cds__district__name')).annotate(bps_id = F('report__cds__district__bps__id')).annotate(bps_name = F('report__cds__district__bps__name')).annotate(reporting_date = F('report__reporting_date'))
+                #births = ReportNSC.objects.filter(report__cds__in = cdslist).filter(birth_date__range=[new_start_date, end_date]).annotate(cds_id = F('report__cds__id')).annotate(cds_name = F('report__cds__name')).annotate(district_id = F('report__cds__district__id')).annotate(district_name = F('report__cds__district__name')).annotate(bps_id = F('report__cds__district__bps__id')).annotate(bps_name = F('report__cds__district__bps__name')).annotate(reporting_date = F('report__reporting_date'))
+                births = ReportNSC.objects.filter(report__cds__in = cdslist, report__reporting_date__range=[start_date, end_date]).filter(birth_date__range=[start_date, end_date]).annotate(cds_id = F('report__cds__id')).annotate(cds_name = F('report__cds__name')).annotate(district_id = F('report__cds__district__id')).annotate(district_name = F('report__cds__district__name')).annotate(bps_id = F('report__cds__district__bps__id')).annotate(bps_name = F('report__cds__district__bps__name')).annotate(reporting_date = F('report__reporting_date'))
                 rows = births.values()
                 rows = json.dumps(list(rows), default=date_handler)
                 rows = json.loads(rows)
                 rows = json.dumps(rows, default=date_handler)
+
+        return HttpResponse(rows, content_type="application/json")
+
+
+def get_deaths_data(request):
+    response_data = {}
+    if request.method == 'POST':
+        #import pdb; pdb.set_trace()
+        json_data = json.loads(request.body)
+        level = json_data['level']
+        code = json_data['code']
+        start_date = json_data['start_date']
+        end_date = json_data['end_date']
+        grodata = ""
+        all_data = []
+
+        if (level):
+            cdslist = None
+            if (level == "cds"):
+                cdslist = CDS.objects.filter(code = code)
+
+            elif (level == "district"):
+                districtlist = District.objects.filter(code = code)
+                if (districtlist):
+                    cdslist = CDS.objects.filter(district__in = districtlist)
+                
+            elif (level == "province"):
+                provincelist = BPS.objects.filter(code = code)
+                if (provincelist):
+                    districtlist = District.objects.filter(bps__in = provincelist)
+                    if (districtlist):
+                        cdslist = CDS.objects.filter(district__in = districtlist)
+            elif (level == "national"):
+                cdslist = CDS.objects.all()
+
+
+            if (cdslist):
+                #
+                #start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d')
+                #new_start_date = start_date - datetime.timedelta(days=300)
+
+                #births = ReportNSC.objects.filter(report__cds__in = cdslist).filter(birth_date__range=[new_start_date, end_date]).annotate(cds_id = F('report__cds__id')).annotate(cds_name = F('report__cds__name')).annotate(district_id = F('report__cds__district__id')).annotate(district_name = F('report__cds__district__name')).annotate(bps_id = F('report__cds__district__bps__id')).annotate(bps_name = F('report__cds__district__bps__name')).annotate(reporting_date = F('report__reporting_date'))
+                deaths = ReportDEC.objects.filter(report__cds__in = cdslist).filter(report__reporting_date__range=[start_date, end_date]).annotate(cds_id = F('report__cds__id')).annotate(cds_name = F('report__cds__name')).annotate(district_id = F('report__cds__district__id')).annotate(district_name = F('report__cds__district__name')).annotate(bps_id = F('report__cds__district__bps__id')).annotate(bps_name = F('report__cds__district__bps__name')).annotate(reporting_date = F('report__reporting_date'))
+                rows = deaths.values()
+                rows = json.dumps(list(rows), default=date_handler)
+                rows = json.loads(rows)
+                rows = json.dumps(rows, default=date_handler)
+
 
         return HttpResponse(rows, content_type="application/json")
 
@@ -441,6 +490,51 @@ def get_risks_data(request):
 
         return HttpResponse(rows, content_type="application/json")
 
+
+def get_red_alerts_data(request):
+    response_data = {}
+    if request.method == 'POST':
+        #import pdb; pdb.set_trace()
+        json_data = json.loads(request.body)
+        level = json_data['level']
+        code = json_data['code']
+        start_date = json_data['start_date']
+        end_date = json_data['end_date']
+        grodata = ""
+        all_data = []
+
+        if (level):
+            cdslist = None
+            if (level == "cds"):
+                cdslist = CDS.objects.filter(code = code)
+
+            elif (level == "district"):
+                districtlist = District.objects.filter(code = code)
+                if (districtlist):
+                    cdslist = CDS.objects.filter(district__in = districtlist)
+                
+            elif (level == "province"):
+                provincelist = BPS.objects.filter(code = code)
+                if (provincelist):
+                    districtlist = District.objects.filter(bps__in = provincelist)
+                    if (districtlist):
+                        cdslist = CDS.objects.filter(district__in = districtlist)
+            elif (level == "national"):
+                cdslist = CDS.objects.all()
+
+
+            if (cdslist):
+
+                start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d')
+                new_start_date = start_date - datetime.timedelta(days=300)
+
+                risks = RIS_Report_Symptom.objects.filter(ris_report__report__cds__in = cdslist, symptom__is_red_symptom=True).filter(ris_report__report__reporting_date__range=[new_start_date, end_date]).annotate(cds_id = F('ris_report__report__cds__id')).annotate(cds_name = F('ris_report__report__cds__name')).annotate(district_id = F('ris_report__report__cds__district__id')).annotate(district_name = F('ris_report__report__cds__district__name')).annotate(bps_id = F('ris_report__report__cds__district__bps__id')).annotate(bps_name = F('ris_report__report__cds__district__bps__name')).annotate(reporting_date = F('ris_report__report__reporting_date')).annotate(red_alert = F('symptom__is_red_symptom'))
+                rows = risks.values()
+                rows = json.dumps(list(rows), default=date_handler)
+                rows = json.loads(rows)
+                rows = json.dumps(rows, default=date_handler)
+
+        return HttpResponse(rows, content_type="application/json")
 
 def get_child_health_data(request):
     response_data = {}
@@ -588,6 +682,60 @@ def registered_risk_details(request, location_name):
 
 
     return render(request, 'registered_risks_details.html', {'rows':rows})
+
+
+def registered_deaths_details(request, location_name):
+    #d = {}
+    location_name = str(request.GET.get('location_name', '')).strip()
+    location_level = str(request.GET.get('location_level', '')).strip()
+    start_date = str(request.GET.get('start_date', '')).strip()
+    end_date = str(request.GET.get('end_date', '')).strip()
+    start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d')
+    end_date = datetime.datetime.strptime(end_date, '%Y-%m-%d')
+
+    if(location_level == "PROVINCE"):
+        concerned_cdss = CDS.objects.filter(district__bps__name__iexact = location_name)
+    if(location_level == "DISTRICT"):
+        concerned_cdss = CDS.objects.filter(district__name__iexact = location_name)
+    if(location_level == "CDS"):
+        concerned_cdss = CDS.objects.filter(name__iexact = location_name)
+
+    concerned_risk_reports = ReportDEC.objects.filter(report__cds__in = concerned_cdss, report__reporting_date__range=[start_date, end_date]).annotate(sous_coline = F('report__sub_hill__name')).annotate(colline = F('report__sub_hill__colline__name')).annotate(commune = F('report__sub_hill__colline__commune__name')).annotate(cds_name = F('report__cds__name')).annotate(district = F('report__cds__district__name')).annotate(province = F('report__sub_hill__colline__commune__province__name')).annotate(reporter_phone_number = F('report__chw__phone_number')).annotate(mother_id = F('report__mother__id_mother')).annotate(mother_phone_number = F('report__mother__phone_number')).annotate(report_text = F('report__text')).annotate(reporting_date = F('report__reporting_date'))
+
+    rows = concerned_risk_reports.values()
+    rows = json.dumps(list(rows), default=date_handler)
+    rows = json.loads(rows)
+    rows = json.dumps(rows, default=date_handler)
+
+
+    return render(request, 'registered_deaths_details.html', {'rows':rows})
+
+def red_alerts_details(request, location_name):
+    location_name = str(request.GET.get('location_name', '')).strip()
+    location_level = str(request.GET.get('location_level', '')).strip()
+    start_date = str(request.GET.get('start_date', '')).strip()
+    end_date = str(request.GET.get('end_date', '')).strip()
+    start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d')
+    end_date = datetime.datetime.strptime(end_date, '%Y-%m-%d')
+
+    if(location_level == "PROVINCE"):
+        concerned_cdss = CDS.objects.filter(district__bps__name__iexact = location_name)
+    if(location_level == "DISTRICT"):
+        concerned_cdss = CDS.objects.filter(district__name__iexact = location_name)
+    if(location_level == "CDS"):
+        concerned_cdss = CDS.objects.filter(name__iexact = location_name)
+
+    
+    concerned_red_alerts_reports = RIS_Report_Symptom.objects.filter(ris_report__report__cds__in = cdslist, symptom__is_red_symptom=True).filter(ris_report__report__reporting_date__range=[new_start_date, end_date]).annotate(cds_id = F('ris_report__report__cds__id')).annotate(cds_name = F('ris_report__report__cds__name')).annotate(district_id = F('ris_report__report__cds__district__id')).annotate(district_name = F('ris_report__report__cds__district__name')).annotate(bps_id = F('ris_report__report__cds__district__bps__id')).annotate(bps_name = F('ris_report__report__cds__district__bps__name')).annotate(reporting_date = F('ris_report__report__reporting_date')).annotate(red_alert = F('symptom__is_red_symptom'))
+    print("2222")
+    rows = concerned_red_alerts_reports.values()
+    rows = json.dumps(list(rows), default=date_handler)
+    rows = json.loads(rows)
+    rows = json.dumps(rows, default=date_handler)
+
+    print rows
+
+    return render(request, 'red_alerts_details.html', {'rows':rows})
 
 
 
