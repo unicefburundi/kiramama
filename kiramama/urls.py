@@ -52,6 +52,7 @@ urlpatterns = [
     url(r'^get_risks_data', kiramama_app.views.get_risks_data, name='get_risks_data'),
     url(r'^get_red_alerts_data', kiramama_app.views.get_red_alerts_data, name='get_red_alerts_data'),
     url(r'^get_deaths_data', kiramama_app.views.get_deaths_data, name='get_deaths_data'),
+    url(r'^get_reminders$', kiramama_app.views.get_reminders, name='get_reminders'),
 
     url(r'^get_child_health_data', kiramama_app.views.get_child_health_data, name='get_child_health_data'),
     url(r'^$', kiramama_app.views.default, name='default'),
@@ -61,6 +62,7 @@ urlpatterns = [
     url(r'^registered_risk_details/(?P<location_name>)$', kiramama_app.views.registered_risk_details, name='registered_risk_details'),
     url(r'^red_alerts_details/(?P<location_name>)$', kiramama_app.views.red_alerts_details, name='red_alerts_details'),
     url(r'^registered_deaths_details/(?P<location_name>)$', kiramama_app.views.registered_deaths_details, name='registered_deaths_details'),
+    url(r'^reminder_details/(?P<location_name>)$', kiramama_app.views.reminder_details, name='reminder_details'),
 
 
     url(r'^mother_message_history/(?P<mother_id>)', kiramama_app.views.mother_message_history, name='mother_message_history'),
