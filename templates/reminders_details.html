@@ -68,8 +68,6 @@
 
 									var col0 = one_row.split(",")[5].split(":")[1];
 									col0 = col0.replace("u","").replace("}]","").replace("\"","").substring(0, col0.length - 4);
-									console.log(typeof(col0));
-
 									var col1 = one_row.split(",")[8].split(":")[1];
 									col1 = col1.replace("u","").replace(/"/g,"");
 
@@ -77,7 +75,16 @@
 									col2 = col2.replace("u","").replace(/"/g,"");
 
 									var col3 = one_row.split(",")[7].split(":")[1];
-									col3 = col3.replace("u","").replace("\"","");
+									col3 = col3.replace("u","").replace("\"","").trim();
+									temp = "false";
+									if(col3 == "false")
+										{
+											col3 = "No";
+										}
+									else{
+
+										col3 = "Yes";
+									}
 
 
 									$('#tblregipreg').find('tbody').append('<tr style="cursor:pointer;"></tr>');
