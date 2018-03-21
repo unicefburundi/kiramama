@@ -446,7 +446,6 @@ def get_deaths_data(request):
 
 
 def get_reminders(request):
-    print "def get_reminders(request)"
     response_data = {}
     if request.method == 'POST':
         #import pdb; pdb.set_trace()
@@ -761,7 +760,6 @@ def registered_deaths_details(request, location_name):
 
 def reminder_details(request, location_name):
     #d = {}
-    print "def reminder_details(request, location_name):"
     location_name = str(request.GET.get('location_name', '')).strip()
     location_level = str(request.GET.get('location_level', '')).strip()
     start_date = str(request.GET.get('start_date', '')).strip()
@@ -788,7 +786,8 @@ def reminder_details(request, location_name):
 
 
 
-def red_alerts_details(request, location_name):
+def red_details(request, location_name):
+
     location_name = str(request.GET.get('location_name', '')).strip()
     location_level = str(request.GET.get('location_level', '')).strip()
     start_date = str(request.GET.get('start_date', '')).strip()
@@ -804,14 +803,11 @@ def red_alerts_details(request, location_name):
         concerned_cdss = CDS.objects.filter(name__iexact = location_name)
 
     
-    concerned_red_alerts_reports = RIS_Report_Symptom.objects.filter(ris_report__report__cds__in = cdslist, symptom__is_red_symptom=True).filter(ris_report__report__reporting_date__range=[new_start_date, end_date]).annotate(cds_id = F('ris_report__report__cds__id')).annotate(cds_name = F('ris_report__report__cds__name')).annotate(district_id = F('ris_report__report__cds__district__id')).annotate(district_name = F('ris_report__report__cds__district__name')).annotate(bps_id = F('ris_report__report__cds__district__bps__id')).annotate(bps_name = F('ris_report__report__cds__district__bps__name')).annotate(reporting_date = F('ris_report__report__reporting_date')).annotate(red_alert = F('symptom__is_red_symptom'))
-    print("2222")
+    concerned_red_alerts_reports = RIS_Report_Symptom.objects.filter(ris_report__report__cds__in = concerned_cdss, symptom__is_red_symptom=True).filter(ris_report__report__reporting_date__range=[start_date, end_date]).annotate(cds_id = F('ris_report__report__cds__id')).annotate(cds_name = F('ris_report__report__cds__name')).annotate(district_id = F('ris_report__report__cds__district__id')).annotate(district_name = F('ris_report__report__cds__district__name')).annotate(bps_id = F('ris_report__report__cds__district__bps__id')).annotate(bps_name = F('ris_report__report__cds__district__bps__name')).annotate(reporting_date = F('ris_report__report__reporting_date')).annotate(red_alert = F('symptom__is_red_symptom')).annotate(reporter_phone_number = F('ris_report__report__chw__phone_number')).annotate(mother_id = F('ris_report__report__mother__id_mother')).annotate(mother_phone_number = F('ris_report__report__mother__phone_number')).annotate(report_text = F('ris_report__report__text')).annotate(symptom_name = F('symptom__symtom_code_meaning')).annotate(sous_coline = F('ris_report__report__sub_hill__name')).annotate(colline = F('ris_report__report__sub_hill__colline__name')).annotate(commune = F('ris_report__report__sub_hill__colline__commune__name'))
     rows = concerned_red_alerts_reports.values()
     rows = json.dumps(list(rows), default=date_handler)
     rows = json.loads(rows)
     rows = json.dumps(rows, default=date_handler)
-
-    print rows
 
     return render(request, 'red_alerts_details.html', {'rows':rows})
 
@@ -1090,7 +1086,6 @@ def p_w_e_d_next_2_w_details(request, location_name):
     end_date = str(request.GET.get('end_date', '')).strip()
     start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d')
     end_date = datetime.datetime.strptime(end_date, '%Y-%m-%d')
-    print end_date
     end_date_2 = end_date + datetime.timedelta(14)
 
     if(location_level == "PROVINCE"):
@@ -1118,7 +1113,6 @@ def h_r_p_w_e_d_next_2_w_details(request, location_name):
     end_date = str(request.GET.get('end_date', '')).strip()
     start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d')
     end_date = datetime.datetime.strptime(end_date, '%Y-%m-%d')
-    print end_date
     end_date_2 = end_date + datetime.timedelta(14)
 
     if(location_level == "PROVINCE"):
@@ -1242,17 +1236,12 @@ def mother_message_history(request, mother_id):
 
         if (r["category"] == "CPN"):
             #We have to determine which CPN it is
-            print("***")
             cpn_name = ReportCPN.objects.filter(report__pk = r["pk"])[0].concerned_cpn.cpn_description
             r["cpn_name"] = cpn_name
         if (r["category"] == "VAC"):
             #We have to determine which VAC it is
-            print("***")
             cpn_name = ReportVAC.objects.filter(report__pk = r["pk"])[0].vac.vac_designation
             r["vac_name"] = cpn_name
-
-    print("---")
-    print(rows)
 
     return render(request, 'mother_message_history.html', {'rows':rows})
 
@@ -1290,18 +1279,12 @@ def child_message_history(request, child_id):
 
         if (r["category"] == "CPN"):
             #We have to determine which CPN it is
-            print("***")
             cpn_name = ReportCPN.objects.filter(report__pk = r["pk"])[0].concerned_cpn.cpn_description
             r["cpn_name"] = cpn_name
         if (r["category"] == "VAC"):
             #We have to determine which VAC it is
-            print("***")
             vac_name = ReportVAC.objects.filter(report__pk = r["pk"])[0].vac.vac_designation
             r["vac_name"] = vac_name
-
-    print("---")
-    print(rows)
-
 
     return render(request, 'child_messages_history.html', {'rows':rows})
 

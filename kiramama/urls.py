@@ -60,7 +60,7 @@ urlpatterns = [
 
     url(r'^registered_preg_details/(?P<location_name>)$', kiramama_app.views.registered_preg_details, name='registered_preg_details'),
     url(r'^registered_risk_details/(?P<location_name>)$', kiramama_app.views.registered_risk_details, name='registered_risk_details'),
-    url(r'^red_alerts_details/(?P<location_name>)$', kiramama_app.views.red_alerts_details, name='red_alerts_details'),
+    url(r'^red_details/(?P<location_name>)$', kiramama_app.views.red_details, name='red_details'),
     url(r'^registered_deaths_details/(?P<location_name>)$', kiramama_app.views.registered_deaths_details, name='registered_deaths_details'),
     url(r'^reminder_details/(?P<location_name>)$', kiramama_app.views.reminder_details, name='reminder_details'),
 
