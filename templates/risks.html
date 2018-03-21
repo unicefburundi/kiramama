@@ -88,7 +88,6 @@
 
 
 		function fetchwanteddata() {
-			console.log("======Debut  fetchwanteddata====")
 			if (new Date($('#dstartdate').val()) > new Date($('#dendtdate').val())) {
                 messimsg = "Start date cannot e more than End date";
                 messititle = "Invalid Date Selection";
@@ -199,7 +198,6 @@
 		                			}
 		                		}
 
-		                		console.log("111");
 		                		console.log(response)
 
 		                		for (var i = 0; i < response.length; i++){
@@ -214,7 +212,6 @@
 		                		}
 
 		                		if (Object.keys(dict).length > 0){
-		                			console.log("0000000");
 		                			$('#divmh').append('<p><b>{% trans "RISK REPORTS" %}</b></p>' +
 
 									'<div style="clear:both; height:10px;"></div>' +

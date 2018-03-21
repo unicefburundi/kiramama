@@ -49,6 +49,7 @@ urlpatterns = [
     
     url(r'^getwanteddata', kiramama_app.views.getwanteddata, name='getwanteddata'),
     url(r'^get_births_data', kiramama_app.views.get_births_data, name='get_births_data'),
+    #url(r'^get_births_after_expected_date', kiramama_app.views.get_births_after_expected_date, name='get_births_after_expected_date'),
     url(r'^get_risks_data', kiramama_app.views.get_risks_data, name='get_risks_data'),
     url(r'^get_red_alerts_data', kiramama_app.views.get_red_alerts_data, name='get_red_alerts_data'),
     url(r'^get_deaths_data', kiramama_app.views.get_deaths_data, name='get_deaths_data'),

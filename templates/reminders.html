@@ -88,7 +88,6 @@
 
 
 		function fetchwanteddata() {
-			console.log("======Debut  fetchwanteddata====")
 			if (new Date($('#dstartdate').val()) > new Date($('#dendtdate').val())) {
                 messimsg = "Start date cannot e more than End date";
                 messititle = "Invalid Date Selection";
@@ -199,12 +198,8 @@
 		                			}
 		                		}
 
-		                		console.log("111");
 		                		console.log(response);
 		                		var j = 0;
-		                		console.log(response[j]["date_time_for_sending"]);
-		                		console.log(response[j]["date_time_for_sending"] >= $('#dstartdate').val());
-		                		console.log(response[j]["date_time_for_sending"] <= $('#dendtdate').val());
 
 		                		for (var i = 0; i < response.length; i++){
 		                			location_name = response[i][location_column];

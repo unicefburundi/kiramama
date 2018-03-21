@@ -88,7 +88,6 @@
 
 
 		function fetchwanteddata() {
-			console.log("======Debut  fetchwanteddata====")
 			if (new Date($('#dstartdate').val()) > new Date($('#dendtdate').val())) {
                 messimsg = "Start date cannot e more than End date";
                 messititle = "Invalid Date Selection";
@@ -213,7 +212,6 @@
 		                		}
 
 		                		if (Object.keys(dict).length > 0){
-		                			console.log("0000000");
 		                			$('#divmh').append('<p><b>{% trans "RED ALERTS" %}</b></p>' +
 
 									'<div style="clear:both; height:10px;"></div>' +
@@ -275,7 +273,6 @@
 		            },
 
 		            error: function (jqXHR, exception) {
-		            	console.log(exception);
 		                messimsg = getajaxerrormessage(jqXHR, exception); //jqXHR.responseText;
 		                messititle = "error";
 		                titleanimation = "messierror";
@@ -290,7 +287,6 @@
 
 
 		    function displayRedAlertsDetails(key=0){
-		    console.log("=====111==========")
 			location_name = key.closest('tr').getElementsByTagName('td')[0].innerHTML;
 			location_level = null
 			
@@ -312,7 +308,6 @@
 			window.open('red_details/?location_name='+location_name+'&location_level='+location_level+'&start_date='+start_date+'&end_date='+end_date,'','fullscreen=yes');
 
 			//window.open('reminder_details/?location_name='+location_name+'&location_level='+location_level+'&start_date='+start_date+'&end_date='+end_date,'','fullscreen=yes');
-			console.log("=====222==========")
 			}
 
 	</script>
