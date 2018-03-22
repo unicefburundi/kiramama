@@ -35,6 +35,7 @@ urlpatterns = [
 
     url(r'^maternalhealth', kiramama_app.views.maternalhealth, name='maternalhealth'),
     url(r'^births', kiramama_app.views.births, name='births'),
+    url(r'^births_after_due_date', kiramama_app.views.births_after_due_date, name='births_after_due_date'),
     url(r'^risks', kiramama_app.views.risks, name='risks'),
     url(r'^red_alerts', kiramama_app.views.red_alerts, name='red_alerts'),
     url(r'^deaths', kiramama_app.views.deaths, name='deaths'),
@@ -49,7 +50,7 @@ urlpatterns = [
     
     url(r'^getwanteddata', kiramama_app.views.getwanteddata, name='getwanteddata'),
     url(r'^get_births_data', kiramama_app.views.get_births_data, name='get_births_data'),
-    #url(r'^get_births_after_expected_date', kiramama_app.views.get_births_after_expected_date, name='get_births_after_expected_date'),
+    url(r'^get_births_after_due_date_data', kiramama_app.views.get_births_after_due_date_data, name='get_births_after_due_date_data'),
     url(r'^get_risks_data', kiramama_app.views.get_risks_data, name='get_risks_data'),
     url(r'^get_red_alerts_data', kiramama_app.views.get_red_alerts_data, name='get_red_alerts_data'),
     url(r'^get_deaths_data', kiramama_app.views.get_deaths_data, name='get_deaths_data'),

@@ -170,6 +170,14 @@ def births(request):
     return render(request, 'births.html', d)
 
 @login_required
+def births_after_due_date(request):
+    d = {}
+    d["pagetitle"] = "Risks"
+    d['provinces'] = getprovinces()
+
+    return render(request, 'births_after_due_date.html', d)
+
+@login_required
 def red_alerts(request):
     d = {}
     d["pagetitle"] = "Risks"
@@ -395,6 +403,54 @@ def get_births_data(request):
                 rows = json.dumps(rows, default=date_handler)
 
         return HttpResponse(rows, content_type="application/json")
+
+
+def get_births_after_due_date_data(request):
+    response_data = {}
+    if request.method == 'POST':
+        #import pdb; pdb.set_trace()
+        json_data = json.loads(request.body)
+        level = json_data['level']
+        code = json_data['code']
+        start_date = json_data['start_date']
+        end_date = json_data['end_date']
+        grodata = ""
+        all_data = []
+
+        if (level):
+            cdslist = None
+            if (level == "cds"):
+                cdslist = CDS.objects.filter(code = code)
+
+            elif (level == "district"):
+                districtlist = District.objects.filter(code = code)
+                if (districtlist):
+                    cdslist = CDS.objects.filter(district__in = districtlist)
+                
+            elif (level == "province"):
+                provincelist = BPS.objects.filter(code = code)
+                if (provincelist):
+                    districtlist = District.objects.filter(bps__in = provincelist)
+                    if (districtlist):
+                        cdslist = CDS.objects.filter(district__in = districtlist)
+            elif (level == "national"):
+                cdslist = CDS.objects.all()
+
+
+            if (cdslist):
+                
+                #start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d')
+                #new_start_date = start_date - datetime.timedelta(days=300)
+
+                #births = ReportNSC.objects.filter(report__cds__in = cdslist).filter(birth_date__range=[new_start_date, end_date]).annotate(cds_id = F('report__cds__id')).annotate(cds_name = F('report__cds__name')).annotate(district_id = F('report__cds__district__id')).annotate(district_name = F('report__cds__district__name')).annotate(bps_id = F('report__cds__district__bps__id')).annotate(bps_name = F('report__cds__district__bps__name')).annotate(reporting_date = F('report__reporting_date'))
+                births = ReportNSC.objects.filter(report__cds__in = cdslist, report__reporting_date__range=[start_date, end_date], birth_date__gte = F("report__mother__report__reportgro__expected_delivery_date")).annotate(cds_id = F('report__cds__id')).annotate(cds_name = F('report__cds__name')).annotate(district_id = F('report__cds__district__id')).annotate(district_name = F('report__cds__district__name')).annotate(bps_id = F('report__cds__district__bps__id')).annotate(bps_name = F('report__cds__district__bps__name')).annotate(reporting_date = F('report__reporting_date'))
+                rows = births.values()
+                rows = json.dumps(list(rows), default=date_handler)
+                rows = json.loads(rows)
+                rows = json.dumps(rows, default=date_handler)
+
+        return HttpResponse(rows, content_type="application/json")
+
 
 
 def get_deaths_data(request):
