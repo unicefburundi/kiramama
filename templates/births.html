@@ -198,21 +198,31 @@
 		                			}
 		                		}
 
-		                		console.log(response)
-
 		                		for (var i = 0; i < response.length; i++){
 		                			location_name = response[i][location_column];
 		                			if((response[i]["reporting_date"] >= $('#dstartdate').val()) && (response[i]["reporting_date"] <= $('#dendtdate').val())){
+
 		                			if (dict.hasOwnProperty(location_name)){
-		                				dict[location_name][0] += 1;
+		                				dict[location_name][3] += 1;
 		                			}else{
-		                				dict[location_name] = [1];
+		                				dict[location_name] = [0,0,0,1];
 		                			}
+
+		                			if(response[i]["birth_location_name"].toUpperCase() == "ME"){
+		                				dict[location_name][0] += 1;
+		                			}
+		                			if(response[i]["birth_location_name"].toUpperCase() == "RT") {
+		                				dict[location_name][1] += 1;
+		                			}
+		                			if((response[i]["birth_location_name"].toUpperCase() == "CS") ||(response[i]["birth_location_name"] == "HP")){
+		                				dict[location_name][2] += 1;
+		                			}
+
 		                			}
 		                		}
 
 		                		if (Object.keys(dict).length > 0){
-		                			$('#divmh').append('<p><b>{% trans "BIRTHS REPORTS STATISTICS" %}</b></p>' +
+		                			$('#divmh').append('<p><b>{% trans "BIRTHS" %}</b></p>' +
 
 									'<div style="clear:both; height:10px;"></div>' +
 
@@ -220,7 +230,7 @@
 
 									
 									$('#tblmh').append('<thead>' +
-										'<th>{% trans "Location" %}</th><th>{% trans "Number of births" %}</th>' +
+										'<th>{% trans "Location" %}</th><th>{% trans "Home" %}</th><th>{% trans "On Road" %}</th><th>{% trans "Health Facility" %}</th><th>{% trans "Total" %}</th>' +
 									'</thead>' +
 										
 									'<tbody>' +
@@ -229,12 +239,18 @@
 									var keys = Object.keys(dict);
 
 									keys.forEach(function(key){
-										var number_births = parseFloat(dict[key][0]);
+										var home = parseFloat(dict[key][0]);
+										var on_road = parseFloat(dict[key][1]);
+										var health_facility = parseFloat(dict[key][2]);
+										var number_births = parseFloat(dict[key][3]);
 										
 										
 										$('#tblmh').find('tbody').append('<tr style="cursor:pointer;"></tr>');
 
 										$('#tblmh tr:last').append('<td align="center">' + key +'</td>');
+										$('#tblmh tr:last').append('<td align="center">' + home +'</td>');
+										$('#tblmh tr:last').append('<td align="center">' + on_road +'</td>');
+										$('#tblmh tr:last').append('<td align="center">' + health_facility +'</td>');
 										$('#tblmh tr:last').append('<td align="center"><a href="#" onclick = "displayRegBirthsDetails(this)">'+ number_births +'</a></td>');
 									});
 

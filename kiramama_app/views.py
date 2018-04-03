@@ -396,7 +396,7 @@ def get_births_data(request):
                 #new_start_date = start_date - datetime.timedelta(days=300)
 
                 #births = ReportNSC.objects.filter(report__cds__in = cdslist).filter(birth_date__range=[new_start_date, end_date]).annotate(cds_id = F('report__cds__id')).annotate(cds_name = F('report__cds__name')).annotate(district_id = F('report__cds__district__id')).annotate(district_name = F('report__cds__district__name')).annotate(bps_id = F('report__cds__district__bps__id')).annotate(bps_name = F('report__cds__district__bps__name')).annotate(reporting_date = F('report__reporting_date'))
-                births = ReportNSC.objects.filter(report__cds__in = cdslist, report__reporting_date__range=[start_date, end_date]).filter(birth_date__range=[start_date, end_date]).annotate(cds_id = F('report__cds__id')).annotate(cds_name = F('report__cds__name')).annotate(district_id = F('report__cds__district__id')).annotate(district_name = F('report__cds__district__name')).annotate(bps_id = F('report__cds__district__bps__id')).annotate(bps_name = F('report__cds__district__bps__name')).annotate(reporting_date = F('report__reporting_date'))
+                births = ReportNSC.objects.filter(report__cds__in = cdslist, report__reporting_date__range=[start_date, end_date]).annotate(cds_id = F('report__cds__id')).annotate(cds_name = F('report__cds__name')).annotate(district_id = F('report__cds__district__id')).annotate(district_name = F('report__cds__district__name')).annotate(bps_id = F('report__cds__district__bps__id')).annotate(bps_name = F('report__cds__district__bps__name')).annotate(reporting_date = F('report__reporting_date')).annotate(birth_location_name = F('birth_location__location_category_designation'))
                 rows = births.values()
                 rows = json.dumps(list(rows), default=date_handler)
                 rows = json.loads(rows)
@@ -405,7 +405,7 @@ def get_births_data(request):
         return HttpResponse(rows, content_type="application/json")
 
 
-def get_births_after_due_date_data(request):
+def get_births_after_date_data(request):
     response_data = {}
     if request.method == 'POST':
         #import pdb; pdb.set_trace()
@@ -893,6 +893,34 @@ def registered_births_details(request, location_name):
     rows = json.dumps(rows, default=date_handler)
 
     return render(request, 'registered_births_details.html', {'rows':rows})
+
+
+
+def registered_births_after_date_details(request, location_name):
+    #d = {}
+    location_name = str(request.GET.get('location_name', '')).strip()
+    location_level = str(request.GET.get('location_level', '')).strip()
+    start_date = str(request.GET.get('start_date', '')).strip()
+    end_date = str(request.GET.get('end_date', '')).strip()
+    start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d')
+    end_date = datetime.datetime.strptime(end_date, '%Y-%m-%d')
+
+    if(location_level == "PROVINCE"):
+        concerned_cdss = CDS.objects.filter(district__bps__name__iexact = location_name)
+    if(location_level == "DISTRICT"):
+        concerned_cdss = CDS.objects.filter(district__name__iexact = location_name)
+    if(location_level == "CDS"):
+        concerned_cdss = CDS.objects.filter(name__iexact = location_name)
+
+    #concerned_birth_reports = ReportNSC.objects.filter(report__cds__in = concerned_cdss, birth_date__range=[start_date, end_date]).annotate(sous_coline = F('report__sub_hill__name')).annotate(colline = F('report__sub_hill__colline__name')).annotate(commune = F('report__sub_hill__colline__commune__name')).annotate(cds_name = F('report__cds__name')).annotate(district = F('report__cds__district__name')).annotate(province = F('report__sub_hill__colline__commune__province__name')).annotate(reporter_phone_number = F('report__chw__phone_number')).annotate(mother_id = F('report__mother__id_mother')).annotate(mother_phone_number = F('report__mother__phone_number')).annotate(report_text = F('report__text')).annotate(child_number_code = F('child_number__child_code_designation')).annotate(lieu_de_naissance = F('birth_location__location_category_description')).annotate(genre = F('gender__gender_code_meaning')).annotate(allaitement = F('breast_feading__breast_feed_option_description'))
+    concerned_birth_reports = ReportNSC.objects.filter(report__cds__in = concerned_cdss, report__reporting_date__range=[start_date, end_date], birth_date__gte = F("report__mother__report__reportgro__expected_delivery_date")).annotate(cds_id = F('report__cds__id')).annotate(cds_name = F('report__cds__name')).annotate(district_id = F('report__cds__district__id')).annotate(district_name = F('report__cds__district__name')).annotate(bps_id = F('report__cds__district__bps__id')).annotate(bps_name = F('report__cds__district__bps__name')).annotate(reporting_date = F('report__reporting_date'))
+
+    rows = concerned_birth_reports.values()
+    rows = json.dumps(list(rows), default=date_handler)
+    rows = json.loads(rows)
+    rows = json.dumps(rows, default=date_handler)
+
+    return render(request, 'births_after_due_date_details.html', {'rows':rows})
 
 
 

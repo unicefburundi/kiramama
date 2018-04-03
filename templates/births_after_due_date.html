@@ -98,7 +98,7 @@
 			}
 	    	initializesonic();
 	    	
-	    	ajaxurl = 'get_births_after_due_date_data';
+	    	ajaxurl = 'get_births_after_date_data';
     		var level = null;
     		var code = null;
     		var start_date = null;
@@ -235,7 +235,7 @@
 										$('#tblmh').find('tbody').append('<tr style="cursor:pointer;"></tr>');
 
 										$('#tblmh tr:last').append('<td align="center">' + key +'</td>');
-										$('#tblmh tr:last').append('<td align="center"><a href="#" onclick = "displayRegBirthsDetails(this)">'+ number_births +'</a></td>');
+										$('#tblmh tr:last').append('<td align="center"><a href="#" onclick = "displayBirthsAfterDueDateDetails(this)">'+ number_births +'</a></td>');
 									});
 
 									
@@ -286,7 +286,8 @@
 
 
 
-		    function displayRegBirthsDetails(key=0){
+		    function displayBirthsAfterDueDateDetails(key=0){
+		    console.log("displayBirthsAfterDueDateDetails(key=0)")
 			location_name = key.closest('tr').getElementsByTagName('td')[0].innerHTML;
 			location_level = null
 			
@@ -304,133 +305,7 @@
 			end_date = $('#dendtdate').val();
 
 			
-			window.open('registered_births_details/?location_name='+location_name+'&location_level='+location_level+'&start_date='+start_date+'&end_date='+end_date,'','fullscreen=yes');
-			}
-
-			function displayHRRegPreDetails(key=0){
-			location_name = key.closest('tr').getElementsByTagName('td')[0].innerHTML;
-			location_level = null
-			
-			if ($('#cmbprovince').val() == ""){
-				location_level = "PROVINCE";
-			}else{
-				if ($('#cmbdistrict').val() == ""){
-					location_level = "DISTRICT";
-				}else{
-					location_level = "CDS";
-				}
-			}
-
-			start_date = $('#dstartdate').val();
-			end_date = $('#dendtdate').val();
-			
-			window.open('h_r_registered_preg_details/?location_name='+location_name+'&location_level='+location_level+'&start_date='+start_date+'&end_date='+end_date,'','fullscreen=yes');
-			}
-
-			function displayExpectedDerivery(key=0){
-			location_name = key.closest('tr').getElementsByTagName('td')[0].innerHTML;
-			location_level = null
-			
-			if ($('#cmbprovince').val() == ""){
-				location_level = "PROVINCE";
-			}else{
-				if ($('#cmbdistrict').val() == ""){
-					location_level = "DISTRICT";
-				}else{
-					location_level = "CDS";
-				}
-			}
-
-			start_date = $('#dstartdate').val();
-			end_date = $('#dendtdate').val();
-
-			
-			window.open('expected_delivery_details/?location_name='+location_name+'&location_level='+location_level+'&start_date='+start_date+'&end_date='+end_date,'','fullscreen=yes');
-			}
-
-
-			function displayHREDDetails(key=0){
-			location_name = key.closest('tr').getElementsByTagName('td')[0].innerHTML;
-			location_level = null
-			
-			if ($('#cmbprovince').val() == ""){
-				location_level = "PROVINCE";
-			}else{
-				if ($('#cmbdistrict').val() == ""){
-					location_level = "DISTRICT";
-				}else{
-					location_level = "CDS";
-				}
-			}
-
-			start_date = $('#dstartdate').val();
-			end_date = $('#dendtdate').val();
-
-			
-			window.open('hr_expected_delivery_details/?location_name='+location_name+'&location_level='+location_level+'&start_date='+start_date+'&end_date='+end_date,'','fullscreen=yes');
-			}
-
-			function displayPWSEDDetails(key=0){
-			location_name = key.closest('tr').getElementsByTagName('td')[0].innerHTML;
-			location_level = null
-			
-			if ($('#cmbprovince').val() == ""){
-				location_level = "PROVINCE";
-			}else{
-				if ($('#cmbdistrict').val() == ""){
-					location_level = "DISTRICT";
-				}else{
-					location_level = "CDS";
-				}
-			}
-
-			start_date = $('#dstartdate').val();
-			end_date = $('#dendtdate').val();
-
-			
-			window.open('p_w_s_e_d_details/?location_name='+location_name+'&location_level='+location_level+'&start_date='+start_date+'&end_date='+end_date,'','fullscreen=yes');
-			}
-
-			function displayPWEDNTWDetails(key=0){
-			location_name = key.closest('tr').getElementsByTagName('td')[0].innerHTML;
-			location_level = null
-			
-			if ($('#cmbprovince').val() == ""){
-				location_level = "PROVINCE";
-			}else{
-				if ($('#cmbdistrict').val() == ""){
-					location_level = "DISTRICT";
-				}else{
-					location_level = "CDS";
-				}
-			}
-
-			start_date = $('#dstartdate').val();
-			end_date = $('#dendtdate').val();
-
-			
-			window.open('p_w_e_d_next_2_w_details/?location_name='+location_name+'&location_level='+location_level+'&start_date='+start_date+'&end_date='+end_date,'','fullscreen=yes');
-			}
-
-			function displayHRPWEDNTWDetails(key=0){
-			location_name = key.closest('tr').getElementsByTagName('td')[0].innerHTML;
-			location_level = null
-			
-			if ($('#cmbprovince').val() == ""){
-				location_level = "PROVINCE";
-			}else{
-				if ($('#cmbdistrict').val() == ""){
-					location_level = "DISTRICT";
-				}else{
-					location_level = "CDS";
-				}
-			}
-
-			start_date = $('#dstartdate').val();
-			end_date = $('#dendtdate').val();
-
-			
-			window.open('h_r_p_w_e_d_next_2_w_details/?location_name='+location_name+'&location_level='+location_level+'&start_date='+start_date+'&end_date='+end_date,'','fullscreen=yes');
+			window.open('registered_births_after_date_details/?location_name='+location_name+'&location_level='+location_level+'&start_date='+start_date+'&end_date='+end_date,'','fullscreen=yes');
 			}
 		 
 

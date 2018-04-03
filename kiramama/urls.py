@@ -50,7 +50,7 @@ urlpatterns = [
     
     url(r'^getwanteddata', kiramama_app.views.getwanteddata, name='getwanteddata'),
     url(r'^get_births_data', kiramama_app.views.get_births_data, name='get_births_data'),
-    url(r'^get_births_after_due_date_data', kiramama_app.views.get_births_after_due_date_data, name='get_births_after_due_date_data'),
+    url(r'^get_births_after_date_data', kiramama_app.views.get_births_after_date_data, name='get_births_after_date_data'),
     url(r'^get_risks_data', kiramama_app.views.get_risks_data, name='get_risks_data'),
     url(r'^get_red_alerts_data', kiramama_app.views.get_red_alerts_data, name='get_red_alerts_data'),
     url(r'^get_deaths_data', kiramama_app.views.get_deaths_data, name='get_deaths_data'),
@@ -78,6 +78,9 @@ urlpatterns = [
     url(r'^p_w_e_d_next_2_w_details/(?P<location_name>)$', kiramama_app.views.p_w_e_d_next_2_w_details, name='p_w_e_d_next_2_w_details'),
     url(r'^h_r_p_w_e_d_next_2_w_details/(?P<location_name>)$', kiramama_app.views.h_r_p_w_e_d_next_2_w_details, name='h_r_p_w_e_d_next_2_w_details'),
     url(r'^registered_births_details/(?P<location_name>)$', kiramama_app.views.registered_births_details, name='registered_births_details'),
+    
+    url(r'^registered_births_after_date_details/(?P<location_name>)$', kiramama_app.views.registered_births_after_date_details, name='registered_births_after_date_details'),
+  
     url(r'^home_births_details/(?P<location_name>)$', kiramama_app.views.home_births_details, name='home_births_details'),
     url(r'^road_births_details/(?P<location_name>)$', kiramama_app.views.road_births_details, name='road_births_details'),
     url(r'^health_facility_births_details/(?P<location_name>)$', kiramama_app.views.health_facility_births_details, name='health_facility_births_details'),
