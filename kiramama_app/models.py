@@ -227,6 +227,7 @@ class ReportVAC(models.Model):
 class ReportRIS(models.Model):
     ''' In this model will be stored RIS (Rapport de risque) reports '''
     report = models.ForeignKey(Report)
+    mother_arrived_at_health_facility = models.BooleanField(default=False)
 
     def __unicode__(self):
         return self.report.text

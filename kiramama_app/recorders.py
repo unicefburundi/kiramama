@@ -319,6 +319,31 @@ def check_if_is_reporter(args):
     args['info_to_contact'] = "Le bureau d affectation de ce rapporteur est connu"
 
 
+
+def check_if_contact_is_from_hf(args):
+    ''' This function checks if the contact who sent the current message is a supervisor of a CHW '''
+    concerned_chw = CHW.objects.filter(supervisor_phone_number = args['phone'])
+    if len(concerned_chw) < 1:
+        # This person is not a supervisor of any community health worker
+        args['valide'] = False
+        args['info_to_contact'] = "Ikosa. Inomero ya telefone yawe ntidushoboye kuyimenya. Kugira itange ubwo butumwa iba yaranditswe numuremesha kiyago ariko ariyandikisha."
+        return
+
+    one_concerned_chw = concerned_chw[0]
+
+    if not one_concerned_chw.cds:
+        # The CDS of this reporter is not known
+        args['valide'] = False
+        args['info_to_contact'] = "Exception. Votre site n est pas enregistre dans le systeme. Veuillez contacter l administrateur du systeme"
+        return
+    
+    args['facility'] = one_concerned_chw.cds
+    args['supervisor_phone_number'] = one_concerned_chw.supervisor_phone_number
+    args['sub_colline'] = one_concerned_chw.sub_colline
+    args['valide'] = True
+    args['info_to_contact'] = "Le numero de telephone qui rapporte est connu"
+
+
 def check_mother_id_is_valid(args):
     ''' This function checks if the mother id sent is valid '''
     the_sent_mother_id = args["sent_mother_id"]
@@ -755,6 +780,19 @@ def check_has_already_session(args):
         args['valide'] = True
         args['info_to_contact'] = "Ok."
 
+def check_risk_report_exists_for_given_woman(args):
+    '''This function checks if there is a risk report registered for 
+    a given woman'''
+    the_concerned_woman = args['concerned_mother']
+    concerned_risk_reports = ReportRIS.objects.filter(report__mother = the_concerned_woman)
+    if len(concerned_risk_reports) > 0:
+        one_concerned_risk_reports = concerned_risk_reports[0]
+        args['valide'] = True
+        args['one_concerned_risk_reports'] = one_concerned_risk_reports
+        args['info_to_contact'] = "Ok."
+    else:
+        args['valide'] = False
+        args['info_to_contact'] = "Ikosa. Nta muremesha kiyago ararungika mesaje ivuga ko umupfasoni afise iyo numero agwaye."
 
 def get_national_sup_phone_number():
     urns = []
@@ -2214,6 +2252,55 @@ def record_risk_report(args):
         data = {"urns": national_sup_phone_numbers,"text": args['info_to_supervisors']}
         args['data'] = data
         send_sms_through_rapidpro(args)
+
+
+
+# -----------------------------------------------------------------
+def record_mother_arrived_at_hf(args):
+    ''' This function is used to record that a woman for whom a red alert
+    report have been sent arrived at the health facility '''
+
+    args['mot_cle'] = "ARR"
+
+    # Let's check if the person who send this message is a supervisor of a CHW
+    #He/she should be from a health facility
+    check_if_contact_is_from_hf(args)
+    if not args['valide']:
+        return
+
+    # Let's check if it is report about a child or a mother. We count the number of values sent
+    # Let's check if the message sent is composed by an expected number of values
+    # args["expected_number_of_values"] = getattr(settings, 'EXPECTED_NUMBER_OF_VALUES', '')[args['message_type']]
+    check_number_of_values(args)
+    if not args['valide']:
+        return
+
+    # Let's check if the mother id sent is valid
+    args["sent_mother_id"] = args['text'].split(' ')[1]
+    check_mother_id_is_valid(args)
+    if not args['valide']:
+        return
+
+    # Let's check if there is a registered risk report about this mother
+    check_risk_report_exists_for_given_woman(args)
+    if not args['valide']:
+        return
+
+    args['one_concerned_risk_reports'].mother_arrived_at_health_facility = True
+    args['one_concerned_risk_reports'].save()
+
+    args['info_to_contact'] = "Ubutumwa uhejeje kurungika buvuga ko umupfasoni afise inomero "+args["sent_mother_id"]+" yashitse kw ivuriro bwashitse neza."
+
+    args['info_to_supervisors'] = "Umuntu akoresheje nomero ya telephone "+args['phone']+" amenyesheje ko umupfasoni afise inomero "+args["sent_mother_id"]+" yashitse kw ivuriro."
+
+    national_sup_phone_numbers = get_national_sup_phone_number()
+
+    print national_sup_phone_numbers
+
+    data = {"urns": national_sup_phone_numbers,"text": args['info_to_supervisors']}
+    args['data'] = data
+    print data
+    #send_sms_through_rapidpro(args)
 
 
 def modify_record_risk_report(args):

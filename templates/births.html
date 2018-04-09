@@ -230,7 +230,7 @@
 
 									
 									$('#tblmh').append('<thead>' +
-										'<th>{% trans "Location" %}</th><th>{% trans "Home" %}</th><th>{% trans "On Road" %}</th><th>{% trans "Health Facility" %}</th><th>{% trans "Total" %}</th>' +
+										'<th align="center">{% trans "Location" %}</th><th  align="center">{% trans "Home" %}</th><th>{% trans "On Road" %}</th><th>{% trans "Health Facility" %}</th><th>{% trans "Total" %}</th>' +
 									'</thead>' +
 										
 									'<tbody>' +
@@ -251,7 +251,8 @@
 										$('#tblmh tr:last').append('<td align="center">' + home +'</td>');
 										$('#tblmh tr:last').append('<td align="center">' + on_road +'</td>');
 										$('#tblmh tr:last').append('<td align="center">' + health_facility +'</td>');
-										$('#tblmh tr:last').append('<td align="center"><a href="#" onclick = "displayRegBirthsDetails(this)">'+ number_births +'</a></td>');
+										/*$('#tblmh tr:last').append('<td align="center"><a href="#" onclick = "displayRegBirthsDetails(this)">'+ number_births +'</a></td>');*/
+										$('#tblmh tr:last').append('<td align="center">'+ number_births +'</td>');
 									});
 
 									

@@ -154,6 +154,11 @@ def handel_rapidpro_request(request):
     if(incoming_data['message_type'] == 'RISK_REPORT'):
         # This contact is reporting a risk
         record_risk_report(incoming_data)
+    if(incoming_data['message_type'] == 'REPORT_MOTHER_ARRIVED_AT_HF'):
+        # This contact is reporting from a health facility
+        # He/she is reporting that the mother with risk (reported by a CHW)
+        #arrived at the health facility
+        record_mother_arrived_at_hf(incoming_data)
     if(incoming_data['message_type'] == 'RESPONSE_TO_RISK_REPORT'):
         # This contact is reporting a response to a risk report
         record_response_to_risk_report(incoming_data)
