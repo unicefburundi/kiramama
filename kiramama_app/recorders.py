@@ -2270,7 +2270,7 @@ def record_mother_arrived_at_hf(args):
 
     # Let's check if it is report about a child or a mother. We count the number of values sent
     # Let's check if the message sent is composed by an expected number of values
-    # args["expected_number_of_values"] = getattr(settings, 'EXPECTED_NUMBER_OF_VALUES', '')[args['message_type']]
+    args["expected_number_of_values"] = getattr(settings, 'EXPECTED_NUMBER_OF_VALUES', '')[args['message_type']]
     check_number_of_values(args)
     if not args['valide']:
         return
