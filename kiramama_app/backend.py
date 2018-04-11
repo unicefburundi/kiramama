@@ -88,7 +88,7 @@ def handel_rapidpro_request(request):
     incoming_data = {}
 
     # Let's put all the incoming data in the dictionary 'incoming_data'
-    incoming_data = byteify(json.loads(request.body))
+    incoming_data = byteify(json.loads(request.body.replace("\'", '"')))
 
     # Let's assume that the incoming data is valid
     incoming_data['valide'] = True
