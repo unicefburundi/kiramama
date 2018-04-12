@@ -29,7 +29,8 @@ def check_session(args):
 
 
 def eliminate_unnecessary_spaces(args):
-    the_incoming_message = args['results']['rapport1']['input']
+    #the_incoming_message = args['results']['rapport1']['input']
+    the_incoming_message = args['input']['text']
     print("The text before sub             " + the_incoming_message)
     # the_new_message = re.sub(' +',' ',the_incoming_message)
 
