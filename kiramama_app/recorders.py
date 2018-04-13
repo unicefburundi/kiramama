@@ -2300,7 +2300,16 @@ def record_mother_arrived_at_hf(args):
     data = {"urns": national_sup_phone_numbers,"text": args['info_to_supervisors']}
     args['data'] = data
     print data
-    #send_sms_through_rapidpro(args)
+    send_sms_through_rapidpro(args)
+
+
+    national_sup_phone_numbers = get_national_sup_phone_number()
+
+    print national_sup_phone_numbers
+
+    data = {"urns": national_sup_phone_numbers,"text": args['info_to_supervisors']}
+    args['data'] = data
+    send_sms_through_rapidpro(args)
 
 
 def modify_record_risk_report(args):
