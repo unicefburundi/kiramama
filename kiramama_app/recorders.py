@@ -807,6 +807,17 @@ def get_national_sup_phone_number():
             urns.append(phone_number)
     return urns
 
+def activate_inactive_chw(args):
+    ''' This function activate inactive CHWs '''
+    chw_phone_number = args['phone']
+    concerned_chw = CHW.objects.filter(phone_number = chw_phone_number)
+    if len(concerned_chw) < 1:
+        return
+    concerned_chw = concerned_chw[0]
+    if concerned_chw.is_active == False:
+        concerned_chw.is_active = True
+        concerned_chw.save()
+
 
 def temporary_record_reporter(args):
     '''This function is used to record temporary a reporter'''
@@ -1207,6 +1218,9 @@ def record_pregnant_case(args):
             created_reminder = NotificationsCHW.objects.create(chw = args['the_sender'], notification = notification_for_chw, date_time_for_sending = time_for_reminder, message_to_send = remind_message_to_send_to_chw)
 
 
+    #If the CHW was inactive, i activate him/her
+    activate_inactive_chw(args)
+
     args['valide'] = True
     # args['info_to_contact'] = "La femme enceinte est bien enregistree. Son numero est "+mother_id
     args['info_to_contact'] = "Mesaje warungitse yashitse. Inomero yuwo mupfasoni yibungenze ni "+mother_id
@@ -1306,6 +1320,10 @@ def modify_record_pregnant_case(args):
     the_one_corresponding_gro_report.risk_level = args["risklevel"]
     the_one_corresponding_gro_report.consultation_location = args['location']
     the_one_corresponding_gro_report.save()
+    
+    #If the CHW was inactive, i activate him/her
+    activate_inactive_chw(args)
+
     args['valide'] = True
     # args['info_to_contact'] = "Mise a jour du rapport de confirmation de grossesse de la femme '"+args['concerned_mother'].id_mother+"' a reussie."
     args['info_to_contact'] = "Mesaje yo gukosora iyari yatanzwe ivuga ko umupfasoni nomero '"+args['concerned_mother'].id_mother+"' yibungenze yashitse neza."
@@ -1409,6 +1427,9 @@ def record_prenatal_consultation_report(args):
     '''for one_symbol in args['checked_symptoms_list']:
         one_symptom = Symptom.objects.filter(symtom_designation__iexact = one_symbol)[0]
         created_report_symptom_connection = CPN_Report_Symptom.objects.create(cpn_report = created_cpn_report, symptom = one_symptom)'''
+
+    #If the CHW was inactive, i activate him/her
+    activate_inactive_chw(args)
 
     args['valide'] = True
     # args['info_to_contact'] = "Le rapport '"+args["concerned_cpn"].cpn_designation+"' de la maman '"+args['concerned_woman'].id_mother+"' est bien enregistre."
@@ -1544,6 +1565,9 @@ def modify_record_prenatal_consultation_report(args):
         one_symptom = Symptom.objects.filter(symtom_designation__iexact = one_symbol)[0]
         created_report_symptom_connection = CPN_Report_Symptom.objects.create(cpn_report = the_one_corresponding_cpnreport, symptom = one_symptom)'''
 
+    #If the CHW was inactive, i activate him/her
+    activate_inactive_chw(args)
+
     args['valide'] = True
     # args['info_to_contact'] = "Mise a jour du rapport de consultation prenatale de la femme '"+args['concerned_mother'].id_mother+"' a reussie."
     args['info_to_contact'] = "Mesaje ikosora iyari yarungitswe yerekeye ukuja gupimisha imbanyi kwumupfasoni '"+args['concerned_mother'].id_mother+"' yashitse."
@@ -1648,6 +1672,10 @@ def record_birth_case_report(args):
     # Now, everything is checked. Let's record the report
     the_created_report = Report.objects.create(chw = args['the_sender'], sub_hill = args['sub_colline'], cds = args['facility'], mother = args['concerned_woman'], reporting_date = datetime.datetime.now().date(), text = args['text'], category = args['mot_cle'])
     created_nsc_report = ReportNSC.objects.create(report = the_created_report, child_number = args['child_number'], birth_date = args["birth_date"], birth_location = args['location'], gender = args['gender'], weight = checked_value, next_appointment_date = args["next_cpon_appointment_date"], breast_feading = args['code_allaitement'])
+    
+    #If the CHW was inactive, i activate him/her
+    activate_inactive_chw(args)
+
     args['valide'] = True
     # args['info_to_contact'] = "Le rapport de naissance du bebe '" +args['child_number'].child_code_designation+"' de la maman '"+args['concerned_woman'].id_mother+"' est bien enregistre."
     args['info_to_contact'] = "Mesaje ivuga ivuka ry umwana '" +args['child_number'].child_code_designation+"' w umupfasoni '"+args['concerned_woman'].id_mother+"' yashitse"
@@ -1782,6 +1810,10 @@ def modify_record_birth_case_report(args):
     the_one_corresponding_nscreport.next_appointment_date = args["next_cpon_appointment_date"]
     the_one_corresponding_nscreport.breast_feading = args['code_allaitement']
     the_one_corresponding_nscreport.save()
+    
+    #If the CHW was inactive, i activate him/her
+    activate_inactive_chw(args)
+
     args['valide'] = True
     # args['info_to_contact'] = "Mise a jour du rapport de naissance du bebe '" +args['child_number'].child_code_designation+"' de la maman '"+args['concerned_woman'].id_mother+"' a reussie."
     args['info_to_contact'] = "Mesaje ikosora iyari yatanzwe yerekeye umwana '" +args['child_number'].child_code_designation+"' w umupfasoni '"+args['concerned_woman'].id_mother+"' yashitse"
@@ -1866,6 +1898,9 @@ def record_postnatal_care_report(args):
     for one_symbol in args['checked_symptoms_list']:
         one_symptom = Symptom.objects.filter(symtom_designation__iexact = one_symbol)[0]
         created_report_symptom_connection = CON_Report_Symptom.objects.create(con_report = created_con_report, symptom = one_symptom)
+
+    #If the CHW was inactive, i activate him/her
+    activate_inactive_chw(args)
 
     args['valide'] = True
     # args['info_to_contact'] = "Le rapport de soins postnatals pour le bebe '" +args['child_number'].child_code_designation+"' de la maman '"+args['concerned_mother'].id_mother+"' est bien enregistre."
@@ -1986,6 +2021,9 @@ def modify_record_postnatal_care_report(args):
         one_symptom = Symptom.objects.filter(symtom_designation__iexact = one_symbol)[0]
         created_report_symptom_connection = CON_Report_Symptom.objects.create(con_report = the_one_corresponding_conreport, symptom = one_symptom)
 
+    #If the CHW was inactive, i activate him/her
+    activate_inactive_chw(args)
+
     args['valide'] = True
     # args['info_to_contact'] = "Mise a jour du rapport de soins postnatals pour le bebe '" +args['child_number'].child_code_designation+"' de la maman '"+args['concerned_mother'].id_mother+"' a reussie."
     args['info_to_contact'] = "Mesaje ikosora iyari yatanzwe yerekeye ukuja kw ivuriro kw umwana '" +args['child_number'].child_code_designation+"' w umupfasoni '"+args['concerned_mother'].id_mother+"' yashitse"
@@ -2044,6 +2082,9 @@ def record_child_follow_up_report(args):
     the_created_report = Report.objects.create(chw = args['the_sender'], sub_hill = args['sub_colline'], cds = args['facility'], mother = args['concerned_mother'], reporting_date = datetime.datetime.now().date(), text = args['text'], category = args['mot_cle'])
 
     created_vac_report = ReportVAC.objects.create(report = the_created_report, child = args['concerned_child'], vac = args['concerned_vac'], location = args['location'])
+
+    #If the CHW was inactive, i activate him/her
+    activate_inactive_chw(args)
 
     args['valide'] = True
     # args['info_to_contact'] = "Le rapport de suivi du bebe '" +args['child_number'].child_code_designation+"' de la maman '"+args['concerned_mother'].id_mother+"' est bien enregistre."
@@ -2129,6 +2170,10 @@ def modify_record_child_follow_up_report(args):
     the_one_corresponding_vacreport.vac = args['concerned_vac']
     the_one_corresponding_vacreport.location = args['location']
     the_one_corresponding_vacreport.save()
+    
+    #If the CHW was inactive, i activate him/her
+    activate_inactive_chw(args)
+
     args['valide'] = True
     # args['info_to_contact'] = "Mise a jour du rapport de suivi du bebe '" +args['child_number'].child_code_designation+"' de la maman '"+args['concerned_mother'].id_mother+"' a reussie."
     args['info_to_contact'] = "Mesaje ikosora iyari yatanzwe yerekeye ikurikiranwa ry umwana '" +args['child_number'].child_code_designation+"' w umupfasoni '"+args['concerned_mother'].id_mother+"' yashitse neza"
@@ -2215,6 +2260,9 @@ def record_risk_report(args):
 
     # The message in this variable will be sent to supervisors
     args['info_to_supervisors'] = ""
+
+    #If the CHW was inactive, i activate him/her
+    activate_inactive_chw(args)
 
     args['valide'] = True
 
@@ -2420,6 +2468,9 @@ def modify_record_risk_report(args):
         # Let's record informations related to the child
         report_ris_bebe = ReportRISBebe.objects.get_or_create(ris_report = the_one_corresponding_risreport, concerned_child = args['concerned_child'])
 
+    #If the CHW was inactive, i activate him/her
+    activate_inactive_chw(args)
+
     args['valide'] = True
     if(args['ris_type'] == "RIS_CHILD"):
         # args['info_to_contact'] = "Mise a jour du rapport de risque pour le bebe '" +args['child_number'].child_code_designation+"' de la maman '"+args['concerned_mother'].id_mother+"' a reussie."
@@ -2505,6 +2556,10 @@ def record_response_to_risk_report(args):
     the_created_report = Report.objects.create(chw = args['the_sender'], sub_hill = args['sub_colline'], cds = args['facility'], mother = args['concerned_mother'], reporting_date = datetime.datetime.now().date(), text = args['text'], category = args['mot_cle'])
 
     created_rer_report = ReportRER.objects.create(report = the_created_report, ris = args['the_concerned_ris'], rescue = args['concerned_rescue_received'], current_state = args['concerned_health_status'])
+    
+    #If the CHW was inactive, i activate him/her
+    activate_inactive_chw(args)
+
     args['valide'] = True
     # args['info_to_contact'] = "Le rapport envoye de reponse au risque de la maman '"+args['concerned_mother'].id_mother+"' est bien enregistre."
     args['info_to_contact'] = "Mesaje ivuga icakozwe ku vyerekeye ibimenyetso vy indwara vyabonetse ku mupfasoni '"+args['concerned_mother'].id_mother+"' yashitse neza"
@@ -2588,6 +2643,9 @@ def modify_record_response_to_risk_report(args):
     the_one_corresponding_rerreport.current_state = args['concerned_health_status']
     the_one_corresponding_rerreport.save()
 
+    #If the CHW was inactive, i activate him/her
+    activate_inactive_chw(args)
+
     args['valide'] = True
     # args['info_to_contact'] = "Mise a jour du rapport envoye en rapport avec la reponse au risque concernant la maman '"+args['concerned_mother'].id_mother+"' a reussie."
     args['info_to_contact'] = "Mesaje ikosora iyari yatanzwe ivuga icakozwe ku vyerekeye ibimenyetso vy indwara vy abonetse ku mupfasoni '"+args['concerned_mother'].id_mother+"' yashitse neza"
@@ -2663,6 +2721,9 @@ def record_death_report(args):
     if(args['dec_type'] == "DEC_CHILD"):
         # Let's record informations related to the child
         report_dec_bebe = ReportDECBebe.objects.create(death_report = created_dec_report, concerned_child = args['concerned_child'])
+
+    #If the CHW was inactive, i activate him/her
+    activate_inactive_chw(args)
 
     args['valide'] = True
     if(args['dec_type'] == "DEC_CHILD"):
@@ -2798,6 +2859,9 @@ def modify_record_death_report(args):
             one_corresponding_report_dec_bebe.save()
     the_one_corresponding_decreport.save()
 
+    #If the CHW was inactive, i activate him/her
+    activate_inactive_chw(args)
+
     args['valide'] = True
     if(args['dec_type'] == "DEC_CHILD"):
         # args['info_to_contact'] = "Mise a jour du rapport de deces du bebe '" +args['child_number'].child_code_designation+"' de la maman '"+args['concerned_mother'].id_mother+"' a reussie."
@@ -2866,6 +2930,10 @@ def record_leave_report(args):
     # Let's change the status of this mother. Now is not affected anywhere
     args['concerned_mother'].is_affected_somewhere = False
     args['concerned_mother'].save()
+    
+    #If the CHW was inactive, i activate him/her
+    activate_inactive_chw(args)
+
     args['valide'] = True
     # args['info_to_contact'] = "Le rapport du depart de la maman '"+args['concerned_mother'].id_mother+"' est bien enregistre."
     args['info_to_contact'] = "Mesaje ivuga ko umupfasoni '"+args['concerned_mother'].id_mother+"' yimutse yashitse neza"
@@ -2931,6 +2999,9 @@ def modify_record_leave_report(args):
 
     the_one_corresponding_depreport.report = the_only_one_corresponding_report
     the_one_corresponding_depreport.save()
+
+    #If the CHW was inactive, i activate him/her
+    activate_inactive_chw(args)
 
     args['valide'] = True
     # args['info_to_contact'] = "Mise a jour du rapport de depart de la maman '"+args['concerned_mother'].id_mother+"' a reussie."
