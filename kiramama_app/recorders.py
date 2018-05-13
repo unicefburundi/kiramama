@@ -1106,6 +1106,7 @@ def record_pregnant_case(args):
     the_created_report = Report.objects.create(chw = args['the_sender'], sub_hill = args['sub_colline'], cds = args['facility'], mother = the_created_mother_record, reporting_date = datetime.datetime.now().date(), text = args['text'], category = args['mot_cle'])
     created_gro_report = ReportGRO.objects.create(report = the_created_report, expected_delivery_date = args["expected_birth_date"], next_appointment_date = args["next_appointment_date"], risk_level = args["risklevel"], consultation_location = args['location'])
 
+    #salut
     # Let's record reminders which will be sent out for the next appointment
     cpn2_notification_type = NotificationType.objects.filter(code__iexact = "cpn2")
     if len(cpn2_notification_type) < 1:
@@ -1675,6 +1676,67 @@ def record_birth_case_report(args):
     
     #If the CHW was inactive, i activate him/her
     activate_inactive_chw(args)
+
+    #salut
+    # Let's record reminders which will be sent out for the next appointment
+    con1_notification_type = NotificationType.objects.filter(code__iexact = "con1")
+    if len(con1_notification_type) < 1:
+        # This case can not occur because we do this check before(In the backend.py file)
+        args['valide'] = False
+        args['info_to_contact'] = "Exception. L administrateur du systeme n a pas cree la notification 'CON1' dans la base de donnees."
+        return
+
+    # -----------------  
+    next_appointment_date_time = datetime.datetime.combine(args["next_cpon_appointment_date"], datetime.datetime.now().time())
+
+    # -----------------
+    the_con1_notification_type = con1_notification_type[0]
+
+
+    notifications_for_mother = NotificationsForMother.objects.filter(notification_type = the_con1_notification_type)
+    if len(notifications_for_mother) > 0:
+        notification_for_mother = notifications_for_mother[0]
+
+        time_measure_unit = notification_for_mother.time_measuring_unit
+        number_for_time = notification_for_mother.time_number
+        
+        if(time_measure_unit.code.startswith("m") or time_measure_unit.code.startswith("M")):
+            time_for_reminder = next_appointment_date_time - datetime.timedelta(minutes = number_for_time)
+        if(time_measure_unit.code.startswith("h") or time_measure_unit.code.startswith("H")):
+            time_for_reminder = next_appointment_date_time - datetime.timedelta(hours = number_for_time)
+
+
+        remind_message_to_send_to_mother = notification_for_mother.message_to_send
+
+        if notification_for_mother.word_to_replace_by_the_date_in_the_message_to_send:
+            remind_message_to_send_to_mother = remind_message_to_send_to_mother.replace(notification_for_mother.word_to_replace_by_the_date_in_the_message_to_send, next_appointment_date_time.date().isoformat())
+          
+        created_reminder = NotificationsMother.objects.create(mother = args['concerned_woman'], notification = notification_for_mother, date_time_for_sending = time_for_reminder, message_to_send = remind_message_to_send_to_mother)
+
+    notifications_for_chw = NotificationsForCHW.objects.filter(notification_type = the_con1_notification_type)
+    if len(notifications_for_chw) > 0:
+        notification_for_chw = notifications_for_chw[0]
+
+        time_measure_unit = notification_for_chw.time_measuring_unit
+        number_for_time = notification_for_chw.time_number
+        if(time_measure_unit.code.startswith("m") or time_measure_unit.code.startswith("M")):
+            time_for_reminder = next_appointment_date_time - datetime.timedelta(minutes = number_for_time)
+        if(time_measure_unit.code.startswith("h") or time_measure_unit.code.startswith("H")):
+            time_for_reminder = next_appointment_date_time - datetime.timedelta(hours = number_for_time)
+
+
+        remind_message_to_send_to_chw = notification_for_chw.message_to_send
+
+        if notification_for_chw.word_to_replace_by_the_mother_id_in_the_message_to_send:
+            remind_message_to_send_to_chw = remind_message_to_send_to_chw.replace(notification_for_chw.word_to_replace_by_the_mother_id_in_the_message_to_send, args['concerned_woman'].id_mother)
+
+        if notification_for_chw.word_to_replace_by_the_date_in_the_message_to_send:
+            remind_message_to_send_to_chw = remind_message_to_send_to_chw.replace(notification_for_chw.word_to_replace_by_the_date_in_the_message_to_send, next_appointment_date_time.date().isoformat())
+
+        created_reminder = NotificationsCHW.objects.create(chw = args['the_sender'], notification = notification_for_chw, date_time_for_sending = time_for_reminder, message_to_send = remind_message_to_send_to_chw)
+
+
+
 
     args['valide'] = True
     # args['info_to_contact'] = "Le rapport de naissance du bebe '" +args['child_number'].child_code_designation+"' de la maman '"+args['concerned_woman'].id_mother+"' est bien enregistre."
