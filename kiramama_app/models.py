@@ -207,7 +207,7 @@ class ReportCON(models.Model):
     con = models.ForeignKey(CON)
     child_health_state = models.ForeignKey(HealthStatus, related_name='child_state')
     mother_health_state = models.ForeignKey(HealthStatus, related_name='mother_state')
-    next_appointment_date = models.DateField()
+    next_appointment_date = models.DateField(null=True)
 
     def __unicode__(self):
         return self.report.text
