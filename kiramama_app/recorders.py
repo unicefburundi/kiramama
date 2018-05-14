@@ -1964,6 +1964,68 @@ def record_postnatal_care_report(args):
     #If the CHW was inactive, i activate him/her
     activate_inactive_chw(args)
 
+
+
+    #If the reported CON is CON1, let's record reminders for CON2
+    #salut
+    if(args['concerned_con'].con_designation.upper() == 'CON1'):
+        con2_notification_type = NotificationType.objects.filter(code__iexact = "con2")
+        if len(con2_notification_type) < 1:
+            args['valide'] = False
+            args['info_to_contact'] = "Exception. L administrateur du systeme n a pas cree la notification 'CON2' dans la base de donnees."
+            return
+
+        # -----------------  
+        next_appointment_date_time = datetime.datetime.combine(args["next_appointment_date"], datetime.datetime.now().time())
+
+        # -----------------
+        the_con2_notification_type = con2_notification_type[0]
+
+
+        notifications_for_mother = NotificationsForMother.objects.filter(notification_type = the_con2_notification_type)
+        if len(notifications_for_mother) > 0:
+            notification_for_mother = notifications_for_mother[0]
+
+            time_measure_unit = notification_for_mother.time_measuring_unit
+            number_for_time = notification_for_mother.time_number
+        
+            if(time_measure_unit.code.startswith("m") or time_measure_unit.code.startswith("M")):
+                time_for_reminder = next_appointment_date_time - datetime.timedelta(minutes = number_for_time)
+            if(time_measure_unit.code.startswith("h") or time_measure_unit.code.startswith("H")):
+                time_for_reminder = next_appointment_date_time - datetime.timedelta(hours = number_for_time)
+
+
+            remind_message_to_send_to_mother = notification_for_mother.message_to_send
+
+            if notification_for_mother.word_to_replace_by_the_date_in_the_message_to_send:
+                remind_message_to_send_to_mother = remind_message_to_send_to_mother.replace(notification_for_mother.word_to_replace_by_the_date_in_the_message_to_send, next_appointment_date_time.date().isoformat())
+          
+            created_reminder = NotificationsMother.objects.create(mother = args['concerned_mother'], notification = notification_for_mother, date_time_for_sending = time_for_reminder, message_to_send = remind_message_to_send_to_mother)
+
+        notifications_for_chw = NotificationsForCHW.objects.filter(notification_type = the_con2_notification_type)
+        if len(notifications_for_chw) > 0:
+            notification_for_chw = notifications_for_chw[0]
+
+            time_measure_unit = notification_for_chw.time_measuring_unit
+            number_for_time = notification_for_chw.time_number
+            if(time_measure_unit.code.startswith("m") or time_measure_unit.code.startswith("M")):
+                time_for_reminder = next_appointment_date_time - datetime.timedelta(minutes = number_for_time)
+            if(time_measure_unit.code.startswith("h") or time_measure_unit.code.startswith("H")):
+                time_for_reminder = next_appointment_date_time - datetime.timedelta(hours = number_for_time)
+
+
+            remind_message_to_send_to_chw = notification_for_chw.message_to_send
+
+            if notification_for_chw.word_to_replace_by_the_mother_id_in_the_message_to_send:
+                remind_message_to_send_to_chw = remind_message_to_send_to_chw.replace(notification_for_chw.word_to_replace_by_the_mother_id_in_the_message_to_send, args['concerned_mother'].id_mother)
+
+            if notification_for_chw.word_to_replace_by_the_date_in_the_message_to_send:
+                remind_message_to_send_to_chw = remind_message_to_send_to_chw.replace(notification_for_chw.word_to_replace_by_the_date_in_the_message_to_send, next_appointment_date_time.date().isoformat())
+
+            created_reminder = NotificationsCHW.objects.create(chw = args['the_sender'], notification = notification_for_chw, date_time_for_sending = time_for_reminder, message_to_send = remind_message_to_send_to_chw)
+
+
+
     args['valide'] = True
     # args['info_to_contact'] = "Le rapport de soins postnatals pour le bebe '" +args['child_number'].child_code_designation+"' de la maman '"+args['concerned_mother'].id_mother+"' est bien enregistre."
     args['info_to_contact'] = "Mesaje warungitse yerekeye ukuja kwivuriro kw umwana '" +args['child_number'].child_code_designation+"' w umupfasoni '"+args['concerned_mother'].id_mother+"' yashitse"
