@@ -12,6 +12,52 @@ from django.conf import settings
 import unicodedata
 
 
+
+def record_vaccination_reminders(chw, concerned_woman, delivery_date):
+    '''
+    This function is used to record vaccination reminders
+    '''
+
+    vac_notification_types = NotificationType.objects.filter(code__icontains = "vac")
+
+    if len(vac_notification_types) > 0:
+        for notification_type in vac_notification_types:
+            vac_designation = notification_type.code
+            vaccination = VAC.objects.filter(vac_designation__iexact = vac_designation)
+            if len(vaccination) > 0:
+                vaccination = vaccination[0]
+                random_delivery_date_time = datetime.datetime.combine(delivery_date, datetime.datetime.now().time())
+                weeks_after_birth_for_vacc = int(vaccination.received_after_how_many_weeks)
+                approximative_date_for_vaccination = random_delivery_date_time + datetime.timedelta(weeks=weeks_after_birth_for_vacc)
+
+                #Let's check if this kind of reminder is sent to CHWs
+                notifications_for_chw = NotificationsForCHW.objects.filter(notification_type = notification_type)
+                
+
+                if len(notifications_for_chw) > 0:
+
+                    notification_for_chw = notifications_for_chw[0]
+
+                    time_measure_unit = notification_for_chw.time_measuring_unit
+                    number_for_time = notification_for_chw.time_number
+                    if(time_measure_unit.code.startswith("m") or time_measure_unit.code.startswith("M")):
+                        time_for_reminder = approximative_date_for_vaccination - datetime.timedelta(minutes = number_for_time)
+                    if(time_measure_unit.code.startswith("h") or time_measure_unit.code.startswith("H")):
+                        time_for_reminder = approximative_date_for_vaccination - datetime.timedelta(hours = number_for_time)
+
+
+                    remind_message_to_send_to_chw = notification_for_chw.message_to_send
+
+                    if notification_for_chw.word_to_replace_by_the_mother_id_in_the_message_to_send:
+                        remind_message_to_send_to_chw = remind_message_to_send_to_chw.replace(notification_for_chw.word_to_replace_by_the_mother_id_in_the_message_to_send, concerned_woman.id_mother)
+
+                    #if notification_for_chw.word_to_replace_by_the_date_in_the_message_to_send:
+                        #remind_message_to_send_to_chw = remind_message_to_send_to_chw.replace(notification_for_chw.word_to_replace_by_the_date_in_the_message_to_send, next_appointment_date_time.date().isoformat())
+
+                    created_reminder = NotificationsCHW.objects.create(chw = chw, notification = notification_for_chw, date_time_for_sending = time_for_reminder, message_to_send = remind_message_to_send_to_chw)
+
+
+
 def send_sms_through_rapidpro(args):
     ''' This function sends messages through rapidpro. Contact(s) and the message to send to them must be in args['data'] '''
     url = 'https://api.rapidpro.io/api/v2/broadcasts.json'
@@ -1106,7 +1152,6 @@ def record_pregnant_case(args):
     the_created_report = Report.objects.create(chw = args['the_sender'], sub_hill = args['sub_colline'], cds = args['facility'], mother = the_created_mother_record, reporting_date = datetime.datetime.now().date(), text = args['text'], category = args['mot_cle'])
     created_gro_report = ReportGRO.objects.create(report = the_created_report, expected_delivery_date = args["expected_birth_date"], next_appointment_date = args["next_appointment_date"], risk_level = args["risklevel"], consultation_location = args['location'])
 
-    #salut
     # Let's record reminders which will be sent out for the next appointment
     cpn2_notification_type = NotificationType.objects.filter(code__iexact = "cpn2")
     if len(cpn2_notification_type) < 1:
@@ -1677,7 +1722,6 @@ def record_birth_case_report(args):
     #If the CHW was inactive, i activate him/her
     activate_inactive_chw(args)
 
-    #salut
     # Let's record reminders which will be sent out for the next appointment
     con1_notification_type = NotificationType.objects.filter(code__iexact = "con1")
     if len(con1_notification_type) < 1:
@@ -1734,6 +1778,15 @@ def record_birth_case_report(args):
             remind_message_to_send_to_chw = remind_message_to_send_to_chw.replace(notification_for_chw.word_to_replace_by_the_date_in_the_message_to_send, next_appointment_date_time.date().isoformat())
 
         created_reminder = NotificationsCHW.objects.create(chw = args['the_sender'], notification = notification_for_chw, date_time_for_sending = time_for_reminder, message_to_send = remind_message_to_send_to_chw)
+
+
+    #Let's record reminders which will be sent out for vaccinations
+    chw = args['the_sender']
+    concerned_woman = args['concerned_woman']
+    birth_date = args["birth_date"]
+    record_vaccination_reminders(chw, concerned_woman, birth_date)
+
+
 
 
 
@@ -1967,7 +2020,6 @@ def record_postnatal_care_report(args):
 
 
     #If the reported CON is CON1, let's record reminders for CON2
-    #salut
     if(args['concerned_con'].con_designation.upper() == 'CON1'):
         con2_notification_type = NotificationType.objects.filter(code__iexact = "con2")
         if len(con2_notification_type) < 1:

@@ -118,6 +118,7 @@ class VAC(models.Model):
     ''' In this model will be stored VAC (suivi de l enfant) desigantions '''
     vac_designation = models.CharField(max_length=10)
     vac_code_meaning = models.CharField(max_length=50)
+    received_after_how_many_weeks = models.CharField(max_length=10, null=True)
 
     def __unicode__(self):
         return "{0} - {1}".format(self.vac_designation, self.vac_code_meaning)
