@@ -32,14 +32,12 @@ def record_vaccination_reminders(chw, concerned_woman, delivery_date):
 
                 #Let's check if this kind of reminder is sent to CHWs
                 notifications_for_chw = NotificationsForCHW.objects.filter(notification_type = notification_type)
-                
-
                 if len(notifications_for_chw) > 0:
-
                     notification_for_chw = notifications_for_chw[0]
 
                     time_measure_unit = notification_for_chw.time_measuring_unit
                     number_for_time = notification_for_chw.time_number
+
                     if(time_measure_unit.code.startswith("m") or time_measure_unit.code.startswith("M")):
                         time_for_reminder = approximative_date_for_vaccination - datetime.timedelta(minutes = number_for_time)
                     if(time_measure_unit.code.startswith("h") or time_measure_unit.code.startswith("H")):
@@ -51,12 +49,31 @@ def record_vaccination_reminders(chw, concerned_woman, delivery_date):
                     if notification_for_chw.word_to_replace_by_the_mother_id_in_the_message_to_send:
                         remind_message_to_send_to_chw = remind_message_to_send_to_chw.replace(notification_for_chw.word_to_replace_by_the_mother_id_in_the_message_to_send, concerned_woman.id_mother)
 
-                    #if notification_for_chw.word_to_replace_by_the_date_in_the_message_to_send:
-                        #remind_message_to_send_to_chw = remind_message_to_send_to_chw.replace(notification_for_chw.word_to_replace_by_the_date_in_the_message_to_send, next_appointment_date_time.date().isoformat())
+                    if notification_for_chw.word_to_replace_by_the_date_in_the_message_to_send:
+                        remind_message_to_send_to_chw = remind_message_to_send_to_chw.replace(notification_for_chw.word_to_replace_by_the_date_in_the_message_to_send, approximative_date_for_vaccination.date().isoformat())
 
                     created_reminder = NotificationsCHW.objects.create(chw = chw, notification = notification_for_chw, date_time_for_sending = time_for_reminder, message_to_send = remind_message_to_send_to_chw)
 
+                notifications_for_mother = NotificationsForMother.objects.filter(notification_type = notification_type)
+                if len(notifications_for_mother) > 0:
+                    notification_for_mother = notifications_for_mother[0]
 
+                    time_measure_unit = notification_for_mother.time_measuring_unit
+                    number_for_time = notification_for_mother.time_number
+                    
+                    if(time_measure_unit.code.startswith("m") or time_measure_unit.code.startswith("M")):
+                        time_for_reminder = approximative_date_for_vaccination - datetime.timedelta(minutes = number_for_time)
+                    if(time_measure_unit.code.startswith("h") or time_measure_unit.code.startswith("H")):
+                        time_for_reminder = approximative_date_for_vaccination - datetime.timedelta(hours = number_for_time)
+
+
+                    remind_message_to_send_to_mother = notification_for_mother.message_to_send
+
+                    if notification_for_mother.word_to_replace_by_the_date_in_the_message_to_send:
+                        remind_message_to_send_to_mother = remind_message_to_send_to_mother.replace(notification_for_mother.word_to_replace_by_the_date_in_the_message_to_send, approximative_date_for_vaccination.date().isoformat())
+                      
+                    created_reminder = NotificationsMother.objects.create(mother = concerned_woman, notification = notification_for_mother, date_time_for_sending = time_for_reminder, message_to_send = remind_message_to_send_to_mother)
+             
 
 def send_sms_through_rapidpro(args):
     ''' This function sends messages through rapidpro. Contact(s) and the message to send to them must be in args['data'] '''
@@ -1785,9 +1802,6 @@ def record_birth_case_report(args):
     concerned_woman = args['concerned_woman']
     birth_date = args["birth_date"]
     record_vaccination_reminders(chw, concerned_woman, birth_date)
-
-
-
 
 
 
