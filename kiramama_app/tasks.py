@@ -25,7 +25,7 @@ def send_sms_through_rapidpro(args):
     print(response)
 
 
-@periodic_task(run_every=(crontab(minute=30, hour='11')), name="send_scheduled_messages", ignore_result=True)
+@periodic_task(run_every=(crontab(minute=50, hour='11')), name="send_scheduled_messages", ignore_result=True)
 def send_scheduled_messages():
     today = datetime.today().date()
     today_7 = datetime.today().date() - timedelta(2)
@@ -159,7 +159,7 @@ def change_chw_status():
 
 
 
-@periodic_task(run_every=(crontab(minute=50, hour='11')), name="tasks.change_chw_status", ignore_result=True) 
+@periodic_task(run_every=(crontab(minute=30, hour='10')), name="tasks.change_chw_status", ignore_result=True) 
 def inform_supersors_on_inactive_chw():
     '''
     This task inform the concerned supervisor if there is a community health work who is not active
