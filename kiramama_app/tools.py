@@ -1,5 +1,7 @@
 import datetime
 from kiramama_app.models import *
+from kiramama_app.recorders import record_vaccination_reminders
+from dateutil.relativedelta import relativedelta
 
 
 
@@ -152,7 +154,6 @@ def delete_test_mothers():
 
 
 
-
 def delete_test_notifications():
 	'''
 	This function is used to delete notifications whose mothers are
@@ -161,3 +162,30 @@ def delete_test_notifications():
 	chw_noti = NotificationsCHW.objects.filter(is_sent = False)
 
 	
+
+def schedule_vaccination_notifications(months=18):
+	'''
+	- This function is used to schedule vaccination notifications
+	for already reported births.
+	- months variable is the number of months to be subtracted from today's date
+	  in order to avoid to shedule reminders for already done activities
+	'''
+	today_date = datetime.datetime.now().date()
+	starting_birth_date = today_date - relativedelta(months=months)
+
+	concerned_birth_reports = ReportNSC.objects.filter(birth_date__gte = starting_birth_date)
+
+	for birth_report in concerned_birth_reports:
+		delivery_date = birth_report.birth_date
+		the_concerned_mother = birth_report.report.mother
+		the_concerned_chw = birth_report.report.chw
+
+		#Let's check if there no death report about this birth case
+		related_death_reports = ReportDEC.objects.filter(report__mother = the_concerned_mother)
+
+		if len(related_death_reports) < 1:
+			print ">>> We are about to schedule reminders for a vaccination"
+			print "The concerned mother : "
+			print the_concerned_mother
+			record_vaccination_reminders(the_concerned_chw, the_concerned_mother, delivery_date)
+			print "---"
