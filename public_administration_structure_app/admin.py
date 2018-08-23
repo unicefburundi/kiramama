@@ -33,10 +33,10 @@ class SousCollineAdmin(admin.ModelAdmin):
 
 		f = StringIO.StringIO()
 		writer = csv.writer(f)
-		writer.writerow(["name", "colline"])
+		writer.writerow(["Name", "Colline", "Commune", "Province"])
 
 		for s in queryset:
-			writer.writerow([s.name, s.colline])
+			writer.writerow([s.name, s.colline, s.colline.commune, s.colline.commune.province])
 
 		f.seek(0)
 
