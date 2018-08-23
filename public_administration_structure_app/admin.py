@@ -26,6 +26,8 @@ class SousCollineAdmin(admin.ModelAdmin):
 	get_commune_name.admin_order_field = 'colline__commune'
 	get_province_name.admin_order_field = 'colline__commune__province'
 
+	list_filter = ("colline__commune__province", "colline__commune",)
+
 	def download_csv(self, request, queryset):
 		import csv
 		from django.http import HttpResponse
