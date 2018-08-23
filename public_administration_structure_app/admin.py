@@ -8,6 +8,7 @@ admin.site.register(Colline)
 #admin.site.register(SousColline)
 
 class SousCollineAdmin(admin.ModelAdmin):
+	actions = ['download_csv']
 	list_display = ['name', 'get_colline_name', 'get_commune_name', 'get_province_name']
 
 	def get_colline_name(self, obj):
@@ -24,5 +25,24 @@ class SousCollineAdmin(admin.ModelAdmin):
 	get_colline_name.admin_order_field = 'colline'
 	get_commune_name.admin_order_field = 'colline__commune'
 	get_province_name.admin_order_field = 'colline__commune__province'
+
+	def download_csv(self, request, queryset):
+		import csv
+		from django.http import HttpResponse
+		import StringIO
+
+		f = StringIO.StringIO()
+		writer = csv.writer(f)
+		writer.writerow(["name", "colline"])
+
+		for s in queryset:
+			writer.writerow([s.name, s.colline])
+
+		f.seek(0)
+
+		response = HttpResponse(f, content_type='text/xlsx')
+		response['Content-Disposition'] = 'attachment; filename=collines.xlsx'
+		return response
+	download_csv.short_description = "Download"
 
 admin.site.register(SousColline , SousCollineAdmin)
