@@ -25,7 +25,67 @@ class ReportNSCAdmin(ExportMixin, admin.ModelAdmin):
         return obj.gender.gender_code
 
 
-admin.site.register(CHW)
+class CHWAdmin(admin.ModelAdmin):
+    actions = ['download_csv']
+    list_display = ['phone_number', 'supervisor_phone_number', 'get_cds_name', 'get_cds_code', 'get_sub_colline', 'get_colline', 'get_district_name', 'get_bps_name']
+
+    def get_cds_name(self, obj):
+        return obj.cds.name
+
+    def get_cds_code(self, obj):
+        return obj.cds.code
+
+    def get_sub_colline(self, obj):
+        return obj.sub_colline.name
+
+    def get_colline(self, obj):
+        return obj.sub_colline.colline.name
+
+    def get_district_name(self, obj):
+        return obj.cds.district.name
+
+    def get_bps_name(self, obj):
+        return obj.cds.district.bps.name
+
+    get_cds_name.short_description = "CDS name"
+    get_cds_code.short_description = "CDS code"
+    get_sub_colline.short_description = "Sub colline"
+    get_colline.short_description = "Colline"
+    get_district_name.short_description = "District"
+    get_bps_name.short_description = "BPS"
+
+    get_cds_name.admin_order_field = 'cds__name'
+    get_cds_code.admin_order_field = 'cds__code'
+    get_sub_colline.admin_order_field = 'sub_colline__name'
+    get_colline.admin_order_field = 'sub_colline__colline__name'
+    get_district_name.admin_order_field = 'cds__district'
+    get_bps_name.admin_order_field = 'cds__district__bps'
+
+    list_filter = ("cds__district", "cds__district__bps",)
+
+    def download_csv(self, request, queryset):
+        import csv
+        from django.http import HttpResponse
+        import StringIO
+
+        f = StringIO.StringIO()
+        writer = csv.writer(f)
+        writer.writerow(["CHW Phone Number", "Supervisor Phone Number", "CDS Name", "CDS Code", "Sub Colline", "Colline", "District", "BPS"])
+
+        for s in queryset:
+            print type(s.cds.code)
+            writer.writerow([s.phone_number, s.supervisor_phone_number, s.cds.name.encode('utf-8'), s.cds.code, s.sub_colline, s.sub_colline.colline, s.cds.district, s.cds.district.bps])
+
+        f.seek(0)
+
+        response = HttpResponse(f, content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename=chws.csv'
+        return response
+    download_csv.short_description = "Download"
+
+admin.site.register(CHW , CHWAdmin)
+#admin.site.register(CHW)
+
 admin.site.register(Mother)
 admin.site.register(Report)
 admin.site.register(RiskLevel)
