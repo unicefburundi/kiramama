@@ -41,7 +41,7 @@ class SousCollineAdmin(admin.ModelAdmin):
 		f.seek(0)
 
 		response = HttpResponse(f, content_type='text/csv')
-		response['Content-Disposition'] = 'attachment; filename=collines.csv'
+		response['Content-Disposition'] = 'attachment; filename=sub_collines.csv'
 		return response
 	download_csv.short_description = "Download"
 
