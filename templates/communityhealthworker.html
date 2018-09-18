@@ -171,12 +171,9 @@
 									
 								'</tbody>');
 
-							var dict = {};
-							var fetched_CHWs = "{{response_data|safe}}";
-							fetched_CHWs = fetched_CHWs.split("},");
 							for(i = 0; i < response.length; i++)
 							{	
-								one_report = fetched_CHWs[i];
+								
 								var col0 = jQuery.makeArray(response[i].province_name);
 
 								var col1 = jQuery.makeArray(response[i].district_name);

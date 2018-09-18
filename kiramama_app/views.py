@@ -14,7 +14,7 @@ import django_filters
 from django.views.generic import DetailView
 import unicodedata
 import ast
-from django.db.models import F, Count, Value, Sum, When, Case, Q
+from django.db.models import F, Count, Value, Sum, When, Case, Q, Max
 
 
 from django.http import JsonResponse
@@ -31,7 +31,6 @@ def default(request):
 def home(request):
     d = {}
     d["pagetitle"] = "Home"
-    #d['registeredmothers'] = Mother.objects.count()
     d['registeredmothers'] = ReportGRO.objects.all().count()
     cpntotal = ReportCPN.objects.count()
 
@@ -67,23 +66,18 @@ def home(request):
     if(CPN.objects.filter(cpn_designation="CPN4")):
         cpn4 = CPN.objects.get(cpn_designation="CPN4")
 
-    #if (cpn1):
-        #d['cpn1'] = float(ReportCPN.objects.filter(concerned_cpn=cpn1).count())/ float(cpntotal) * 100.0
     d['cpn1'] = ReportGRO.objects.all().count()
 
 
     if (cpn2):
-        #d['cpn2'] = float(ReportCPN.objects.filter(concerned_cpn=cpn2).count())/ float(cpntotal) * 100.0
         d['cpn2'] = ReportCPN.objects.filter(concerned_cpn=cpn2).count()
 
 
     if (cpn3):
-        #d['cpn3'] = float(ReportCPN.objects.filter(concerned_cpn=cpn3).count())/ float(cpntotal) * 100.0
         d['cpn3'] = ReportCPN.objects.filter(concerned_cpn=cpn3).count()
 
 
     if (cpn4):
-        #d['cpn4'] = float(ReportCPN.objects.filter(concerned_cpn=cpn4).count())/ float(cpntotal) * 100.0
         d['cpn4'] = ReportCPN.objects.filter(concerned_cpn=cpn4).count()
 
 
@@ -103,16 +97,12 @@ def home(request):
     if(ReportNSC.objects.all()):
         d['total_delivery'] = ReportNSC.objects.count()
         if(ReportNSC.objects.filter(birth_location__location_category_designation__iexact='HP')):
-            #d['percentage_delivery_at_hospital'] = ReportNSC.objects.filter(birth_location__location_category_designation__iexact='HP').count() / float(d['total_delivery']) * 100
             d['percentage_delivery_at_hospital'] = ReportNSC.objects.filter(birth_location__location_category_designation__iexact='HP').count()
         if(ReportNSC.objects.filter(birth_location__location_category_designation__iexact='ME')):
-            #d['percentage_delivery_at_home'] = ReportNSC.objects.filter(birth_location__location_category_designation__iexact='ME').count() / float(d['total_delivery']) * 100
             d['percentage_delivery_at_home'] = ReportNSC.objects.filter(birth_location__location_category_designation__iexact='ME').count()
         if(ReportNSC.objects.filter(birth_location__location_category_designation__iexact='RT')):
-            #d['percentage_delivery_on_road'] = ReportNSC.objects.filter(birth_location__location_category_designation__iexact='RT').count() / float(d['total_delivery']) * 100
             d['percentage_delivery_on_road'] = ReportNSC.objects.filter(birth_location__location_category_designation__iexact='RT').count()
         if(ReportNSC.objects.filter(birth_location__location_category_designation__iexact='CS')):
-            #d['percentage_delivery_at_CDS'] = ReportNSC.objects.filter(birth_location__location_category_designation__iexact='CS').count() / float(d['total_delivery']) * 100
             d['percentage_delivery_at_CDS'] = ReportNSC.objects.filter(birth_location__location_category_designation__iexact='CS').count()
         d['percentage_delivery_at_HF'] = d['percentage_delivery_at_CDS'] + d['percentage_delivery_at_hospital']
         
@@ -217,7 +207,6 @@ def getprovinces():
 def getdistrictsinprovince(request):
     response_data = {}
     if request.method == 'POST':
-        # import pdb; pdb.set_trace()
         json_data = json.loads(request.body)
         code = json_data['code']
         if (code):
@@ -229,7 +218,6 @@ def getdistrictsinprovince(request):
 def getcdsindistrict(request):
     response_data = {}
     if request.method == 'POST':
-        # import pdb; pdb.set_trace()
         json_data = json.loads(request.body)
         code = json_data['code']
         if (code):
@@ -262,41 +250,11 @@ def getcdsdata(request):
                     if (districtlist):
                         cdslist = CDS.objects.filter(district__in = districtlist)
             if (cdslist):
-                chw_data = CHW.objects.filter(cds__in = cdslist).order_by('reg_date')
+                chw_data = CHW.objects.filter(cds__in = cdslist, is_deleted = False).annotate(sub_colline_name = F('sub_colline__name')).annotate(colline_name = F('sub_colline__colline__name')).annotate(commune_name = F('sub_colline__colline__commune__name')).annotate(province_name = F('sub_colline__colline__commune__province__name')).annotate(cds_name = F('cds__name')).annotate(district_name = F('cds__district__name')).annotate(last_seen = Max('report__reporting_date')).values()
         else:
-            chw_data = CHW.objects.all()
+            chw_data = CHW.objects.filter(is_deleted = False).annotate(sub_colline_name = F('sub_colline__name')).annotate(colline_name = F('sub_colline__colline__name')).annotate(commune_name = F('sub_colline__colline__commune__name')).annotate(province_name = F('sub_colline__colline__commune__province__name')).annotate(cds_name = F('cds__name')).annotate(district_name = F('cds__district__name')).annotate(last_seen = Max('report__reporting_date')).values()
 
-        chw_data = serializers.serialize('python', chw_data)
-        columns = [d['fields'] for d in chw_data]
-        data = json.dumps(columns, default=date_handler)
-        chw_data = json.loads(data)
-
-        for r in chw_data:
-            sub_coline = SousColline.objects.get(id = r["sub_colline"])
-            r["sub_colline_name"] = sub_coline.name
-            r["colline_name"] = sub_coline.colline.name
-            r["commune_name"] = sub_coline.colline.commune.name
-            r["province_name"] = sub_coline.colline.commune.province.name
-
-            cds = CDS.objects.get(id = r["cds"])
-            r["cds_name"] = cds.name
-            r["district_name"] = cds.district.name
-
-            r["last_seen"] = ""
-            
-            chw_pn = unicodedata.normalize('NFKD', r["phone_number"]).encode('ascii','ignore')
-            concerned_chw_set = CHW.objects.filter(phone_number = chw_pn)
-            if(len(concerned_chw_set) > 0):
-                concerned_chw = concerned_chw_set[0]
-                report_set = Report.objects.filter(chw = concerned_chw)
-                if(len(report_set) > 0):
-                    last_report = Report.objects.filter(chw = concerned_chw).order_by('-id')[0]
-                    last_seen = last_report.reporting_date
-                    last_seen = last_seen.strftime('%Y/%m/%d')
-                    r["last_seen"] = last_seen
-
-
-        response_data = json.dumps(chw_data, default=date_handler)
+        response_data = json.dumps(list(chw_data), default=date_handler)
 
         return HttpResponse(response_data, content_type="application/json")
     else:
@@ -314,7 +272,6 @@ def date_handler(obj):
 def getwanteddata(request):
     response_data = {}
     if request.method == 'POST':
-        #import pdb; pdb.set_trace()
         json_data = json.loads(request.body)
         level = json_data['level']
         code = json_data['code']
@@ -361,7 +318,6 @@ def getwanteddata(request):
 def get_births_data(request):
     response_data = {}
     if request.method == 'POST':
-        #import pdb; pdb.set_trace()
         json_data = json.loads(request.body)
         level = json_data['level']
         code = json_data['code']
@@ -391,11 +347,6 @@ def get_births_data(request):
 
 
             if (cdslist):
-                
-                #start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d')
-                #new_start_date = start_date - datetime.timedelta(days=300)
-
-                #births = ReportNSC.objects.filter(report__cds__in = cdslist).filter(birth_date__range=[new_start_date, end_date]).annotate(cds_id = F('report__cds__id')).annotate(cds_name = F('report__cds__name')).annotate(district_id = F('report__cds__district__id')).annotate(district_name = F('report__cds__district__name')).annotate(bps_id = F('report__cds__district__bps__id')).annotate(bps_name = F('report__cds__district__bps__name')).annotate(reporting_date = F('report__reporting_date'))
                 births = ReportNSC.objects.filter(report__cds__in = cdslist, report__reporting_date__range=[start_date, end_date]).annotate(cds_id = F('report__cds__id')).annotate(cds_name = F('report__cds__name')).annotate(district_id = F('report__cds__district__id')).annotate(district_name = F('report__cds__district__name')).annotate(bps_id = F('report__cds__district__bps__id')).annotate(bps_name = F('report__cds__district__bps__name')).annotate(reporting_date = F('report__reporting_date')).annotate(birth_location_name = F('birth_location__location_category_designation'))
                 rows = births.values()
                 rows = json.dumps(list(rows), default=date_handler)
@@ -408,7 +359,6 @@ def get_births_data(request):
 def get_births_after_date_data(request):
     response_data = {}
     if request.method == 'POST':
-        #import pdb; pdb.set_trace()
         json_data = json.loads(request.body)
         level = json_data['level']
         code = json_data['code']
@@ -438,11 +388,6 @@ def get_births_after_date_data(request):
 
 
             if (cdslist):
-                
-                #start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d')
-                #new_start_date = start_date - datetime.timedelta(days=300)
-
-                #births = ReportNSC.objects.filter(report__cds__in = cdslist).filter(birth_date__range=[new_start_date, end_date]).annotate(cds_id = F('report__cds__id')).annotate(cds_name = F('report__cds__name')).annotate(district_id = F('report__cds__district__id')).annotate(district_name = F('report__cds__district__name')).annotate(bps_id = F('report__cds__district__bps__id')).annotate(bps_name = F('report__cds__district__bps__name')).annotate(reporting_date = F('report__reporting_date'))
                 births = ReportNSC.objects.filter(report__cds__in = cdslist, report__reporting_date__range=[start_date, end_date], birth_date__gte = F("report__mother__report__reportgro__expected_delivery_date")).annotate(cds_id = F('report__cds__id')).annotate(cds_name = F('report__cds__name')).annotate(district_id = F('report__cds__district__id')).annotate(district_name = F('report__cds__district__name')).annotate(bps_id = F('report__cds__district__bps__id')).annotate(bps_name = F('report__cds__district__bps__name')).annotate(reporting_date = F('report__reporting_date'))
                 rows = births.values()
                 rows = json.dumps(list(rows), default=date_handler)
@@ -456,7 +401,6 @@ def get_births_after_date_data(request):
 def get_deaths_data(request):
     response_data = {}
     if request.method == 'POST':
-        #import pdb; pdb.set_trace()
         json_data = json.loads(request.body)
         level = json_data['level']
         code = json_data['code']
@@ -486,11 +430,6 @@ def get_deaths_data(request):
 
 
             if (cdslist):
-                #
-                #start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d')
-                #new_start_date = start_date - datetime.timedelta(days=300)
-
-                #births = ReportNSC.objects.filter(report__cds__in = cdslist).filter(birth_date__range=[new_start_date, end_date]).annotate(cds_id = F('report__cds__id')).annotate(cds_name = F('report__cds__name')).annotate(district_id = F('report__cds__district__id')).annotate(district_name = F('report__cds__district__name')).annotate(bps_id = F('report__cds__district__bps__id')).annotate(bps_name = F('report__cds__district__bps__name')).annotate(reporting_date = F('report__reporting_date'))
                 deaths = ReportDEC.objects.filter(report__cds__in = cdslist).filter(report__reporting_date__range=[start_date, end_date]).annotate(cds_id = F('report__cds__id')).annotate(cds_name = F('report__cds__name')).annotate(district_id = F('report__cds__district__id')).annotate(district_name = F('report__cds__district__name')).annotate(bps_id = F('report__cds__district__bps__id')).annotate(bps_name = F('report__cds__district__bps__name')).annotate(reporting_date = F('report__reporting_date'))
                 rows = deaths.values()
                 rows = json.dumps(list(rows), default=date_handler)
@@ -504,7 +443,6 @@ def get_deaths_data(request):
 def get_reminders(request):
     response_data = {}
     if request.method == 'POST':
-        #import pdb; pdb.set_trace()
         json_data = json.loads(request.body)
         level = json_data['level']
         code = json_data['code']
@@ -534,10 +472,6 @@ def get_reminders(request):
 
 
             if (cdslist):
-                #
-                #start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d')
-                #new_start_date = start_date - datetime.timedelta(days=300)
-
                 notifications = NotificationsCHW.objects.filter(chw__cds__in = cdslist).filter(date_time_for_sending__range=[start_date, end_date]).annotate(cds_id = F('chw__cds__id')).annotate(cds_name = F('chw__cds__name')).annotate(district_id = F('chw__cds__district__id')).annotate(district_name = F('chw__cds__district__name')).annotate(bps_id = F('chw__cds__district__bps__id')).annotate(bps_name = F('chw__cds__district__bps__name'))
                 rows = notifications.values()
                 rows = json.dumps(list(rows), default=date_handler)
@@ -551,7 +485,6 @@ def get_reminders(request):
 def get_risks_data(request):
     response_data = {}
     if request.method == 'POST':
-        #import pdb; pdb.set_trace()
         json_data = json.loads(request.body)
         level = json_data['level']
         code = json_data['code']
@@ -597,7 +530,6 @@ def get_risks_data(request):
 def get_red_alerts_data(request):
     response_data = {}
     if request.method == 'POST':
-        #import pdb; pdb.set_trace()
         json_data = json.loads(request.body)
         level = json_data['level']
         code = json_data['code']
@@ -706,7 +638,6 @@ def vaccination_reports(request, vac):
                 r["location name"] = ""
             else:
                 r["location name"] = unicodedata.normalize('NFKD', l[0].location_category_designation).encode('ascii','ignore')
-                #r["location name"] = l[0].location_category_designation
 
             nsc_id = r["child"]
             related_nsc = ReportNSC.objects.filter(id=nsc_id)
@@ -734,7 +665,6 @@ def mother_details (request, child):
 
 
 def registered_preg_details(request, location_name):
-    #d = {}
     location_name = str(request.GET.get('location_name', '')).strip()
     location_level = str(request.GET.get('location_level', '')).strip()
     start_date = str(request.GET.get('start_date', '')).strip()
@@ -761,7 +691,6 @@ def registered_preg_details(request, location_name):
 
 
 def registered_risk_details(request, location_name):
-    #d = {}
     location_name = str(request.GET.get('location_name', '')).strip()
     location_level = str(request.GET.get('location_level', '')).strip()
     start_date = str(request.GET.get('start_date', '')).strip()
@@ -788,7 +717,6 @@ def registered_risk_details(request, location_name):
 
 
 def registered_deaths_details(request, location_name):
-    #d = {}
     location_name = str(request.GET.get('location_name', '')).strip()
     location_level = str(request.GET.get('location_level', '')).strip()
     start_date = str(request.GET.get('start_date', '')).strip()
@@ -815,7 +743,6 @@ def registered_deaths_details(request, location_name):
 
 
 def reminder_details(request, location_name):
-    #d = {}
     location_name = str(request.GET.get('location_name', '')).strip()
     location_level = str(request.GET.get('location_level', '')).strip()
     start_date = str(request.GET.get('start_date', '')).strip()
@@ -830,7 +757,6 @@ def reminder_details(request, location_name):
     if(location_level == "CDS"):
         concerned_cdss = CDS.objects.filter(name__iexact = location_name)
 
-    #concerned_risk_reports = ReportDEC.objects.filter(report__cds__in = concerned_cdss, report__reporting_date__range=[start_date, end_date]).annotate(sous_coline = F('report__sub_hill__name')).annotate(colline = F('report__sub_hill__colline__name')).annotate(commune = F('report__sub_hill__colline__commune__name')).annotate(cds_name = F('report__cds__name')).annotate(district = F('report__cds__district__name')).annotate(province = F('report__sub_hill__colline__commune__province__name')).annotate(reporter_phone_number = F('report__chw__phone_number')).annotate(mother_id = F('report__mother__id_mother')).annotate(mother_phone_number = F('report__mother__phone_number')).annotate(report_text = F('report__text')).annotate(reporting_date = F('report__reporting_date'))
     concerned_reminders = NotificationsCHW.objects.filter(chw__cds__in = concerned_cdss).filter(date_time_for_sending__range=[start_date, end_date]).annotate(cds_id = F('chw__cds__id')).annotate(cds_name = F('chw__cds__name')).annotate(district_id = F('chw__cds__district__id')).annotate(district_name = F('chw__cds__district__name')).annotate(bps_id = F('chw__cds__district__bps__id')).annotate(bps_name = F('chw__cds__district__bps__name')).annotate(chw_phone = F('chw__phone_number'))
     rows = concerned_reminders.values()
     rows = json.dumps(list(rows), default=date_handler)
@@ -870,7 +796,6 @@ def red_details(request, location_name):
 
 
 def registered_births_details(request, location_name):
-    #d = {}
     location_name = str(request.GET.get('location_name', '')).strip()
     location_level = str(request.GET.get('location_level', '')).strip()
     start_date = str(request.GET.get('start_date', '')).strip()
@@ -897,7 +822,6 @@ def registered_births_details(request, location_name):
 
 
 def registered_births_after_date_details(request, location_name):
-    #d = {}
     location_name = str(request.GET.get('location_name', '')).strip()
     location_level = str(request.GET.get('location_level', '')).strip()
     start_date = str(request.GET.get('start_date', '')).strip()
@@ -912,7 +836,6 @@ def registered_births_after_date_details(request, location_name):
     if(location_level == "CDS"):
         concerned_cdss = CDS.objects.filter(name__iexact = location_name)
 
-    #concerned_birth_reports = ReportNSC.objects.filter(report__cds__in = concerned_cdss, birth_date__range=[start_date, end_date]).annotate(sous_coline = F('report__sub_hill__name')).annotate(colline = F('report__sub_hill__colline__name')).annotate(commune = F('report__sub_hill__colline__commune__name')).annotate(cds_name = F('report__cds__name')).annotate(district = F('report__cds__district__name')).annotate(province = F('report__sub_hill__colline__commune__province__name')).annotate(reporter_phone_number = F('report__chw__phone_number')).annotate(mother_id = F('report__mother__id_mother')).annotate(mother_phone_number = F('report__mother__phone_number')).annotate(report_text = F('report__text')).annotate(child_number_code = F('child_number__child_code_designation')).annotate(lieu_de_naissance = F('birth_location__location_category_description')).annotate(genre = F('gender__gender_code_meaning')).annotate(allaitement = F('breast_feading__breast_feed_option_description'))
     concerned_birth_reports = ReportNSC.objects.filter(report__cds__in = concerned_cdss, report__reporting_date__range=[start_date, end_date], birth_date__gte = F("report__mother__report__reportgro__expected_delivery_date")).annotate(cds_id = F('report__cds__id')).annotate(cds_name = F('report__cds__name')).annotate(district_id = F('report__cds__district__id')).annotate(district_name = F('report__cds__district__name')).annotate(bps_id = F('report__cds__district__bps__id')).annotate(bps_name = F('report__cds__district__bps__name')).annotate(reporting_date = F('report__reporting_date'))
 
     rows = concerned_birth_reports.values()
@@ -925,7 +848,6 @@ def registered_births_after_date_details(request, location_name):
 
 
 def home_births_details(request, location_name):
-    #d = {}
     location_name = str(request.GET.get('location_name', '')).strip()
     location_level = str(request.GET.get('location_level', '')).strip()
     start_date = str(request.GET.get('start_date', '')).strip()
@@ -951,7 +873,6 @@ def home_births_details(request, location_name):
 
 
 def road_births_details(request, location_name):
-    #d = {}
     location_name = str(request.GET.get('location_name', '')).strip()
     location_level = str(request.GET.get('location_level', '')).strip()
     start_date = str(request.GET.get('start_date', '')).strip()
@@ -977,7 +898,6 @@ def road_births_details(request, location_name):
 
 
 def health_facility_births_details(request, location_name):
-    #d = {}
     location_name = str(request.GET.get('location_name', '')).strip()
     location_level = str(request.GET.get('location_level', '')).strip()
     start_date = str(request.GET.get('start_date', '')).strip()
@@ -1004,7 +924,6 @@ def health_facility_births_details(request, location_name):
 
 
 def breastf_in_first_hour_details(request, location_name):
-    #d = {}
     location_name = str(request.GET.get('location_name', '')).strip()
     location_level = str(request.GET.get('location_level', '')).strip()
     start_date = str(request.GET.get('start_date', '')).strip()
@@ -1030,7 +949,6 @@ def breastf_in_first_hour_details(request, location_name):
 
 
 def breastf_after_first_hour_details(request, location_name):
-    #d = {}
     location_name = str(request.GET.get('location_name', '')).strip()
     location_level = str(request.GET.get('location_level', '')).strip()
     start_date = str(request.GET.get('start_date', '')).strip()
@@ -1083,7 +1001,6 @@ def h_r_registered_preg_details(request, location_name):
 
 
 def expected_delivery_details(request, location_name):
-    #d = {}
     location_name = str(request.GET.get('location_name', '')).strip()
     location_level = str(request.GET.get('location_level', '')).strip()
     start_date = str(request.GET.get('start_date', '')).strip()
@@ -1110,7 +1027,6 @@ def expected_delivery_details(request, location_name):
 
 
 def hr_expected_delivery_details(request, location_name):
-    #d = {}
     location_name = str(request.GET.get('location_name', '')).strip()
     location_level = str(request.GET.get('location_level', '')).strip()
     start_date = str(request.GET.get('start_date', '')).strip()
