@@ -43,11 +43,40 @@
 									
 								'</tbody>');
 
-			var dict = {};
-			var fetched_CHWs = "{{data|safe}}";
-			//var fetched_vaccination_reports = "{{fetched_vaccination_reports}}";
-			fetched_CHWs = fetched_CHWs.split("},");
-			for(i=0; i<fetched_CHWs.length; i++)
+			//var dict = {};
+			var active_chws = "{{rows|escapejs}}";
+			var table_data = JSON.parse(active_chws);
+
+			console.log(table_data);
+
+			var province, district, cds, hill, sub_hill, chw_phone, last_seen;
+
+			for(i=0; i<table_data.length; i++){
+
+				province = table_data[i]["province_name"];
+				district = table_data[i]["district_name"];
+				cds = table_data[i]["cds_name"];
+				hill = table_data[i]["colline_name"];
+				sub_hill = table_data[i]["sub_colline_name"];
+				chw_phone = table_data[i]["phone_number"];
+				last_seen = table_data[i]["last_seen"];
+
+
+				$('#tblactiveCHWs').find('tbody').append('<tr style="cursor:pointer;"></tr>');
+
+				$('#tblactiveCHWs tr:last').append('<td>' + province +'</td>');
+				$('#tblactiveCHWs tr:last').append('<td>' + district +'</td>');
+				$('#tblactiveCHWs tr:last').append('<td>' + cds +'</td>');
+				$('#tblactiveCHWs tr:last').append('<td>' + hill +'</td>');
+				$('#tblactiveCHWs tr:last').append('<td>' + sub_hill +'</td>');
+				$('#tblactiveCHWs tr:last').append('<td>' + chw_phone +'</td>');
+				$('#tblactiveCHWs tr:last').append('<td>' + last_seen +'</td>');
+
+			}
+
+			//fetched_CHWs = fetched_CHWs.split("},");
+
+			/*for(i=0; i<fetched_CHWs.length; i++)
 			{	
 				one_report = fetched_CHWs[i];
 				var col0 = one_report.split(",")[13].split(":")[1];
@@ -85,7 +114,7 @@
 				$('#tblactiveCHWs tr:last').append('<td>' + col6 +'</td>');
 				
 
-			}
+			}*/
 
 			$('#tblactiveCHWs').DataTable({
 										dom: "<'row'<'col-sm-3'l><'col-sm-4'i><'col-sm-5'f>>" +

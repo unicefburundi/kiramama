@@ -88,7 +88,6 @@
 
 
 		function fetchwanteddata() {
-			console.log("======Debut  fetchwanteddata====")
 			if (new Date($('#dstartdate').val()) > new Date($('#dendtdate').val())) {
                 messimsg = "Start date cannot e more than End date";
                 messititle = "Invalid Date Selection";
@@ -199,9 +198,6 @@
 		                			}
 		                		}
 
-		                		console.log("111");
-		                		console.log(response);
-
 		                		for (var i = 0; i < response.length; i++){
 		                			location_name = response[i][location_column];
 		                			if((response[i]["reporting_date"] >= $('#dstartdate').val()) && (response[i]["reporting_date"] <= $('#dendtdate').val())){
@@ -245,7 +241,6 @@
 		                				}
 									}
 
-									//if((exp_der_date <= end_date) && (isNaN(derivery_date)))
 									if((exp_der_date >= selected_end_date) && (exp_der_date <= end_date)){
 										if (dict.hasOwnProperty(location_name)){
 		                					dict[location_name][1] += 1;

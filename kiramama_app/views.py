@@ -708,7 +708,7 @@ def registered_risk_details(request, location_name):
     concerned_risk_reports = ReportRIS.objects.filter(report__cds__in = concerned_cdss, report__reporting_date__range=[start_date, end_date]).annotate(sous_coline = F('report__sub_hill__name')).annotate(colline = F('report__sub_hill__colline__name')).annotate(commune = F('report__sub_hill__colline__commune__name')).annotate(cds_name = F('report__cds__name')).annotate(district = F('report__cds__district__name')).annotate(province = F('report__sub_hill__colline__commune__province__name')).annotate(reporter_phone_number = F('report__chw__phone_number')).annotate(mother_id = F('report__mother__id_mother')).annotate(mother_phone_number = F('report__mother__phone_number')).annotate(report_text = F('report__text')).annotate(symptom_name = F('ris_report_symptom__symptom__symtom_code_meaning')).values()
 
     rows = json.dumps(list(concerned_risk_reports), default=date_handler)
-
+    print "registered_risk_details"
     return render(request, 'registered_risks_details.html', {'rows':rows})
 
 
@@ -1129,7 +1129,12 @@ def h_r_p_w_e_d_next_2_w_details(request, location_name):
 
 
 def active_chw(request):
-    data = CHW.objects.filter(is_active = True, is_deleted=False)
+
+    active_chws = CHW.objects.filter(is_active = True, is_deleted=False).annotate(sub_colline_name = F('sub_colline__name')).annotate(colline_name = F('sub_colline__colline__name')).annotate(commune_name = F('sub_colline__colline__commune__name')).annotate(province_name = F('sub_colline__colline__commune__province__name')).annotate(cds_name = F('cds__name')).annotate(district_name = F('cds__district__name')).annotate(last_seen = Max('report__reporting_date')).values()
+
+    rows = json.dumps(list(active_chws), default=date_handler)
+
+    '''print "active_chw"
 
     data = serializers.serialize('python', data)
     columns = [d['fields'] for d in data]
@@ -1158,9 +1163,9 @@ def active_chw(request):
                 last_report = Report.objects.filter(chw = concerned_chw).order_by('-id')[0]
                 last_seen = last_report.reporting_date
                 last_seen = last_seen.strftime('%Y/%m/%d')
-                r["last_seen"] = last_seen
+                r["last_seen"] = last_seen '''
 
-    return render(request, 'active_chws.html', {'data':data})
+    return render(request, 'active_chws.html', {'rows':rows})
 
 
 
