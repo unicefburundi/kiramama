@@ -43,47 +43,31 @@
 									
 								'</tbody>');
 
-			var dict = {};
-			var fetched_CHWs = "{{data|safe}}";
-			//var fetched_vaccination_reports = "{{fetched_vaccination_reports}}";
-			fetched_CHWs = fetched_CHWs.split("},");
-			for(i=0; i<fetched_CHWs.length; i++)
-			{	
-				one_report = fetched_CHWs[i];
-				var col0 = one_report.split(",")[13].split(":")[1];
-				col0 = col0.replace("u","");
-				col0 = col0.split("'")[1];
-				
-				var col1 = one_report.split(",")[4].split(":")[1];
-				col1 = col1.replace("u","");
-				col1 = col1.split("'")[1];
-				var col2 = one_report.split(",")[8].split(":")[1];
-				col2 = col2.replace("u","");
-				col2 = col2.split("'")[1];
-				var col3 = one_report.split(",")[12].split(":")[1];
-				col3 = col3.replace("u","");
-				col3 = col3.split("'")[1];
-				var col4 = one_report.split(",")[5].split(":")[1];
-				col4 = col4.replace("u","");
-				col4 = col4.split("'")[1];
-				var col5 = one_report.split(",")[0].split(":")[1];
-				col5 = col5.replace("u","");
-				col5 = col5.split("'")[1];
-				var col6 = one_report.split(",")[11].split(":")[1];
-				col6 = col6.replace("u","");
-				col6 = col6.split("'")[1];
+			var active_chws = "{{rows|escapejs}}";
+			var table_data = JSON.parse(active_chws);
+
+			var province, district, cds, hill, sub_hill, chw_phone, last_seen;
+
+			for(i=0; i<table_data.length; i++){
+
+				province = table_data[i]["province_name"];
+				district = table_data[i]["district_name"];
+				cds = table_data[i]["cds_name"];
+				hill = table_data[i]["colline_name"];
+				sub_hill = table_data[i]["sub_colline_name"];
+				chw_phone = table_data[i]["phone_number"];
+				last_seen = table_data[i]["last_seen"];
 
 
 				$('#tblactiveCHWs').find('tbody').append('<tr style="cursor:pointer;"></tr>');
 
-				$('#tblactiveCHWs tr:last').append('<td>' + col0 +'</td>');
-				$('#tblactiveCHWs tr:last').append('<td>' + col1 +'</td>');
-				$('#tblactiveCHWs tr:last').append('<td>' + col2 +'</td>');
-				$('#tblactiveCHWs tr:last').append('<td>' + col3 +'</td>');
-				$('#tblactiveCHWs tr:last').append('<td>' + col4 +'</td>');
-				$('#tblactiveCHWs tr:last').append('<td>' + col5 +'</td>');
-				$('#tblactiveCHWs tr:last').append('<td>' + col6 +'</td>');
-				
+				$('#tblactiveCHWs tr:last').append('<td>' + province +'</td>');
+				$('#tblactiveCHWs tr:last').append('<td>' + district +'</td>');
+				$('#tblactiveCHWs tr:last').append('<td>' + cds +'</td>');
+				$('#tblactiveCHWs tr:last').append('<td>' + hill +'</td>');
+				$('#tblactiveCHWs tr:last').append('<td>' + sub_hill +'</td>');
+				$('#tblactiveCHWs tr:last').append('<td>' + chw_phone +'</td>');
+				$('#tblactiveCHWs tr:last').append('<td>' + last_seen +'</td>');
 
 			}
 

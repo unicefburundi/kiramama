@@ -1131,78 +1131,19 @@ def h_r_p_w_e_d_next_2_w_details(request, location_name):
 def active_chw(request):
 
     active_chws = CHW.objects.filter(is_active = True, is_deleted=False).annotate(sub_colline_name = F('sub_colline__name')).annotate(colline_name = F('sub_colline__colline__name')).annotate(commune_name = F('sub_colline__colline__commune__name')).annotate(province_name = F('sub_colline__colline__commune__province__name')).annotate(cds_name = F('cds__name')).annotate(district_name = F('cds__district__name')).annotate(last_seen = Max('report__reporting_date')).values()
-
     rows = json.dumps(list(active_chws), default=date_handler)
-
-    '''print "active_chw"
-
-    data = serializers.serialize('python', data)
-    columns = [d['fields'] for d in data]
-    data = json.dumps(columns, default=date_handler)
-    data = json.loads(data)
-
-    for r in data:
-        sub_coline = SousColline.objects.get(id = r["sub_colline"])
-        r["sub_colline_name"] = sub_coline.name
-        r["colline_name"] = sub_coline.colline.name
-        r["commune_name"] = sub_coline.colline.commune.name
-        r["province_name"] = sub_coline.colline.commune.province.name
-
-        cds = CDS.objects.get(id = r["cds"])
-        r["cds_name"] = cds.name
-        r["district_name"] = cds.district.name
-
-        r["last_seen"] = ""
-        
-        chw_pn = unicodedata.normalize('NFKD', r["phone_number"]).encode('ascii','ignore')
-        concerned_chw_set = CHW.objects.filter(phone_number = chw_pn)
-        if(len(concerned_chw_set) > 0):
-            concerned_chw = concerned_chw_set[0]
-            report_set = Report.objects.filter(chw = concerned_chw)
-            if(len(report_set) > 0):
-                last_report = Report.objects.filter(chw = concerned_chw).order_by('-id')[0]
-                last_seen = last_report.reporting_date
-                last_seen = last_seen.strftime('%Y/%m/%d')
-                r["last_seen"] = last_seen '''
 
     return render(request, 'active_chws.html', {'rows':rows})
 
 
 
 def inactive_chw(request):
-    data = CHW.objects.filter(is_active = False, is_deleted=False)
 
-    data = serializers.serialize('python', data)
-    columns = [d['fields'] for d in data]
-    data = json.dumps(columns, default=date_handler)
-    data = json.loads(data)
+    active_chws = CHW.objects.filter(is_active = False, is_deleted=False).annotate(sub_colline_name = F('sub_colline__name')).annotate(colline_name = F('sub_colline__colline__name')).annotate(commune_name = F('sub_colline__colline__commune__name')).annotate(province_name = F('sub_colline__colline__commune__province__name')).annotate(cds_name = F('cds__name')).annotate(district_name = F('cds__district__name')).annotate(last_seen = Max('report__reporting_date')).values()
+    rows = json.dumps(list(active_chws), default=date_handler)
 
-    for r in data:
-        sub_coline = SousColline.objects.get(id = r["sub_colline"])
-        r["sub_colline_name"] = sub_coline.name
-        r["colline_name"] = sub_coline.colline.name
-        r["commune_name"] = sub_coline.colline.commune.name
-        r["province_name"] = sub_coline.colline.commune.province.name
+    return render(request, 'inactive_chws.html', {'rows':rows})
 
-        cds = CDS.objects.get(id = r["cds"])
-        r["cds_name"] = cds.name
-        r["district_name"] = cds.district.name
-
-
-        r["last_seen"] = ""
-        
-        chw_pn = unicodedata.normalize('NFKD', r["phone_number"]).encode('ascii','ignore')
-        concerned_chw_set = CHW.objects.filter(phone_number = chw_pn)
-        if(len(concerned_chw_set) > 0):
-            concerned_chw = concerned_chw_set[0]
-            report_set = Report.objects.filter(chw = concerned_chw)
-            if(len(report_set) > 0):
-                last_report = Report.objects.filter(chw = concerned_chw).order_by('-id')[0]
-                last_seen = last_report.reporting_date
-                last_seen = last_seen.strftime('%Y/%m/%d')
-                r["last_seen"] = last_seen
-
-    return render(request, 'inactive_chws.html', {'data':data})
 
 def mother_message_history(request, mother_id):
 
