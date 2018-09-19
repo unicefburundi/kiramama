@@ -42,57 +42,36 @@
 								'<tbody>' +
 									
 								'</tbody>');
-								var registered_pregnancies = "{{rows|escapejs}}";
 
-								var province;
-								var district;
-								var cds;
-								var colline;
-								var sous_colline;
+								var reminders = "{{rows|escapejs}}";
+								reminders = JSON.parse(reminders);
+
+								var send_date, msg_to_send, chw_phone, status;
 
 
-								reminders = registered_pregnancies.split("},");
+								for(i = 0; i<reminders.length; i++){
 
-								console.log(reminders);
-
-								for(i=0; i<reminders.length; i++){
-									one_row = reminders[i];
-
-									
-
-									province = one_row.split(",")[0].split(":")[1].replace("u","");
-									district = one_row.split(",")[4].split(":")[1].replace("u","");
-									cds = one_row.split(",")[1].split(":")[1].replace("u","").replace("}]","");
-									colline = one_row.split(",")[2].split(":")[1].replace("u","");
-									sous_colline = one_row.split(",")[6].split(":")[1].replace("u","");
-
-									var col0 = one_row.split(",")[5].split(":")[1];
-									col0 = col0.replace("u","").replace("}]","").replace("\"","").substring(0, col0.length - 4);
-									var col1 = one_row.split(",")[8].split(":")[1];
-									col1 = col1.replace("u","").replace(/"/g,"");
-
-									var col2 = one_row.split(",")[9].split(":")[1];
-									col2 = col2.replace("u","").replace(/"/g,"");
-
-									var col3 = one_row.split(",")[7].split(":")[1];
-									col3 = col3.replace("u","").replace("\"","").trim();
-									temp = "false";
-									if(col3 == "false")
+									send_date = reminders[i]["date_time_for_sending"].substring(0, 10);
+									msg_to_send = reminders[i]["message_to_send"];
+									chw_phone = reminders[i]["chw_phone"];
+									if(reminders[i]["is_sent"] == "false")
 										{
-											col3 = "No";
+										status = "No";
 										}
 									else{
-
-										col3 = "Yes";
+										status = "Yes";
 									}
 
 
 									$('#tblregipreg').find('tbody').append('<tr style="cursor:pointer;"></tr>');
-									$('#tblregipreg tr:last').append('<td>' + col0 +'</td>');
-									$('#tblregipreg tr:last').append('<td>' + col1 +'</td>');
-									$('#tblregipreg tr:last').append('<td>' + col2 +'</td>');
-									$('#tblregipreg tr:last').append('<td>' + col3 +'</td>');
+									$('#tblregipreg tr:last').append('<td>' + send_date +'</td>');
+									$('#tblregipreg tr:last').append('<td>' + msg_to_send +'</td>');
+									$('#tblregipreg tr:last').append('<td>' + chw_phone +'</td>');
+									$('#tblregipreg tr:last').append('<td>' + status +'</td>');
+
 								}
+
+				
 
 								$('#tblregipreg').DataTable({
 										dom: "<'row'<'col-sm-3'l><'col-sm-4'i><'col-sm-5'f>>" +

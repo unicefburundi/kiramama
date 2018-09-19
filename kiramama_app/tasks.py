@@ -25,10 +25,10 @@ def send_sms_through_rapidpro(args):
     print(response)
 
 
-@periodic_task(run_every=(crontab(minute=50, hour='11')), name="send_scheduled_messages", ignore_result=True)
+@periodic_task(run_every=(crontab(minute=30, hour='7')), name="send_scheduled_messages", ignore_result=True)
 def send_scheduled_messages():
     today = datetime.today().date()
-    today_7 = datetime.today().date() - timedelta(2)
+    today_7 = datetime.today().date() - timedelta(4)
 
     ready_to_send_mother_messages = NotificationsMother.objects.filter(date_time_for_sending__gte = today_7, date_time_for_sending__lte = today, is_sent=False)
     args = {}
