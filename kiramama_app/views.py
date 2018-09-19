@@ -234,7 +234,7 @@ def getcdsdata(request):
         level = json_data['level']
         code = json_data['code']
         chw_data = None
-
+        
         if (level and code):
             cdslist = None
             if (level == "cds"):
@@ -255,6 +255,8 @@ def getcdsdata(request):
             chw_data = CHW.objects.filter(is_deleted = False).annotate(sub_colline_name = F('sub_colline__name')).annotate(colline_name = F('sub_colline__colline__name')).annotate(commune_name = F('sub_colline__colline__commune__name')).annotate(province_name = F('sub_colline__colline__commune__province__name')).annotate(cds_name = F('cds__name')).annotate(district_name = F('cds__district__name')).annotate(last_seen = Max('report__reporting_date')).values()
 
         response_data = json.dumps(list(chw_data), default=date_handler)
+
+        print ""
 
         return HttpResponse(response_data, content_type="application/json")
     else:
@@ -705,13 +707,12 @@ def registered_risk_details(request, location_name):
     if(location_level == "CDS"):
         concerned_cdss = CDS.objects.filter(name__iexact = location_name)
 
-    concerned_risk_reports = ReportRIS.objects.filter(report__cds__in = concerned_cdss, report__reporting_date__range=[start_date, end_date]).annotate(sous_coline = F('report__sub_hill__name')).annotate(colline = F('report__sub_hill__colline__name')).annotate(commune = F('report__sub_hill__colline__commune__name')).annotate(cds_name = F('report__cds__name')).annotate(district = F('report__cds__district__name')).annotate(province = F('report__sub_hill__colline__commune__province__name')).annotate(reporter_phone_number = F('report__chw__phone_number')).annotate(mother_id = F('report__mother__id_mother')).annotate(mother_phone_number = F('report__mother__phone_number')).annotate(report_text = F('report__text'))
+    concerned_risk_reports = ReportRIS.objects.filter(report__cds__in = concerned_cdss, report__reporting_date__range=[start_date, end_date]).annotate(sous_coline = F('report__sub_hill__name')).annotate(colline = F('report__sub_hill__colline__name')).annotate(commune = F('report__sub_hill__colline__commune__name')).annotate(cds_name = F('report__cds__name')).annotate(district = F('report__cds__district__name')).annotate(province = F('report__sub_hill__colline__commune__province__name')).annotate(reporter_phone_number = F('report__chw__phone_number')).annotate(mother_id = F('report__mother__id_mother')).annotate(mother_phone_number = F('report__mother__phone_number')).annotate(report_text = F('report__text')).annotate(symptom_name = F('ris_report_symptom__symptom__symtom_code_meaning')).values()
 
-    rows = concerned_risk_reports.values()
-    rows = json.dumps(list(rows), default=date_handler)
-    rows = json.loads(rows)
-    rows = json.dumps(rows, default=date_handler)
+    rows = json.dumps(list(concerned_risk_reports), default=date_handler)
 
+    print "... >>> ..."
+    print type(rows)
 
     return render(request, 'registered_risks_details.html', {'rows':rows})
 
