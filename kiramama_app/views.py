@@ -256,8 +256,6 @@ def getcdsdata(request):
 
         response_data = json.dumps(list(chw_data), default=date_handler)
 
-        print ""
-
         return HttpResponse(response_data, content_type="application/json")
     else:
         response_data = _("Method must be a POST")
@@ -711,9 +709,6 @@ def registered_risk_details(request, location_name):
 
     rows = json.dumps(list(concerned_risk_reports), default=date_handler)
 
-    print "... >>> ..."
-    print type(rows)
-
     return render(request, 'registered_risks_details.html', {'rows':rows})
 
 
@@ -786,11 +781,9 @@ def red_details(request, location_name):
         concerned_cdss = CDS.objects.filter(name__iexact = location_name)
 
     
-    concerned_red_alerts_reports = RIS_Report_Symptom.objects.filter(ris_report__report__cds__in = concerned_cdss, symptom__is_red_symptom=True).filter(ris_report__report__reporting_date__range=[start_date, end_date]).annotate(cds_id = F('ris_report__report__cds__id')).annotate(cds_name = F('ris_report__report__cds__name')).annotate(district_id = F('ris_report__report__cds__district__id')).annotate(district_name = F('ris_report__report__cds__district__name')).annotate(bps_id = F('ris_report__report__cds__district__bps__id')).annotate(bps_name = F('ris_report__report__cds__district__bps__name')).annotate(reporting_date = F('ris_report__report__reporting_date')).annotate(red_alert = F('symptom__is_red_symptom')).annotate(reporter_phone_number = F('ris_report__report__chw__phone_number')).annotate(mother_id = F('ris_report__report__mother__id_mother')).annotate(mother_phone_number = F('ris_report__report__mother__phone_number')).annotate(report_text = F('ris_report__report__text')).annotate(symptom_name = F('symptom__symtom_code_meaning')).annotate(sous_coline = F('ris_report__report__sub_hill__name')).annotate(colline = F('ris_report__report__sub_hill__colline__name')).annotate(commune = F('ris_report__report__sub_hill__colline__commune__name'))
-    rows = concerned_red_alerts_reports.values()
-    rows = json.dumps(list(rows), default=date_handler)
-    rows = json.loads(rows)
-    rows = json.dumps(rows, default=date_handler)
+    concerned_red_alerts_reports = RIS_Report_Symptom.objects.filter(ris_report__report__cds__in = concerned_cdss, symptom__is_red_symptom=True).filter(ris_report__report__reporting_date__range=[start_date, end_date]).annotate(cds_id = F('ris_report__report__cds__id')).annotate(cds_name = F('ris_report__report__cds__name')).annotate(district_id = F('ris_report__report__cds__district__id')).annotate(district_name = F('ris_report__report__cds__district__name')).annotate(bps_id = F('ris_report__report__cds__district__bps__id')).annotate(bps_name = F('ris_report__report__cds__district__bps__name')).annotate(reporting_date = F('ris_report__report__reporting_date')).annotate(red_alert = F('symptom__is_red_symptom')).annotate(reporter_phone_number = F('ris_report__report__chw__phone_number')).annotate(mother_id = F('ris_report__report__mother__id_mother')).annotate(mother_phone_number = F('ris_report__report__mother__phone_number')).annotate(report_text = F('ris_report__report__text')).annotate(symptom_name = F('symptom__symtom_code_meaning')).annotate(sous_coline = F('ris_report__report__sub_hill__name')).annotate(colline = F('ris_report__report__sub_hill__colline__name')).annotate(commune = F('ris_report__report__sub_hill__colline__commune__name')).values()
+    
+    rows = json.dumps(list(concerned_red_alerts_reports), default=date_handler)
 
     return render(request, 'red_alerts_details.html', {'rows':rows})
 
