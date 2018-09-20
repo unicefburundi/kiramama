@@ -54,7 +54,8 @@
 									send_date = reminders[i]["date_time_for_sending"].substring(0, 10);
 									msg_to_send = reminders[i]["message_to_send"];
 									chw_phone = reminders[i]["chw_phone"];
-									if(reminders[i]["is_sent"] == "false")
+
+									if(reminders[i]["is_sent"] === false)
 										{
 										status = "No";
 										}
