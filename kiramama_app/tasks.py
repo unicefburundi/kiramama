@@ -25,7 +25,7 @@ def send_sms_through_rapidpro(args):
     print(response)
 
 
-@periodic_task(run_every=(crontab(minute=20, hour='9')), name="send_scheduled_messages", ignore_result=True)
+@periodic_task(run_every=(crontab(minute=20, hour='8')), name="send_scheduled_messages", ignore_result=True)
 def send_scheduled_messages():
     today = datetime.today().date()
     today_7 = datetime.today().date() - timedelta(4)

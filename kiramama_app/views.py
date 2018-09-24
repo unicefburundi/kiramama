@@ -741,6 +741,7 @@ def reminder_details(request, location_name):
     end_date = str(request.GET.get('end_date', '')).strip()
     start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d')
     end_date = datetime.datetime.strptime(end_date, '%Y-%m-%d')
+    end_date_2 = end_date + datetime.timedelta(1)
 
     if(location_level == "PROVINCE"):
         concerned_cdss = CDS.objects.filter(district__bps__name__iexact = location_name)
@@ -749,7 +750,7 @@ def reminder_details(request, location_name):
     if(location_level == "CDS"):
         concerned_cdss = CDS.objects.filter(name__iexact = location_name)
 
-    concerned_reminders = NotificationsCHW.objects.filter(chw__cds__in = concerned_cdss).filter(date_time_for_sending__range=[start_date, end_date]).annotate(cds_id = F('chw__cds__id')).annotate(cds_name = F('chw__cds__name')).annotate(district_id = F('chw__cds__district__id')).annotate(district_name = F('chw__cds__district__name')).annotate(bps_id = F('chw__cds__district__bps__id')).annotate(bps_name = F('chw__cds__district__bps__name')).annotate(chw_phone = F('chw__phone_number')).values()
+    concerned_reminders = NotificationsCHW.objects.filter(chw__cds__in = concerned_cdss).filter(date_time_for_sending__range=[start_date, end_date_2]).annotate(cds_id = F('chw__cds__id')).annotate(cds_name = F('chw__cds__name')).annotate(district_id = F('chw__cds__district__id')).annotate(district_name = F('chw__cds__district__name')).annotate(bps_id = F('chw__cds__district__bps__id')).annotate(bps_name = F('chw__cds__district__bps__name')).annotate(chw_phone = F('chw__phone_number')).values()
     
     rows = json.dumps(list(concerned_reminders), default=date_handler)
 
