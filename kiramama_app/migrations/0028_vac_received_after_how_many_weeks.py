@@ -7,14 +7,12 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('kiramama_app', '0027_auto_20180513_1011'),
-    ]
+    dependencies = [("kiramama_app", "0027_auto_20180513_1011")]
 
     operations = [
         migrations.AddField(
-            model_name='vac',
-            name='received_after_how_many_weeks',
+            model_name="vac",
+            name="received_after_how_many_weeks",
             field=models.CharField(max_length=10, null=True),
-        ),
+        )
     ]

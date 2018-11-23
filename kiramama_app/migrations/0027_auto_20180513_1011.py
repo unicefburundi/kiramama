@@ -8,13 +8,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('kiramama_app', '0026_reportris_mother_arrived_at_health_facility'),
+        ("kiramama_app", "0026_reportris_mother_arrived_at_health_facility")
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='reportcon',
-            name='next_appointment_date',
+            model_name="reportcon",
+            name="next_appointment_date",
             field=models.DateField(null=True),
-        ),
+        )
     ]

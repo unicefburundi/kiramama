@@ -7,15 +7,13 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('kiramama_app', '0016_chw_is_active'),
-    ]
+    dependencies = [("kiramama_app", "0016_chw_is_active")]
 
     operations = [
         migrations.AddField(
-            model_name='settings',
-            name='setting_code',
-            field=models.CharField(default='CHWAI', max_length=20),
+            model_name="settings",
+            name="setting_code",
+            field=models.CharField(default="CHWAI", max_length=20),
             preserve_default=False,
-        ),
+        )
     ]

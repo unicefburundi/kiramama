@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
-#from __future__ import unicode_literals
+# from __future__ import unicode_literals
 
 from django.db import models
 
+
 class Province(models.Model):
-    '''In this model, we will store burundi provinces'''
-    name = models.CharField(('name'),unique=True, max_length=20)
+    """In this model, we will store burundi provinces"""
+
+    name = models.CharField(("name"), unique=True, max_length=20)
     code = models.IntegerField(unique=True, blank=True, null=True)
 
     def __unicode__(self):
@@ -16,12 +18,14 @@ class Province(models.Model):
         return self.id
 
     class Meta:
-        ordering = ('name',)
+        ordering = ("name",)
+
 
 class Commune(models.Model):
-    '''In this model, we will store burundi communes'''
+    """In this model, we will store burundi communes"""
+
     province = models.ForeignKey(Province)
-    name = models.CharField(('name'),unique=True, max_length=20)
+    name = models.CharField(("name"), unique=True, max_length=20)
     code = models.IntegerField(unique=True, blank=True, null=True)
 
     def __unicode__(self):
@@ -32,12 +36,14 @@ class Commune(models.Model):
         return self.id
 
     class Meta:
-        ordering = ('name',)
+        ordering = ("name",)
+
 
 class Colline(models.Model):
-    '''In this model, we will store burundi colline'''
+    """In this model, we will store burundi colline"""
+
     commune = models.ForeignKey(Commune)
-    name = models.CharField(('name'), max_length=30)
+    name = models.CharField(("name"), max_length=30)
     code = models.IntegerField(unique=True, blank=True, null=True)
 
     def __unicode__(self):
@@ -48,12 +54,14 @@ class Colline(models.Model):
         return self.id
 
     class Meta:
-        ordering = ('name',)
+        ordering = ("name",)
+
 
 class SousColline(models.Model):
-    '''In this model, we will store burundi sub hills'''
+    """In this model, we will store burundi sub hills"""
+
     colline = models.ForeignKey(Colline)
-    name = models.CharField(('name'), max_length=30)
+    name = models.CharField(("name"), max_length=30)
     code = models.IntegerField(unique=True, blank=True, null=True)
 
     def __unicode__(self):
@@ -64,4 +72,4 @@ class SousColline(models.Model):
         return self.id
 
     class Meta:
-        ordering = ('name',)
+        ordering = ("name",)

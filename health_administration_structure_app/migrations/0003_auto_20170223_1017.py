@@ -7,14 +7,26 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('health_administration_structure_app', '0002_auto_20170222_1047'),
-    ]
+    dependencies = [("health_administration_structure_app", "0002_auto_20170222_1047")]
 
     operations = [
         migrations.AlterField(
-            model_name='cds',
-            name='status',
-            field=models.CharField(blank=True, choices=[('Pub', 'Public'), ('Con', 'Confessionnel'), ('Priv', 'Prive'), ('Ass', 'Associatif'), ('HPub', 'HPublic'), ('HCon', 'HConfessionnel'), ('HPrv', 'HPrive')], help_text='Either Public, Conf, Ass, Prive  or Hospital status.', max_length=15, null=True),
-        ),
+            model_name="cds",
+            name="status",
+            field=models.CharField(
+                blank=True,
+                choices=[
+                    ("Pub", "Public"),
+                    ("Con", "Confessionnel"),
+                    ("Priv", "Prive"),
+                    ("Ass", "Associatif"),
+                    ("HPub", "HPublic"),
+                    ("HCon", "HConfessionnel"),
+                    ("HPrv", "HPrive"),
+                ],
+                help_text="Either Public, Conf, Ass, Prive  or Hospital status.",
+                max_length=15,
+                null=True,
+            ),
+        )
     ]

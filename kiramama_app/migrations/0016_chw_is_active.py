@@ -7,14 +7,10 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('kiramama_app', '0015_settings'),
-    ]
+    dependencies = [("kiramama_app", "0015_settings")]
 
     operations = [
         migrations.AddField(
-            model_name='chw',
-            name='is_active',
-            field=models.BooleanField(default=True),
-        ),
+            model_name="chw", name="is_active", field=models.BooleanField(default=True)
+        )
     ]

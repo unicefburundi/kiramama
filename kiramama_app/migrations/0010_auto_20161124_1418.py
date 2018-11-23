@@ -7,21 +7,19 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('kiramama_app', '0009_auto_20161106_2020'),
-    ]
+    dependencies = [("kiramama_app", "0009_auto_20161106_2020")]
 
     operations = [
         migrations.AddField(
-            model_name='notificationschw',
-            name='message_to_send',
-            field=models.CharField(default='!', max_length=160),
+            model_name="notificationschw",
+            name="message_to_send",
+            field=models.CharField(default="!", max_length=160),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='notificationsmother',
-            name='message_to_send',
-            field=models.CharField(default='1', max_length=160),
+            model_name="notificationsmother",
+            name="message_to_send",
+            field=models.CharField(default="1", max_length=160),
             preserve_default=False,
         ),
     ]

@@ -9,27 +9,55 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('health_administration_structure_app', '0006_merge'),
-        ('kiramama_app', '0021_symptom_is_red_symptom'),
+        ("health_administration_structure_app", "0006_merge"),
+        ("kiramama_app", "0021_symptom_is_red_symptom"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='AllSupervisor',
+            name="AllSupervisor",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('first_name', models.CharField(max_length=50)),
-                ('last_name', models.CharField(max_length=50)),
-                ('phone_number', models.CharField(max_length=15)),
-                ('is_national_supervisor', models.BooleanField(default=False)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("first_name", models.CharField(max_length=50)),
+                ("last_name", models.CharField(max_length=50)),
+                ("phone_number", models.CharField(max_length=15)),
+                ("is_national_supervisor", models.BooleanField(default=False)),
             ],
         ),
         migrations.CreateModel(
-            name='DistrictSupervisor',
+            name="DistrictSupervisor",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('district', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='health_administration_structure_app.District')),
-                ('supervisor', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='kiramama_app.AllSupervisor')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "district",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="health_administration_structure_app.District",
+                    ),
+                ),
+                (
+                    "supervisor",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="kiramama_app.AllSupervisor",
+                    ),
+                ),
             ],
         ),
     ]

@@ -8,18 +8,31 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('kiramama_app', '0014_childnumber_child_number'),
-    ]
+    dependencies = [("kiramama_app", "0014_childnumber_child_number")]
 
     operations = [
         migrations.CreateModel(
-            name='Settings',
+            name="Settings",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('setting_name', models.CharField(max_length=200)),
-                ('setting_value', models.CharField(max_length=100)),
-                ('time_measuring_unit', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='kiramama_app.TimeMeasuringUnit')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("setting_name", models.CharField(max_length=200)),
+                ("setting_value", models.CharField(max_length=100)),
+                (
+                    "time_measuring_unit",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="kiramama_app.TimeMeasuringUnit",
+                    ),
+                ),
             ],
-        ),
+        )
     ]

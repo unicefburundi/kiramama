@@ -4,4 +4,4 @@ from django.apps import AppConfig
 
 
 class PublicAdministrationConfig(AppConfig):
-    name = 'public_administration'
+    name = "public_administration"

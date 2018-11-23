@@ -8,14 +8,15 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('kiramama_app', '0002_temporary'),
-    ]
+    dependencies = [("kiramama_app", "0002_temporary")]
 
     operations = [
         migrations.AlterField(
-            model_name='reportnsc',
-            name='breast_feading',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='kiramama_app.BreastFeed'),
-        ),
+            model_name="reportnsc",
+            name="breast_feading",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to="kiramama_app.BreastFeed",
+            ),
+        )
     ]

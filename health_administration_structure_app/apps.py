@@ -4,4 +4,4 @@ from django.apps import AppConfig
 
 
 class HealthAdministrationConfig(AppConfig):
-    name = 'health_administration'
+    name = "health_administration"

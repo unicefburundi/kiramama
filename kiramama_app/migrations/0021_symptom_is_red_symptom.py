@@ -7,14 +7,12 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('kiramama_app', '0020_auto_20170724_1241'),
-    ]
+    dependencies = [("kiramama_app", "0020_auto_20170724_1241")]
 
     operations = [
         migrations.AddField(
-            model_name='symptom',
-            name='is_red_symptom',
+            model_name="symptom",
+            name="is_red_symptom",
             field=models.BooleanField(default=False),
-        ),
+        )
     ]

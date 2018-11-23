@@ -7,27 +7,25 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('kiramama_app', '0007_auto_20161103_1525'),
-    ]
+    dependencies = [("kiramama_app", "0007_auto_20161103_1525")]
 
     operations = [
         migrations.AddField(
-            model_name='notificationsforchw',
-            name='word_to_replace_by_the_date_in_the_message_to_send',
-            field=models.CharField(default='-', max_length=50),
+            model_name="notificationsforchw",
+            name="word_to_replace_by_the_date_in_the_message_to_send",
+            field=models.CharField(default="-", max_length=50),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='notificationsforchw',
-            name='word_to_replace_by_the_mother_id_in_the_message_to_send',
-            field=models.CharField(default='1', max_length=50),
+            model_name="notificationsforchw",
+            name="word_to_replace_by_the_mother_id_in_the_message_to_send",
+            field=models.CharField(default="1", max_length=50),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='notificationsformother',
-            name='word_to_replace_by_the_date_in_the_message_to_send',
-            field=models.CharField(default='-', max_length=50),
+            model_name="notificationsformother",
+            name="word_to_replace_by_the_date_in_the_message_to_send",
+            field=models.CharField(default="-", max_length=50),
             preserve_default=False,
         ),
     ]

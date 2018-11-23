@@ -7,23 +7,18 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('kiramama_app', '0005_auto_20160906_1326'),
-    ]
+    dependencies = [("kiramama_app", "0005_auto_20160906_1326")]
 
     operations = [
-        migrations.RenameModel(
-            old_name='HealthState',
-            new_name='HealthStatus',
+        migrations.RenameModel(old_name="HealthState", new_name="HealthStatus"),
+        migrations.RenameField(
+            model_name="healthstatus",
+            old_name="health_state_code_meaning",
+            new_name="health_status_code_meaning",
         ),
         migrations.RenameField(
-            model_name='healthstatus',
-            old_name='health_state_code_meaning',
-            new_name='health_status_code_meaning',
-        ),
-        migrations.RenameField(
-            model_name='healthstatus',
-            old_name='health_state_desigantion',
-            new_name='health_status_desigantion',
+            model_name="healthstatus",
+            old_name="health_state_desigantion",
+            new_name="health_status_desigantion",
         ),
     ]
