@@ -8,15 +8,33 @@ from import_export.admin import ExportMixin
 class ReportNSCResource(resources.ModelResource):
     class Meta:
         model = ReportNSC
-        fields = ('report', 'child_number', 'birth_date', 'birth_location', 'gender', 'weight', 'next_appointment_date', 'breast_feading', )
+        fields = (
+            "report",
+            "child_number",
+            "birth_date",
+            "birth_location",
+            "gender",
+            "weight",
+            "next_appointment_date",
+            "breast_feading",
+        )
 
 
 class ReportNSCAdmin(ExportMixin, admin.ModelAdmin):
     resource_class = ReportNSCResource
-    search_fields = ('child_number', 'birth_location', 'breast_feading', )
-    list_display = ('id', 'birth_date', 'birth_location', 'child_number', 'mother', 'sex', 'weight', 'breast_feading', )
-    date_hierarchy = 'birth_date'
-    list_filter = ('gender', 'birth_location', 'child_number', 'breast_feading')
+    search_fields = ("child_number", "birth_location", "breast_feading")
+    list_display = (
+        "id",
+        "birth_date",
+        "birth_location",
+        "child_number",
+        "mother",
+        "sex",
+        "weight",
+        "breast_feading",
+    )
+    date_hierarchy = "birth_date"
+    list_filter = ("gender", "birth_location", "child_number", "breast_feading")
 
     def mother(self, obj):
         return obj.report.mother.id_mother
@@ -26,8 +44,17 @@ class ReportNSCAdmin(ExportMixin, admin.ModelAdmin):
 
 
 class CHWAdmin(admin.ModelAdmin):
-    actions = ['download_csv']
-    list_display = ['phone_number', 'supervisor_phone_number', 'get_cds_name', 'get_cds_code', 'get_sub_colline', 'get_colline', 'get_district_name', 'get_bps_name']
+    actions = ["download_csv"]
+    list_display = [
+        "phone_number",
+        "supervisor_phone_number",
+        "get_cds_name",
+        "get_cds_code",
+        "get_sub_colline",
+        "get_colline",
+        "get_district_name",
+        "get_bps_name",
+    ]
 
     def get_cds_name(self, obj):
         return obj.cds.name
@@ -54,14 +81,14 @@ class CHWAdmin(admin.ModelAdmin):
     get_district_name.short_description = "District"
     get_bps_name.short_description = "BPS"
 
-    get_cds_name.admin_order_field = 'cds__name'
-    get_cds_code.admin_order_field = 'cds__code'
-    get_sub_colline.admin_order_field = 'sub_colline__name'
-    get_colline.admin_order_field = 'sub_colline__colline__name'
-    get_district_name.admin_order_field = 'cds__district'
-    get_bps_name.admin_order_field = 'cds__district__bps'
+    get_cds_name.admin_order_field = "cds__name"
+    get_cds_code.admin_order_field = "cds__code"
+    get_sub_colline.admin_order_field = "sub_colline__name"
+    get_colline.admin_order_field = "sub_colline__colline__name"
+    get_district_name.admin_order_field = "cds__district"
+    get_bps_name.admin_order_field = "cds__district__bps"
 
-    list_filter = ("cds__district", "cds__district__bps",)
+    list_filter = ("cds__district", "cds__district__bps")
 
     def download_csv(self, request, queryset):
         import csv
@@ -70,21 +97,45 @@ class CHWAdmin(admin.ModelAdmin):
 
         f = StringIO.StringIO()
         writer = csv.writer(f)
-        writer.writerow(["CHW Phone Number", "Supervisor Phone Number", "CDS Name", "CDS Code", "Sub Colline", "Colline", "District", "BPS"])
+        writer.writerow(
+            [
+                "CHW Phone Number",
+                "Supervisor Phone Number",
+                "CDS Name",
+                "CDS Code",
+                "Sub Colline",
+                "Colline",
+                "District",
+                "BPS",
+            ]
+        )
 
         for s in queryset:
             print type(s.cds.code)
-            writer.writerow([s.phone_number, s.supervisor_phone_number, s.cds.name.encode('utf-8'), s.cds.code, s.sub_colline, s.sub_colline.colline, s.cds.district, s.cds.district.bps])
+            writer.writerow(
+                [
+                    s.phone_number,
+                    s.supervisor_phone_number,
+                    s.cds.name.encode("utf-8"),
+                    s.cds.code,
+                    s.sub_colline,
+                    s.sub_colline.colline,
+                    s.cds.district,
+                    s.cds.district.bps,
+                ]
+            )
 
         f.seek(0)
 
-        response = HttpResponse(f, content_type='text/csv')
-        response['Content-Disposition'] = 'attachment; filename=chws.csv'
+        response = HttpResponse(f, content_type="text/csv")
+        response["Content-Disposition"] = "attachment; filename=chws.csv"
         return response
+
     download_csv.short_description = "Download"
 
-admin.site.register(CHW , CHWAdmin)
-#admin.site.register(CHW)
+
+admin.site.register(CHW, CHWAdmin)
+# admin.site.register(CHW)
 
 admin.site.register(Mother)
 admin.site.register(Report)
