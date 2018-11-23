@@ -1,11 +1,52 @@
 # -*- coding: utf-8 -*-
 from django.contrib import admin
 from public_administration_structure_app.models import *
+from import_export import resources
+from import_export.admin import ImportExportModelAdmin
 
-admin.site.register(Province)
-admin.site.register(Commune)
-admin.site.register(Colline)
-# admin.site.register(SousColline)
+
+class ProvinceResource(resources.ModelResource):
+    class Meta:
+        model = Province
+        fields = ("id", "name", "code")
+
+
+@admin.register(Province)
+class ProvinceAdmin(ImportExportModelAdmin):
+    resource_class = ProvinceResource
+    search_fields = ("name", "code")
+    list_display = ("name", "code")
+
+
+class CommuneResource(resources.ModelResource):
+    class Meta:
+        model = Commune
+        fields = ("id", "name", "code", "province__name", "province")
+
+
+@admin.register(Commune)
+class CommuneAdmin(ImportExportModelAdmin):
+    resource_class = CommuneResource
+    search_fields = ("name", "code")
+    list_display = ("name", "code", "province")
+    list_filter = ("province__name",)
+
+
+class CollineResource(resources.ModelResource):
+    class Meta:
+        model = Colline
+        fields = ("id", "name", "code", "commune__name", "commune__province__name")
+
+
+@admin.register(Colline)
+class CollineAdmin(ImportExportModelAdmin):
+    resource_class = CollineResource
+    search_fields = ("name", "code")
+    list_display = ("name", "code", "commune", "province")
+    list_filter = ("commune__province__name",)
+
+    def province(self, obj):
+        return obj.commune.province.name
 
 
 class SousCollineAdmin(admin.ModelAdmin):
