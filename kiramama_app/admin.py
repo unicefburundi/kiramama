@@ -83,9 +83,46 @@ class CHWAdmin(admin.ModelAdmin):
         return response
     download_csv.short_description = "Download"
 
-admin.site.register(CHW , CHWAdmin)
-#admin.site.register(CHW)
 
+
+
+class ReportRISAdmin(admin.ModelAdmin):
+    actions = ['download_csv']
+    list_display = ['report', 'mother_arrived_at_health_facility']
+
+    def report(self, obj):
+        return obj.report
+
+    def mother_arrived_at_health_facility(self, obj):
+        return obj.mother_arrived_at_health_facility
+
+    report.short_description = "Report"
+    mother_arrived_at_health_facility.short_description = "Woman arrived at HF"
+
+    list_filter = ("mother_arrived_at_health_facility",)
+
+    def download_csv(self, request, queryset):
+        import csv
+        from django.http import HttpResponse
+        import StringIO
+
+        f = StringIO.StringIO()
+        writer = csv.writer(f)
+        writer.writerow(["Report", "Woman arrived at HF"])
+
+        for s in queryset:
+            print type(s.report)
+            writer.writerow([s.report, s.mother_arrived_at_health_facility])
+
+        f.seek(0)
+
+        response = HttpResponse(f, content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename=Risk_reports.csv'
+        return response
+    download_csv.short_description = "Download"
+
+
+admin.site.register(CHW , CHWAdmin)
 admin.site.register(Mother)
 admin.site.register(Report)
 admin.site.register(RiskLevel)
@@ -105,7 +142,7 @@ admin.site.register(ReportCPN)
 admin.site.register(ReportNSC, ReportNSCAdmin)
 admin.site.register(ReportCON)
 admin.site.register(ReportVAC)
-admin.site.register(ReportRIS)
+admin.site.register(ReportRIS, ReportRISAdmin)
 admin.site.register(ReportRISBebe)
 admin.site.register(ReportRER)
 admin.site.register(ReportDEC)
