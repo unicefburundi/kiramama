@@ -88,10 +88,13 @@ class CHWAdmin(admin.ModelAdmin):
 
 class ReportRISAdmin(admin.ModelAdmin):
     actions = ['download_csv']
-    list_display = ['report', 'mother_arrived_at_health_facility', 'get_cds_code', 'get_sub_colline', 'get_colline', 'get_district_name', 'get_bps_name']
+    list_display = ['report', 'get_report_date', 'mother_arrived_at_health_facility', 'get_cds_code', 'get_sub_colline', 'get_colline', 'get_district_name', 'get_bps_name']
 
     def report(self, obj):
         return obj.report
+
+    def get_report_date(self, obj):
+        return obj.report.reporting_date
 
     def mother_arrived_at_health_facility(self, obj):
         return obj.mother_arrived_at_health_facility
@@ -116,6 +119,7 @@ class ReportRISAdmin(admin.ModelAdmin):
 
 
     report.short_description = "Report"
+    get_report_date.short_description = "Reporting date"
     mother_arrived_at_health_facility.short_description = "Woman arrived at HF"
     #get_cds_name.short_description = "CDS name"
     get_cds_code.short_description = "CDS code"
@@ -133,11 +137,11 @@ class ReportRISAdmin(admin.ModelAdmin):
 
         f = StringIO.StringIO()
         writer = csv.writer(f)
-        writer.writerow(["Report", "Woman arrived at HF", "CDS Code", "Sub colline", "Colline", "District", "BPS"])
+        writer.writerow(["Report", "Reporting date", "Woman arrived at HF", "CDS Code", "Sub colline", "Colline", "District", "BPS"])
 
         for s in queryset:
             print type(s.report)
-            writer.writerow([s.report, s.mother_arrived_at_health_facility, s.report.cds.code, s.report.sub_hill.name, s.report.sub_hill.colline.name, s.report.cds.district.name, s.report.cds.district.bps.name])
+            writer.writerow([s.report, s.report.reporting_date, s.mother_arrived_at_health_facility, s.report.cds.code, s.report.sub_hill.name, s.report.sub_hill.colline.name, s.report.cds.district.name, s.report.cds.district.bps.name])
 
         f.seek(0)
 
