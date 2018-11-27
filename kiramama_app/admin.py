@@ -88,7 +88,7 @@ class CHWAdmin(admin.ModelAdmin):
 
 class ReportRISAdmin(admin.ModelAdmin):
     actions = ['download_csv']
-    list_display = ['report', 'mother_arrived_at_health_facility']
+    list_display = ['report', 'mother_arrived_at_health_facility', 'get_cds_code', 'get_sub_colline', 'get_colline', 'get_district_name', 'get_bps_name']
 
     def report(self, obj):
         return obj.report
@@ -96,10 +96,35 @@ class ReportRISAdmin(admin.ModelAdmin):
     def mother_arrived_at_health_facility(self, obj):
         return obj.mother_arrived_at_health_facility
 
+    '''def get_cds_name(self, obj):
+        return obj.report.cds.name'''
+
+    def get_cds_code(self, obj):
+        return obj.report.cds.code
+
+    def get_sub_colline(self, obj):
+        return obj.report.sub_hill.name
+
+    def get_colline(self, obj):
+        return obj.report.sub_hill.colline.name
+
+    def get_district_name(self, obj):
+        return obj.report.cds.district.name
+
+    def get_bps_name(self, obj):
+        return obj.report.cds.district.bps.name
+
+
     report.short_description = "Report"
     mother_arrived_at_health_facility.short_description = "Woman arrived at HF"
+    #get_cds_name.short_description = "CDS name"
+    get_cds_code.short_description = "CDS code"
+    get_sub_colline.short_description = "Sub colline"
+    get_colline.short_description = "Colline"
+    get_district_name.short_description = "District"
+    get_bps_name.short_description = "BPS"
 
-    list_filter = ("mother_arrived_at_health_facility",)
+    list_filter = ("mother_arrived_at_health_facility", "report__cds__district__bps","report__cds__district",)
 
     def download_csv(self, request, queryset):
         import csv
@@ -108,11 +133,11 @@ class ReportRISAdmin(admin.ModelAdmin):
 
         f = StringIO.StringIO()
         writer = csv.writer(f)
-        writer.writerow(["Report", "Woman arrived at HF"])
+        writer.writerow(["Report", "Woman arrived at HF", "CDS Code", "Sub colline", "Colline", "District", "BPS"])
 
         for s in queryset:
             print type(s.report)
-            writer.writerow([s.report, s.mother_arrived_at_health_facility])
+            writer.writerow([s.report, s.mother_arrived_at_health_facility, s.report.cds.code, s.report.sub_hill.name, s.report.sub_hill.colline.name, s.report.cds.district.name, s.report.cds.district.bps.name])
 
         f.seek(0)
 
