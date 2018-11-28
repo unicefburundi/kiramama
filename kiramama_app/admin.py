@@ -152,6 +152,76 @@ class ReportRISAdmin(admin.ModelAdmin):
 
 
 
+class ReportAdmin(admin.ModelAdmin):
+    actions = ['download_csv']
+    list_display = ['report_category', 'text', 'get_report_date', 'get_cds_code', 'get_sub_colline', 'get_colline', 'get_district_name', 'get_bps_name']
+
+    def report_category(self, obj):
+        return obj.category
+
+    def text(self, obj):
+        return obj.text
+
+    def get_report_date(self, obj):
+        return obj.reporting_date
+
+    '''def mother_arrived_at_health_facility(self, obj):
+        return obj.mother_arrived_at_health_facility'''
+
+    '''def get_cds_name(self, obj):
+        return obj.report.cds.name'''
+
+    def get_cds_code(self, obj):
+        return obj.cds.code
+
+    def get_sub_colline(self, obj):
+        return obj.sub_hill.name
+
+    def get_colline(self, obj):
+        return obj.sub_hill.colline.name
+
+    def get_district_name(self, obj):
+        return obj.cds.district.name
+
+    def get_bps_name(self, obj):
+        return obj.cds.district.bps.name
+
+
+    report_category.short_description = "Report category"
+    text.short_description = "Sent text"
+    get_report_date.short_description = "Reporting date"
+    #mother_arrived_at_health_facility.short_description = "Woman arrived at HF"
+    #get_cds_name.short_description = "CDS name"
+    get_cds_code.short_description = "CDS code"
+    get_sub_colline.short_description = "Sub colline"
+    get_colline.short_description = "Colline"
+    get_district_name.short_description = "District"
+    get_bps_name.short_description = "BPS"
+
+    list_filter = ("category","cds__district__bps","cds__district",)
+
+    def download_csv(self, request, queryset):
+        import csv
+        from django.http import HttpResponse
+        import StringIO
+
+        f = StringIO.StringIO()
+        writer = csv.writer(f)
+        writer.writerow(["Report category", "Sent text", "Reporting date", "CDS Code", "Sub colline", "Colline", "District", "BPS"])
+
+        for s in queryset:
+            print type(s.text)
+            writer.writerow([s.category, s.text, s.reporting_date, s.cds.code, s.sub_hill.name, s.sub_hill.colline.name, s.cds.district.name, s.cds.district.bps.name])
+
+        f.seek(0)
+
+        response = HttpResponse(f, content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename=Reports.csv'
+        return response
+    download_csv.short_description = "Download"
+
+
+
 class NotificationsCHWAdmin(admin.ModelAdmin):
     actions = ['download_csv']
     list_display = ['chw', 'get_message_to_send', 'get_date_for_sending', 'get_bps_name', 'get_district_name']
@@ -201,7 +271,7 @@ class NotificationsCHWAdmin(admin.ModelAdmin):
 
 admin.site.register(CHW , CHWAdmin)
 admin.site.register(Mother)
-admin.site.register(Report)
+admin.site.register(Report, ReportAdmin)
 admin.site.register(RiskLevel)
 admin.site.register(Lieu)
 admin.site.register(CPN)
