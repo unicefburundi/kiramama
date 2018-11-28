@@ -151,6 +151,54 @@ class ReportRISAdmin(admin.ModelAdmin):
     download_csv.short_description = "Download"
 
 
+
+class NotificationsCHWAdmin(admin.ModelAdmin):
+    actions = ['download_csv']
+    list_display = ['chw', 'get_message_to_send', 'get_date_for_sending', 'get_bps_name', 'get_district_name']
+
+    def chw(self, obj):
+        return obj.chw
+    def get_message_to_send(self, obj):
+        return obj.message_to_send
+    def get_date_for_sending(self, obj):
+        return obj.date_time_for_sending
+    def get_bps_name(self, obj):
+        return obj.chw.cds.district.bps.name
+    def get_district_name(self, obj):
+        return obj.chw.cds.district.name
+
+
+    chw.short_description = "CHW"
+    get_message_to_send.short_description = "Message"
+    get_date_for_sending.short_description = "Send date"
+    get_bps_name.short_description = "Province"
+    get_district_name.short_description = "District"
+
+    list_filter = ("chw__cds__district__bps","chw__cds__district",)
+
+    def download_csv(self, request, queryset):
+        import csv
+        from django.http import HttpResponse
+        import StringIO
+
+        f = StringIO.StringIO()
+        writer = csv.writer(f)
+        writer.writerow(["CHW", "Message", "Send date", "Province", "District"])
+
+        for s in queryset:
+            print type(s.chw)
+            writer.writerow([s.chw, s.message_to_send, s.date_time_for_sending, s.chw.cds.district.bps.name, s.chw.cds.district.name])
+
+        f.seek(0)
+
+        response = HttpResponse(f, content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename=Reminders.csv'
+        return response
+    download_csv.short_description = "Download"
+
+
+
+
 admin.site.register(CHW , CHWAdmin)
 admin.site.register(Mother)
 admin.site.register(Report)
@@ -186,7 +234,7 @@ admin.site.register(TimeMeasuringUnit)
 admin.site.register(NotificationsForMother)
 admin.site.register(NotificationsForCHW)
 admin.site.register(NotificationsMother)
-admin.site.register(NotificationsCHW)
+admin.site.register(NotificationsCHW, NotificationsCHWAdmin)
 admin.site.register(Settings)
 admin.site.register(AllSupervisor)
 admin.site.register(DistrictSupervisor)
