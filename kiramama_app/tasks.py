@@ -185,3 +185,46 @@ def inform_supersors_on_inactive_chw():
         send_sms_through_rapidpro(args)
     print("---Finish inform_supersors_on_inactive_chw---")
 
+
+
+#@periodic_task(run_every=(crontab(minute=30, hour='7')), name="tasks.cancel_reminders", ignore_result=True) 
+def cancel_reminders():
+    '''
+    This task is used to cancel no longer needed reminders
+    '''
+    today = datetime.today().date()
+
+    start_date = datetime.today().date() - timedelta(7)
+    end_date = datetime.today().date() + timedelta(300)
+
+    concerned_mothers_dec = Mother.objects.filter(report__category = "DEC")
+
+    if len(concerned_mothers_dec) > 0:
+        '''There is at least one death report.'''
+        for one_woman in concerned_mothers_dec:
+            #Let's delete notifications scheduled to be sent to this woman
+            notifications_to_woman = NotificationsMother.objects.filter(mother = one_woman, date_time_for_sending__gte = start_date, date_time_for_sending__lte = end_date, is_sent=False)
+            if len(notifications_to_woman) > 0:
+                #We have to delete all these notifications
+                for one_notification in notifications_to_woman:
+                    print "==== Before deleting ===="
+                    print one_notification.mother
+                    print one_notification.date_time_for_sending
+                    print one_notification.message_to_send
+                    one_notification.delete()
+                    print "==== After deleting ===="
+
+            #Let's delete notifications scheduled to be sent to a CHW
+            mother_id = one_woman.id_mother
+            mother_id = " "+mother_id+" "
+            notifications_to_chw = NotificationsCHW.objects.filter(message_to_send__contains = mother_id)
+            if len(notifications_to_chw) > 0:
+                #We have to delete all these notifications
+                for one_notification in notifications_to_chw:
+                    print "==== Before deleting ===="
+                    print mother_id
+                    print one_notification.date_time_for_sending
+                    print one_notification.message_to_send
+                    one_notification.delete()
+                    print "==== After deleting ===="
+
