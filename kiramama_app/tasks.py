@@ -187,7 +187,7 @@ def inform_supersors_on_inactive_chw():
 
 
 
-#@periodic_task(run_every=(crontab(minute=30, hour='7')), name="tasks.cancel_reminders", ignore_result=True) 
+@periodic_task(run_every=(crontab(minute=30, hour='7')), name="tasks.cancel_reminders", ignore_result=True) 
 def cancel_reminders():
     '''
     This task is used to cancel no longer needed reminders
