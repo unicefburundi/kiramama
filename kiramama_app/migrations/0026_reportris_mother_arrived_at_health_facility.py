@@ -7,14 +7,12 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('kiramama_app', '0025_chw_is_deleted'),
-    ]
+    dependencies = [("kiramama_app", "0025_chw_is_deleted")]
 
     operations = [
         migrations.AddField(
-            model_name='reportris',
-            name='mother_arrived_at_health_facility',
+            model_name="reportris",
+            name="mother_arrived_at_health_facility",
             field=models.BooleanField(default=False),
-        ),
+        )
     ]

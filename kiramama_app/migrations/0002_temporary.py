@@ -9,20 +9,40 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('health_administration_structure_app', '0001_initial'),
-        ('public_administration_structure_app', '0001_initial'),
-        ('kiramama_app', '0001_initial'),
+        ("health_administration_structure_app", "0001_initial"),
+        ("public_administration_structure_app", "0001_initial"),
+        ("kiramama_app", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Temporary',
+            name="Temporary",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('phone_number', models.CharField(max_length=20)),
-                ('supervisor_phone_number', models.CharField(max_length=20)),
-                ('facility', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='health_administration_structure_app.CDS')),
-                ('sub_hill', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='public_administration_structure_app.SousColline')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("phone_number", models.CharField(max_length=20)),
+                ("supervisor_phone_number", models.CharField(max_length=20)),
+                (
+                    "facility",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="health_administration_structure_app.CDS",
+                    ),
+                ),
+                (
+                    "sub_hill",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="public_administration_structure_app.SousColline",
+                    ),
+                ),
             ],
-        ),
+        )
     ]

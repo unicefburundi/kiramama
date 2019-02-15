@@ -6,7 +6,8 @@ from public_administration_structure_app.models import *
 
 
 class CHW(models.Model):
-    '''In this model, we will store community health workers'''
+    """In this model, we will store community health workers"""
+
     sub_colline = models.ForeignKey(SousColline)
     cds = models.ForeignKey(CDS)
     phone_number = models.CharField(max_length=20)
@@ -19,11 +20,12 @@ class CHW(models.Model):
         return self.phone_number
 
     class Meta:
-        ordering = ('phone_number',)
+        ordering = ("phone_number",)
 
 
 class Mother(models.Model):
-    ''' In this model, we will store mothers properties '''
+    """ In this model, we will store mothers properties """
+
     id_mother = models.CharField(unique=True, max_length=10)
     phone_number = models.CharField(max_length=20, blank=True)
     is_affected_somewhere = models.BooleanField(default=True)
@@ -33,7 +35,8 @@ class Mother(models.Model):
 
 
 class Report(models.Model):
-    ''' In this model, we will store all reports '''
+    """ In this model, we will store all reports """
+
     chw = models.ForeignKey(CHW)
     sub_hill = models.ForeignKey(SousColline)
     cds = models.ForeignKey(CDS)
@@ -46,11 +49,12 @@ class Report(models.Model):
         return self.text
 
     class Meta:
-        ordering = ('reporting_date',)
+        ordering = ("reporting_date",)
 
 
 class RiskLevel(models.Model):
-    ''' In this model will be stored risk levels '''
+    """ In this model will be stored risk levels """
+
     risk_designation = models.CharField(max_length=10)
     risk_level_meaning = models.CharField(max_length=50)
 
@@ -59,7 +63,8 @@ class RiskLevel(models.Model):
 
 
 class Lieu(models.Model):
-    ''' In this model will be stored categories of locations '''
+    """ In this model will be stored categories of locations """
+
     location_category_designation = models.CharField(max_length=10)
     location_category_description = models.CharField(max_length=50)
 
@@ -68,26 +73,33 @@ class Lieu(models.Model):
 
 
 class CPN(models.Model):
-    ''' `In this model will be stored CPN categories '''
+    """ `In this model will be stored CPN categories """
+
     cpn_number = models.IntegerField(unique=True)
     cpn_designation = models.CharField(max_length=10)
     cpn_description = models.CharField(max_length=50)
 
     def __unicode__(self):
-        return "{0} - {1} - {2}".format(self.cpn_number, self.cpn_designation, self.cpn_description)
+        return "{0} - {1} - {2}".format(
+            self.cpn_number, self.cpn_designation, self.cpn_description
+        )
 
 
 class BreastFeed(models.Model):
-    ''' In this model will be stored breastfeed options based on the time the child have been breast-feeded after his/her born '''
+    """ In this model will be stored breastfeed options based on the time the child have been breast-feeded after his/her born """
+
     breast_feed_option_name = models.CharField(max_length=10)
     breast_feed_option_description = models.CharField(max_length=50)
 
     def __unicode__(self):
-        return "{0} - {1}".format(self.breast_feed_option_name, self.breast_feed_option_description)
+        return "{0} - {1}".format(
+            self.breast_feed_option_name, self.breast_feed_option_description
+        )
 
 
 class CON(models.Model):
-    ''' In this model will be stored CON (soins postnatals) categories '''
+    """ In this model will be stored CON (soins postnatals) categories """
+
     con_designation = models.CharField(max_length=10)
     con_description = models.CharField(max_length=50)
 
@@ -96,7 +108,8 @@ class CON(models.Model):
 
 
 class ChildNumber(models.Model):
-    ''' In this model will be stored codes which will be used to number children '''
+    """ In this model will be stored codes which will be used to number children """
+
     child_code_designation = models.CharField(max_length=10)
     child_code_meaning = models.CharField(max_length=50)
     child_number = models.IntegerField(default=1)
@@ -106,7 +119,8 @@ class ChildNumber(models.Model):
 
 
 class Gender(models.Model):
-    ''' In  this model will be stored gender codes '''
+    """ In  this model will be stored gender codes """
+
     gender_code = models.CharField(max_length=10)
     gender_code_meaning = models.CharField(max_length=50)
 
@@ -115,7 +129,8 @@ class Gender(models.Model):
 
 
 class VAC(models.Model):
-    ''' In this model will be stored VAC (suivi de l enfant) desigantions '''
+    """ In this model will be stored VAC (suivi de l enfant) desigantions """
+
     vac_designation = models.CharField(max_length=10)
     vac_code_meaning = models.CharField(max_length=50)
     received_after_how_many_weeks = models.CharField(max_length=10, null=True)
@@ -125,7 +140,8 @@ class VAC(models.Model):
 
 
 class Symptom(models.Model):
-    ''' In this model will be stored symptom designations '''
+    """ In this model will be stored symptom designations """
+
     symtom_designation = models.CharField(max_length=50)
     symtom_code_meaning = models.CharField(max_length=50)
     kirundi_name = models.CharField(max_length=50, default="")
@@ -136,7 +152,8 @@ class Symptom(models.Model):
 
 
 class DeathCode(models.Model):
-    ''' In this model we will put "Les codes de deces" '''
+    """ In this model we will put "Les codes de deces" """
+
     Death_code = models.CharField(max_length=10)
     Death_code_meaning = models.CharField(max_length=50)
 
@@ -145,16 +162,20 @@ class DeathCode(models.Model):
 
 
 class HealthStatus(models.Model):
-    '''In this model will be stored health state designations'''
+    """In this model will be stored health state designations"""
+
     health_status_desigantion = models.CharField(max_length=10)
     health_status_code_meaning = models.CharField(max_length=50)
 
     def __unicode__(self):
-        return "{0} - {1}".format(self.health_status_desigantion, self.health_status_code_meaning)
+        return "{0} - {1}".format(
+            self.health_status_desigantion, self.health_status_code_meaning
+        )
 
 
 class Rescue(models.Model):
-    '''In ths model will be stored rescue designations'''
+    """In ths model will be stored rescue designations"""
+
     rescue_designation = models.CharField(max_length=50)
 
     def __unicode__(self):
@@ -162,7 +183,8 @@ class Rescue(models.Model):
 
 
 class ReportGRO(models.Model):
-    ''' In this model will be stored pregnancy confirmation reports '''
+    """ In this model will be stored pregnancy confirmation reports """
+
     report = models.ForeignKey(Report)
     expected_delivery_date = models.DateField()
     next_appointment_date = models.DateField()
@@ -174,7 +196,8 @@ class ReportGRO(models.Model):
 
 
 class ReportCPN(models.Model):
-    ''' In this model will be stored CPN (consultation prenatale) reports '''
+    """ In this model will be stored CPN (consultation prenatale) reports """
+
     report = models.ForeignKey(Report)
     concerned_cpn = models.ForeignKey(CPN)
     consultation_date = models.DateField()
@@ -187,7 +210,8 @@ class ReportCPN(models.Model):
 
 
 class ReportNSC(models.Model):
-    ''' In this model will be stored NSC (rapport de naissance) reports '''
+    """ In this model will be stored NSC (rapport de naissance) reports """
+
     report = models.ForeignKey(Report)
     child_number = models.ForeignKey(ChildNumber)
     birth_date = models.DateField()
@@ -202,12 +226,13 @@ class ReportNSC(models.Model):
 
 
 class ReportCON(models.Model):
-    ''' In this model will be stored CON (rapport de soins postnatals) reports '''
+    """ In this model will be stored CON (rapport de soins postnatals) reports """
+
     report = models.ForeignKey(Report)
     child = models.ForeignKey(ReportNSC)
     con = models.ForeignKey(CON)
-    child_health_state = models.ForeignKey(HealthStatus, related_name='child_state')
-    mother_health_state = models.ForeignKey(HealthStatus, related_name='mother_state')
+    child_health_state = models.ForeignKey(HealthStatus, related_name="child_state")
+    mother_health_state = models.ForeignKey(HealthStatus, related_name="mother_state")
     next_appointment_date = models.DateField(null=True)
 
     def __unicode__(self):
@@ -215,7 +240,8 @@ class ReportCON(models.Model):
 
 
 class ReportVAC(models.Model):
-    ''' In this model will be stored VAC (rapport de suivi de l enfant) reports '''
+    """ In this model will be stored VAC (rapport de suivi de l enfant) reports """
+
     report = models.ForeignKey(Report)
     child = models.ForeignKey(ReportNSC)
     vac = models.ForeignKey(VAC)
@@ -226,7 +252,8 @@ class ReportVAC(models.Model):
 
 
 class ReportRIS(models.Model):
-    ''' In this model will be stored RIS (Rapport de risque) reports '''
+    """ In this model will be stored RIS (Rapport de risque) reports """
+
     report = models.ForeignKey(Report)
     mother_arrived_at_health_facility = models.BooleanField(default=False)
 
@@ -235,7 +262,8 @@ class ReportRIS(models.Model):
 
 
 class ReportRISBebe(models.Model):
-    ''' In this model will be stored informations specific to child in the case of a child RIS report '''
+    """ In this model will be stored informations specific to child in the case of a child RIS report """
+
     ris_report = models.ForeignKey(ReportRIS)
     concerned_child = models.ForeignKey(ReportNSC)
 
@@ -244,7 +272,8 @@ class ReportRISBebe(models.Model):
 
 
 class ReportRER(models.Model):
-    ''' In this model will be stored RER (Reponse du rapport de risque) reports '''
+    """ In this model will be stored RER (Reponse du rapport de risque) reports """
+
     report = models.ForeignKey(Report)
     ris = models.ForeignKey(ReportRIS)
     rescue = models.ForeignKey(Rescue)
@@ -255,7 +284,8 @@ class ReportRER(models.Model):
 
 
 class ReportDEC(models.Model):
-    ''' In this model will be stored DEC (Rapport de deces) reports '''
+    """ In this model will be stored DEC (Rapport de deces) reports """
+
     report = models.ForeignKey(Report)
     location = models.ForeignKey(Lieu)
     death_code = models.ForeignKey(DeathCode)
@@ -265,8 +295,9 @@ class ReportDEC(models.Model):
 
 
 class ReportDECBebe(models.Model):
-    ''' In this model will be stored informations specific to child in the case
-     of a child death report '''
+    """ In this model will be stored informations specific to child in the case
+     of a child death report """
+
     death_report = models.ForeignKey(ReportDEC)
     concerned_child = models.ForeignKey(ReportNSC)
 
@@ -275,8 +306,9 @@ class ReportDECBebe(models.Model):
 
 
 class ReportDEP(models.Model):
-    ''' In this model will be stored mother departure cases from one 
-    "Sous colline" to an other '''
+    """ In this model will be stored mother departure cases from one 
+    "Sous colline" to an other """
+
     report = models.ForeignKey(Report)
 
     def __unicode__(self):
@@ -284,7 +316,8 @@ class ReportDEP(models.Model):
 
 
 class ReportREC(models.Model):
-    ''' In this model will be stored reports about mothers (mothers from other areas) receptions. '''
+    """ In this model will be stored reports about mothers (mothers from other areas) receptions. """
+
     report = models.ForeignKey(Report)
 
     def __unicode__(self):
@@ -292,7 +325,8 @@ class ReportREC(models.Model):
 
 
 class CON_Report_Symptom(models.Model):
-    ''' This model is for CON reports and Symptoms association '''
+    """ This model is for CON reports and Symptoms association """
+
     con_report = models.ForeignKey(ReportCON)
     symptom = models.ForeignKey(Symptom)
 
@@ -301,7 +335,8 @@ class CON_Report_Symptom(models.Model):
 
 
 class CPN_Report_Symptom(models.Model):
-    ''' This model is for CPN reports and Symptoms association '''
+    """ This model is for CPN reports and Symptoms association """
+
     cpn_report = models.ForeignKey(ReportCPN)
     symptom = models.ForeignKey(Symptom)
 
@@ -310,7 +345,8 @@ class CPN_Report_Symptom(models.Model):
 
 
 class RIS_Report_Symptom(models.Model):
-    ''' This model is for RIS reports and Symptoms association '''
+    """ This model is for RIS reports and Symptoms association """
+
     ris_report = models.ForeignKey(ReportRIS)
     symptom = models.ForeignKey(Symptom)
 
@@ -319,9 +355,10 @@ class RIS_Report_Symptom(models.Model):
 
 
 class Temporary(models.Model):
-    '''
+    """
     This model will be used to temporary store a reporter who doesn't finish his self registration
-    '''
+    """
+
     facility = models.ForeignKey(CDS)
     sub_hill = models.ForeignKey(SousColline)
     phone_number = models.CharField(max_length=20)
@@ -332,8 +369,9 @@ class Temporary(models.Model):
 
 
 class NotificationType(models.Model):
-    ''' This model is used to store notification categories
-    '''
+    """ This model is used to store notification categories
+    """
+
     code = models.CharField(max_length=20)
     description = models.CharField(max_length=100)
 
@@ -342,9 +380,10 @@ class NotificationType(models.Model):
 
 
 class TimeMeasuringUnit(models.Model):
-    '''
+    """
     This model is used to store time measuring units
-    '''
+    """
+
     code = models.CharField(max_length=4)
     description = models.CharField(max_length=20)
 
@@ -353,9 +392,10 @@ class TimeMeasuringUnit(models.Model):
 
 
 class Settings(models.Model):
-    '''
+    """
     In this model we will put settings
-    '''
+    """
+
     setting_code = models.CharField(max_length=20)
     setting_name = models.CharField(max_length=200)
     setting_value = models.CharField(max_length=100)
@@ -367,8 +407,9 @@ class Settings(models.Model):
 
 
 class NotificationsForMother(models.Model):
-    ''' This model is used to store notifications which are sent to mothers
-    '''
+    """ This model is used to store notifications which are sent to mothers
+    """
+
     notification_type = models.ForeignKey(NotificationType)
     word_to_replace_by_the_date_in_the_message_to_send = models.CharField(max_length=50)
     message_to_send = models.CharField(max_length=160)
@@ -380,10 +421,13 @@ class NotificationsForMother(models.Model):
 
 
 class NotificationsForCHW(models.Model):
-    ''' This model is used to store notifications which are sent to CHW
-    '''
+    """ This model is used to store notifications which are sent to CHW
+    """
+
     notification_type = models.ForeignKey(NotificationType)
-    word_to_replace_by_the_mother_id_in_the_message_to_send = models.CharField(max_length=50)
+    word_to_replace_by_the_mother_id_in_the_message_to_send = models.CharField(
+        max_length=50
+    )
     word_to_replace_by_the_date_in_the_message_to_send = models.CharField(max_length=50)
     message_to_send = models.CharField(max_length=160)
     time_measuring_unit = models.ForeignKey(TimeMeasuringUnit)
@@ -394,8 +438,9 @@ class NotificationsForCHW(models.Model):
 
 
 class NotificationsMother(models.Model):
-    ''' This model is used to link notifications to mothers
-    '''
+    """ This model is used to link notifications to mothers
+    """
+
     mother = models.ForeignKey(Mother)
     notification = models.ForeignKey(NotificationsForMother)
     date_time_for_sending = models.DateTimeField()
@@ -407,8 +452,9 @@ class NotificationsMother(models.Model):
 
 
 class NotificationsCHW(models.Model):
-    ''' This model is used to link notifications to CHWs
-    '''
+    """ This model is used to link notifications to CHWs
+    """
+
     chw = models.ForeignKey(CHW)
     notification = models.ForeignKey(NotificationsForCHW)
     date_time_for_sending = models.DateTimeField()
@@ -426,7 +472,12 @@ class AllSupervisor(models.Model):
     is_national_supervisor = models.BooleanField(default=False)
 
     def __unicode__(self):
-        return "{0} {1} {2} {3}".format(self.first_name, self.last_name, self.phone_number, self.is_national_supervisor)
+        return "{0} {1} {2} {3}".format(
+            self.first_name,
+            self.last_name,
+            self.phone_number,
+            self.is_national_supervisor,
+        )
 
 
 class ProvinceSupervisor(models.Model):
@@ -434,8 +485,9 @@ class ProvinceSupervisor(models.Model):
     supervisor = models.ForeignKey(AllSupervisor)
 
     def __unicode__(self):
-        return "{0} {1} Supervise {2}".format(self.supervisor.first_name, self.supervisor.last_name, self.province.name)
-
+        return "{0} {1} Supervise {2}".format(
+            self.supervisor.first_name, self.supervisor.last_name, self.province.name
+        )
 
 
 class DistrictSupervisor(models.Model):
@@ -443,4 +495,6 @@ class DistrictSupervisor(models.Model):
     supervisor = models.ForeignKey(AllSupervisor)
 
     def __unicode__(self):
-        return "{0} {1} Supervise {2}".format(self.supervisor.first_name, self.supervisor.last_name, self.district.name)
+        return "{0} {1} Supervise {2}".format(
+            self.supervisor.first_name, self.supervisor.last_name, self.district.name
+        )

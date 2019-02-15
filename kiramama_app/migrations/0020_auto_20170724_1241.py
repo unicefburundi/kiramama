@@ -7,14 +7,10 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('kiramama_app', '0019_cpn_cpn_number'),
-    ]
+    dependencies = [("kiramama_app", "0019_cpn_cpn_number")]
 
     operations = [
         migrations.AlterField(
-            model_name='cpn',
-            name='cpn_number',
-            field=models.IntegerField(unique=True),
-        ),
+            model_name="cpn", name="cpn_number", field=models.IntegerField(unique=True)
+        )
     ]

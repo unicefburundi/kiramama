@@ -10,63 +10,104 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Colline',
+            name="Colline",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=30, verbose_name=b'name')),
-                ('code', models.IntegerField(blank=True, null=True, unique=True)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=30, verbose_name=b"name")),
+                ("code", models.IntegerField(blank=True, null=True, unique=True)),
             ],
-            options={
-                'ordering': ('name',),
-            },
+            options={"ordering": ("name",)},
         ),
         migrations.CreateModel(
-            name='Commune',
+            name="Commune",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=20, unique=True, verbose_name=b'name')),
-                ('code', models.IntegerField(blank=True, null=True, unique=True)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "name",
+                    models.CharField(max_length=20, unique=True, verbose_name=b"name"),
+                ),
+                ("code", models.IntegerField(blank=True, null=True, unique=True)),
             ],
-            options={
-                'ordering': ('name',),
-            },
+            options={"ordering": ("name",)},
         ),
         migrations.CreateModel(
-            name='Province',
+            name="Province",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=20, unique=True, verbose_name=b'name')),
-                ('code', models.IntegerField(blank=True, null=True, unique=True)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "name",
+                    models.CharField(max_length=20, unique=True, verbose_name=b"name"),
+                ),
+                ("code", models.IntegerField(blank=True, null=True, unique=True)),
             ],
-            options={
-                'ordering': ('name',),
-            },
+            options={"ordering": ("name",)},
         ),
         migrations.CreateModel(
-            name='SousColline',
+            name="SousColline",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=30, verbose_name=b'name')),
-                ('code', models.IntegerField(blank=True, null=True, unique=True)),
-                ('colline', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='public_administration_structure_app.Colline')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=30, verbose_name=b"name")),
+                ("code", models.IntegerField(blank=True, null=True, unique=True)),
+                (
+                    "colline",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="public_administration_structure_app.Colline",
+                    ),
+                ),
             ],
-            options={
-                'ordering': ('name',),
-            },
+            options={"ordering": ("name",)},
         ),
         migrations.AddField(
-            model_name='commune',
-            name='province',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='public_administration_structure_app.Province'),
+            model_name="commune",
+            name="province",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to="public_administration_structure_app.Province",
+            ),
         ),
         migrations.AddField(
-            model_name='colline',
-            name='commune',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='public_administration_structure_app.Commune'),
+            model_name="colline",
+            name="commune",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to="public_administration_structure_app.Commune",
+            ),
         ),
     ]

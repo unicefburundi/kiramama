@@ -11,337 +11,763 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('public_administration_structure_app', '0001_initial'),
-        ('health_administration_structure_app', '0001_initial'),
+        ("public_administration_structure_app", "0001_initial"),
+        ("health_administration_structure_app", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='BreastFeed',
+            name="BreastFeed",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('breast_feed_option_name', models.CharField(max_length=10)),
-                ('breast_feed_option_description', models.CharField(max_length=50)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("breast_feed_option_name", models.CharField(max_length=10)),
+                ("breast_feed_option_description", models.CharField(max_length=50)),
             ],
         ),
         migrations.CreateModel(
-            name='ChildNumber',
+            name="ChildNumber",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('child_code_designation', models.CharField(max_length=10)),
-                ('child_code_meaning', models.CharField(max_length=50)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("child_code_designation", models.CharField(max_length=10)),
+                ("child_code_meaning", models.CharField(max_length=50)),
             ],
         ),
         migrations.CreateModel(
-            name='CHW',
+            name="CHW",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('phone_number', models.CharField(max_length=20)),
-                ('supervisor_phone_number', models.CharField(max_length=20)),
-                ('cds', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='health_administration_structure_app.CDS')),
-                ('sub_colline', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='public_administration_structure_app.SousColline')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("phone_number", models.CharField(max_length=20)),
+                ("supervisor_phone_number", models.CharField(max_length=20)),
+                (
+                    "cds",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="health_administration_structure_app.CDS",
+                    ),
+                ),
+                (
+                    "sub_colline",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="public_administration_structure_app.SousColline",
+                    ),
+                ),
             ],
-            options={
-                'ordering': ('phone_number',),
-            },
+            options={"ordering": ("phone_number",)},
         ),
         migrations.CreateModel(
-            name='CON',
+            name="CON",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('con_designation', models.CharField(max_length=10)),
-                ('con_description', models.CharField(max_length=50)),
-            ],
-        ),
-        migrations.CreateModel(
-            name='CON_Report_Symptom',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-            ],
-        ),
-        migrations.CreateModel(
-            name='CONSymptom',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('con_symptom_code', models.CharField(max_length=10)),
-                ('con_symptom_code_meaning', models.CharField(max_length=50)),
-            ],
-        ),
-        migrations.CreateModel(
-            name='CPN',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('cpn_designation', models.CharField(max_length=10)),
-                ('cpn_description', models.CharField(max_length=50)),
-            ],
-        ),
-        migrations.CreateModel(
-            name='DeathCode',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('Death_code', models.CharField(max_length=10)),
-                ('Death_code_meaning', models.CharField(max_length=50)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("con_designation", models.CharField(max_length=10)),
+                ("con_description", models.CharField(max_length=50)),
             ],
         ),
         migrations.CreateModel(
-            name='Gender',
+            name="CON_Report_Symptom",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('gender_code', models.CharField(max_length=10)),
-                ('gender_code_meaning', models.CharField(max_length=50)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                )
             ],
         ),
         migrations.CreateModel(
-            name='HealthState',
+            name="CONSymptom",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('health_state_desigantion', models.CharField(max_length=10)),
-                ('health_state_code_meaning', models.CharField(max_length=50)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("con_symptom_code", models.CharField(max_length=10)),
+                ("con_symptom_code_meaning", models.CharField(max_length=50)),
             ],
         ),
         migrations.CreateModel(
-            name='Lieu',
+            name="CPN",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('location_category_designation', models.CharField(max_length=10)),
-                ('location_category_description', models.CharField(max_length=50)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("cpn_designation", models.CharField(max_length=10)),
+                ("cpn_description", models.CharField(max_length=50)),
             ],
         ),
         migrations.CreateModel(
-            name='Mother',
+            name="DeathCode",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('id_mother', models.CharField(max_length=10, unique=True)),
-                ('phone_number', models.CharField(blank=True, max_length=20)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("Death_code", models.CharField(max_length=10)),
+                ("Death_code_meaning", models.CharField(max_length=50)),
             ],
         ),
         migrations.CreateModel(
-            name='Report',
+            name="Gender",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('reporting_date', models.DateField()),
-                ('text', models.CharField(max_length=200)),
-                ('category', models.CharField(max_length=100)),
-                ('cds', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='health_administration_structure_app.CDS')),
-                ('chw', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='kiramama_app.CHW')),
-                ('mother', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='kiramama_app.Mother')),
-                ('sub_hill', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='public_administration_structure_app.SousColline')),
-            ],
-            options={
-                'ordering': ('reporting_date',),
-            },
-        ),
-        migrations.CreateModel(
-            name='ReportCON',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('next_appointment_date', models.DateField()),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("gender_code", models.CharField(max_length=10)),
+                ("gender_code_meaning", models.CharField(max_length=50)),
             ],
         ),
         migrations.CreateModel(
-            name='ReportCPN',
+            name="HealthState",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('consultation_date', models.DateField()),
-                ('mother_weight', models.FloatField()),
-                ('next_appointment_date', models.DateField()),
-                ('concerned_cpn', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='kiramama_app.CPN')),
-                ('consultation_location', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='kiramama_app.Lieu')),
-                ('report', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='kiramama_app.Report')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("health_state_desigantion", models.CharField(max_length=10)),
+                ("health_state_code_meaning", models.CharField(max_length=50)),
             ],
         ),
         migrations.CreateModel(
-            name='ReportDEC',
+            name="Lieu",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('death_code', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='kiramama_app.DeathCode')),
-                ('location', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='kiramama_app.Lieu')),
-                ('report', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='kiramama_app.Report')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("location_category_designation", models.CharField(max_length=10)),
+                ("location_category_description", models.CharField(max_length=50)),
             ],
         ),
         migrations.CreateModel(
-            name='ReportDECBebe',
+            name="Mother",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("id_mother", models.CharField(max_length=10, unique=True)),
+                ("phone_number", models.CharField(blank=True, max_length=20)),
             ],
         ),
         migrations.CreateModel(
-            name='ReportDEP',
+            name="Report",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('report', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='kiramama_app.Report')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("reporting_date", models.DateField()),
+                ("text", models.CharField(max_length=200)),
+                ("category", models.CharField(max_length=100)),
+                (
+                    "cds",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="health_administration_structure_app.CDS",
+                    ),
+                ),
+                (
+                    "chw",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="kiramama_app.CHW",
+                    ),
+                ),
+                (
+                    "mother",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="kiramama_app.Mother",
+                    ),
+                ),
+                (
+                    "sub_hill",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="public_administration_structure_app.SousColline",
+                    ),
+                ),
+            ],
+            options={"ordering": ("reporting_date",)},
+        ),
+        migrations.CreateModel(
+            name="ReportCON",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("next_appointment_date", models.DateField()),
             ],
         ),
         migrations.CreateModel(
-            name='ReportGRO',
+            name="ReportCPN",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('expected_delivery_date', models.DateField()),
-                ('next_appointment_date', models.DateField()),
-                ('consultation_location', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='kiramama_app.Lieu')),
-                ('report', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='kiramama_app.Report')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("consultation_date", models.DateField()),
+                ("mother_weight", models.FloatField()),
+                ("next_appointment_date", models.DateField()),
+                (
+                    "concerned_cpn",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="kiramama_app.CPN",
+                    ),
+                ),
+                (
+                    "consultation_location",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="kiramama_app.Lieu",
+                    ),
+                ),
+                (
+                    "report",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="kiramama_app.Report",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='ReportNSC',
+            name="ReportDEC",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('child_number', models.CharField(max_length=10)),
-                ('birth_date', models.DateField()),
-                ('gender', models.CharField(max_length=10)),
-                ('weight', models.FloatField()),
-                ('next_appointment_date', models.DateField()),
-                ('breast_feading', models.CharField(max_length=10)),
-                ('birth_location', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='kiramama_app.Lieu')),
-                ('report', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='kiramama_app.Report')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "death_code",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="kiramama_app.DeathCode",
+                    ),
+                ),
+                (
+                    "location",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="kiramama_app.Lieu",
+                    ),
+                ),
+                (
+                    "report",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="kiramama_app.Report",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='ReportRER',
+            name="ReportDECBebe",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('current_state', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='kiramama_app.HealthState')),
-                ('report', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='kiramama_app.Report')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                )
             ],
         ),
         migrations.CreateModel(
-            name='ReportRIS',
+            name="ReportDEP",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('report', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='kiramama_app.Report')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "report",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="kiramama_app.Report",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='ReportRISBebe',
+            name="ReportGRO",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('concerned_child', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='kiramama_app.ReportNSC')),
-                ('ris_report', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='kiramama_app.ReportRIS')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("expected_delivery_date", models.DateField()),
+                ("next_appointment_date", models.DateField()),
+                (
+                    "consultation_location",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="kiramama_app.Lieu",
+                    ),
+                ),
+                (
+                    "report",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="kiramama_app.Report",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='ReportVAC',
+            name="ReportNSC",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('child', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='kiramama_app.ReportNSC')),
-                ('location', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='kiramama_app.Lieu')),
-                ('report', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='kiramama_app.Report')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("child_number", models.CharField(max_length=10)),
+                ("birth_date", models.DateField()),
+                ("gender", models.CharField(max_length=10)),
+                ("weight", models.FloatField()),
+                ("next_appointment_date", models.DateField()),
+                ("breast_feading", models.CharField(max_length=10)),
+                (
+                    "birth_location",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="kiramama_app.Lieu",
+                    ),
+                ),
+                (
+                    "report",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="kiramama_app.Report",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Rescue',
+            name="ReportRER",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('rescue_designation', models.CharField(max_length=50)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "current_state",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="kiramama_app.HealthState",
+                    ),
+                ),
+                (
+                    "report",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="kiramama_app.Report",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='RIS_Report_Symptom',
+            name="ReportRIS",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('ris_report', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='kiramama_app.ReportRIS')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "report",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="kiramama_app.Report",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='RiskLevel',
+            name="ReportRISBebe",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('risk_designation', models.CharField(max_length=10)),
-                ('risk_level_meaning', models.CharField(max_length=50)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "concerned_child",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="kiramama_app.ReportNSC",
+                    ),
+                ),
+                (
+                    "ris_report",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="kiramama_app.ReportRIS",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='RISSymptom',
+            name="ReportVAC",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('ris_symptom_code', models.CharField(max_length=10)),
-                ('ris_symptom_code_meaning', models.CharField(max_length=50)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "child",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="kiramama_app.ReportNSC",
+                    ),
+                ),
+                (
+                    "location",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="kiramama_app.Lieu",
+                    ),
+                ),
+                (
+                    "report",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="kiramama_app.Report",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Symptom',
+            name="Rescue",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('symtom_designation', models.CharField(max_length=50)),
-                ('symtom_code_meaning', models.CharField(max_length=50)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("rescue_designation", models.CharField(max_length=50)),
             ],
         ),
         migrations.CreateModel(
-            name='VAC',
+            name="RIS_Report_Symptom",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('vac_designation', models.CharField(max_length=10)),
-                ('vac_code_meaning', models.CharField(max_length=50)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "ris_report",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="kiramama_app.ReportRIS",
+                    ),
+                ),
+            ],
+        ),
+        migrations.CreateModel(
+            name="RiskLevel",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("risk_designation", models.CharField(max_length=10)),
+                ("risk_level_meaning", models.CharField(max_length=50)),
+            ],
+        ),
+        migrations.CreateModel(
+            name="RISSymptom",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("ris_symptom_code", models.CharField(max_length=10)),
+                ("ris_symptom_code_meaning", models.CharField(max_length=50)),
+            ],
+        ),
+        migrations.CreateModel(
+            name="Symptom",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("symtom_designation", models.CharField(max_length=50)),
+                ("symtom_code_meaning", models.CharField(max_length=50)),
+            ],
+        ),
+        migrations.CreateModel(
+            name="VAC",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("vac_designation", models.CharField(max_length=10)),
+                ("vac_code_meaning", models.CharField(max_length=50)),
             ],
         ),
         migrations.AddField(
-            model_name='ris_report_symptom',
-            name='symptom',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='kiramama_app.RISSymptom'),
+            model_name="ris_report_symptom",
+            name="symptom",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to="kiramama_app.RISSymptom",
+            ),
         ),
         migrations.AddField(
-            model_name='reportvac',
-            name='vac',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='kiramama_app.VAC'),
+            model_name="reportvac",
+            name="vac",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to="kiramama_app.VAC"
+            ),
         ),
         migrations.AddField(
-            model_name='reportrer',
-            name='rescue',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='kiramama_app.Rescue'),
+            model_name="reportrer",
+            name="rescue",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to="kiramama_app.Rescue"
+            ),
         ),
         migrations.AddField(
-            model_name='reportrer',
-            name='ris',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='kiramama_app.ReportRIS'),
+            model_name="reportrer",
+            name="ris",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to="kiramama_app.ReportRIS"
+            ),
         ),
         migrations.AddField(
-            model_name='reportgro',
-            name='risk_level',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='kiramama_app.RiskLevel'),
+            model_name="reportgro",
+            name="risk_level",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to="kiramama_app.RiskLevel"
+            ),
         ),
         migrations.AddField(
-            model_name='reportdecbebe',
-            name='concerned_child',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='kiramama_app.ReportNSC'),
+            model_name="reportdecbebe",
+            name="concerned_child",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to="kiramama_app.ReportNSC"
+            ),
         ),
         migrations.AddField(
-            model_name='reportdecbebe',
-            name='death_report',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='kiramama_app.ReportDEC'),
+            model_name="reportdecbebe",
+            name="death_report",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to="kiramama_app.ReportDEC"
+            ),
         ),
         migrations.AddField(
-            model_name='reportcon',
-            name='child',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='kiramama_app.ReportNSC'),
+            model_name="reportcon",
+            name="child",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to="kiramama_app.ReportNSC"
+            ),
         ),
         migrations.AddField(
-            model_name='reportcon',
-            name='child_health_state',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='child_state', to='kiramama_app.HealthState'),
+            model_name="reportcon",
+            name="child_health_state",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="child_state",
+                to="kiramama_app.HealthState",
+            ),
         ),
         migrations.AddField(
-            model_name='reportcon',
-            name='con',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='kiramama_app.CON'),
+            model_name="reportcon",
+            name="con",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to="kiramama_app.CON"
+            ),
         ),
         migrations.AddField(
-            model_name='reportcon',
-            name='mother_health_state',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='mother_state', to='kiramama_app.HealthState'),
+            model_name="reportcon",
+            name="mother_health_state",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="mother_state",
+                to="kiramama_app.HealthState",
+            ),
         ),
         migrations.AddField(
-            model_name='reportcon',
-            name='report',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='kiramama_app.Report'),
+            model_name="reportcon",
+            name="report",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to="kiramama_app.Report"
+            ),
         ),
         migrations.AddField(
-            model_name='con_report_symptom',
-            name='con_report',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='kiramama_app.ReportCON'),
+            model_name="con_report_symptom",
+            name="con_report",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to="kiramama_app.ReportCON"
+            ),
         ),
         migrations.AddField(
-            model_name='con_report_symptom',
-            name='symptom',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='kiramama_app.CONSymptom'),
+            model_name="con_report_symptom",
+            name="symptom",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to="kiramama_app.CONSymptom",
+            ),
         ),
     ]

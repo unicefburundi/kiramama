@@ -8,83 +8,162 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('kiramama_app', '0006_auto_20160914_1533'),
-    ]
+    dependencies = [("kiramama_app", "0006_auto_20160914_1533")]
 
     operations = [
         migrations.CreateModel(
-            name='NotificationsCHW',
+            name="NotificationsCHW",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('is_sent', models.BooleanField(default=False)),
-                ('chw', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='kiramama_app.CHW')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("is_sent", models.BooleanField(default=False)),
+                (
+                    "chw",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="kiramama_app.CHW",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='NotificationsForCHW',
+            name="NotificationsForCHW",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('message_to_send', models.CharField(max_length=160)),
-                ('time_number', models.IntegerField()),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("message_to_send", models.CharField(max_length=160)),
+                ("time_number", models.IntegerField()),
             ],
         ),
         migrations.CreateModel(
-            name='NotificationsForMother',
+            name="NotificationsForMother",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('message_to_send', models.CharField(max_length=160)),
-                ('time_number', models.IntegerField()),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("message_to_send", models.CharField(max_length=160)),
+                ("time_number", models.IntegerField()),
             ],
         ),
         migrations.CreateModel(
-            name='NotificationsMother',
+            name="NotificationsMother",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('is_sent', models.BooleanField(default=False)),
-                ('mother', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='kiramama_app.Mother')),
-                ('notification', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='kiramama_app.NotificationsForMother')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("is_sent", models.BooleanField(default=False)),
+                (
+                    "mother",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="kiramama_app.Mother",
+                    ),
+                ),
+                (
+                    "notification",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="kiramama_app.NotificationsForMother",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='NotificationType',
+            name="NotificationType",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('code', models.CharField(max_length=20)),
-                ('description', models.CharField(max_length=100)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("code", models.CharField(max_length=20)),
+                ("description", models.CharField(max_length=100)),
             ],
         ),
         migrations.CreateModel(
-            name='TimeMeasuringUnit',
+            name="TimeMeasuringUnit",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('code', models.CharField(max_length=4)),
-                ('description', models.CharField(max_length=20)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("code", models.CharField(max_length=4)),
+                ("description", models.CharField(max_length=20)),
             ],
         ),
         migrations.AddField(
-            model_name='notificationsformother',
-            name='notification_type',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='kiramama_app.NotificationType'),
+            model_name="notificationsformother",
+            name="notification_type",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to="kiramama_app.NotificationType",
+            ),
         ),
         migrations.AddField(
-            model_name='notificationsformother',
-            name='time_measuring_unit',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='kiramama_app.TimeMeasuringUnit'),
+            model_name="notificationsformother",
+            name="time_measuring_unit",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to="kiramama_app.TimeMeasuringUnit",
+            ),
         ),
         migrations.AddField(
-            model_name='notificationsforchw',
-            name='notification_type',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='kiramama_app.NotificationType'),
+            model_name="notificationsforchw",
+            name="notification_type",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to="kiramama_app.NotificationType",
+            ),
         ),
         migrations.AddField(
-            model_name='notificationsforchw',
-            name='time_measuring_unit',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='kiramama_app.TimeMeasuringUnit'),
+            model_name="notificationsforchw",
+            name="time_measuring_unit",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to="kiramama_app.TimeMeasuringUnit",
+            ),
         ),
         migrations.AddField(
-            model_name='notificationschw',
-            name='notification',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='kiramama_app.NotificationsForCHW'),
+            model_name="notificationschw",
+            name="notification",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to="kiramama_app.NotificationsForCHW",
+            ),
         ),
     ]

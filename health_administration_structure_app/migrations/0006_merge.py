@@ -9,9 +9,8 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('health_administration_structure_app', '0005_auto_20170227_1234'),
-        ('health_administration_structure_app', '0002_auto_20170220_1127'),
+        ("health_administration_structure_app", "0005_auto_20170227_1234"),
+        ("health_administration_structure_app", "0002_auto_20170220_1127"),
     ]
 
-    operations = [
-    ]
+    operations = []

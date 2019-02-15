@@ -7,14 +7,12 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('health_administration_structure_app', '0001_initial'),
-    ]
+    dependencies = [("health_administration_structure_app", "0001_initial")]
 
     operations = [
         migrations.AlterField(
-            model_name='district',
-            name='code',
+            model_name="district",
+            name="code",
             field=models.CharField(max_length=4, unique=True),
-        ),
+        )
     ]

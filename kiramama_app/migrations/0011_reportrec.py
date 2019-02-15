@@ -8,16 +8,28 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('kiramama_app', '0010_auto_20161124_1418'),
-    ]
+    dependencies = [("kiramama_app", "0010_auto_20161124_1418")]
 
     operations = [
         migrations.CreateModel(
-            name='ReportREC',
+            name="ReportREC",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('report', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='kiramama_app.Report')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "report",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="kiramama_app.Report",
+                    ),
+                ),
             ],
-        ),
+        )
     ]

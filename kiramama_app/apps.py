@@ -4,4 +4,4 @@ from django.apps import AppConfig
 
 
 class KiramamaAppConfig(AppConfig):
-    name = 'kiramama_app'
+    name = "kiramama_app"

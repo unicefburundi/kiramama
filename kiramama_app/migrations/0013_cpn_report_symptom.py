@@ -8,17 +8,35 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('kiramama_app', '0012_mother_is_affected_somewhere'),
-    ]
+    dependencies = [("kiramama_app", "0012_mother_is_affected_somewhere")]
 
     operations = [
         migrations.CreateModel(
-            name='CPN_Report_Symptom',
+            name="CPN_Report_Symptom",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('cpn_report', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='kiramama_app.ReportCPN')),
-                ('symptom', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='kiramama_app.Symptom')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "cpn_report",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="kiramama_app.ReportCPN",
+                    ),
+                ),
+                (
+                    "symptom",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="kiramama_app.Symptom",
+                    ),
+                ),
             ],
-        ),
+        )
     ]
