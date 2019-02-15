@@ -47,7 +47,7 @@ class Colline(models.Model):
     code = models.IntegerField(unique=True, blank=True, null=True)
 
     def __unicode__(self):
-        return self.name
+        return "{0} de {1}".format(self.name, self.commune)
 
     def get_absolute_url(self):
         # return reverse('province_detail', kwargs={'pk': self.id})

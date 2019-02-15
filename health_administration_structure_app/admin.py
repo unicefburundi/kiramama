@@ -5,13 +5,13 @@ from django.http import HttpResponse
 import StringIO
 
 admin.site.register(BPS)
-admin.site.register(District)
 # admin.site.register(CDS)
 
 
 class CDSAdmin(admin.ModelAdmin):
     actions = ["download_csv"]
     list_display = ["name", "code", "get_district_name", "get_bps_name"]
+    search_fields = ("name", "code", "district__name", "district__bps__name")
 
     def get_district_name(self, obj):
         return obj.district.name
@@ -47,4 +47,11 @@ class CDSAdmin(admin.ModelAdmin):
     download_csv.short_description = "Download"
 
 
+class DistrictAdmin(admin.ModelAdmin):
+    list_display = ["name", "code", ]
+    search_fields = ("name", "code", )
+    list_filter = ( "bps",)
+
+
+admin.site.register(District, DistrictAdmin)
 admin.site.register(CDS, CDSAdmin)

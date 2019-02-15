@@ -52,6 +52,7 @@ class CollineAdmin(ImportExportModelAdmin):
 class SousCollineAdmin(admin.ModelAdmin):
     actions = ["download_csv"]
     list_display = ["name", "get_colline_name", "get_commune_name", "get_province_name"]
+    search_fields = ("name", "code")
 
     def get_colline_name(self, obj):
         return obj.colline.name
