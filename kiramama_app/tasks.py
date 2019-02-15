@@ -19,7 +19,7 @@ def send_sms_through_rapidpro(args):
     """
     token = getattr(settings, "TOKEN", "")
     data = args["data"]
-    print(data)
+    print (data)
     response = requests.post(
         settings.RAPIDPRO_BROADCAST_URL,
         headers={
@@ -28,8 +28,8 @@ def send_sms_through_rapidpro(args):
         },
         data=json.dumps(data),
     )
-    print("response :")
-    print(response)
+    print ("response :")
+    print (response)
 
 
 @periodic_task(
@@ -59,17 +59,17 @@ def send_scheduled_messages():
                 args["data"] = data
                 #  Changing the message status before calling "send_sms_through_rapidpro" is helpful when the task is running quickly
                 #  and run the next time before all messages are sent
-                print("[Part 1]==>Before sending the message :")
-                print(mother_message.message_to_send)
-                print("To :")
-                print(mother_message.mother.phone_number)
+                print ("[Part 1]==>Before sending the message :")
+                print (mother_message.message_to_send)
+                print ("To :")
+                print (mother_message.mother.phone_number)
                 send_sms_through_rapidpro(args)
                 mother_message.is_sent = True
                 mother_message.save()
-                print("[Part 1]After sending the message :")
-                print(mother_message.message_to_send)
-                print("To :")
-                print(mother_message.mother.phone_number)
+                print ("[Part 1]After sending the message :")
+                print (mother_message.message_to_send)
+                print ("To :")
+                print (mother_message.mother.phone_number)
 
     ready_to_send_chw_messages = NotificationsCHW.objects.filter(
         date_time_for_sending__gte=today_7,
@@ -86,17 +86,17 @@ def send_scheduled_messages():
                     "text": chw_message.message_to_send,
                 }
                 args["data"] = data
-                print("[Part 2]==> Before sending the message to :")
-                print(chw_message.message_to_send)
-                print("To :")
-                print(chw_message.chw.phone_number)
+                print ("[Part 2]==> Before sending the message to :")
+                print (chw_message.message_to_send)
+                print ("To :")
+                print (chw_message.chw.phone_number)
                 send_sms_through_rapidpro(args)
                 chw_message.is_sent = True
                 chw_message.save()
-                print("[Part 2] After sending the message :")
-                print(chw_message.message_to_send)
-                print("To :")
-                print(chw_message.chw.phone_number)
+                print ("[Part 2] After sending the message :")
+                print (chw_message.message_to_send)
+                print ("To :")
+                print (chw_message.chw.phone_number)
 
 
 def change_chw_status():
@@ -104,7 +104,7 @@ def change_chw_status():
         This function switch a CHW to the following status : active/inactive
         A CHW is switched to inactive status if he spend long time without sending any message.
     """
-    print("=== Begin change_chw_status ===")
+    print ("=== Begin change_chw_status ===")
     key_word_for_chwai_setting = getattr(
         settings, "KEY_WORD_FOR_CHW_ACTIVE_SETTING", ""
     )
@@ -176,7 +176,7 @@ def change_chw_status():
                 chw.is_active = True
                 chw.save()
 
-    print("=== Finish change_chw_status ===")
+    print ("=== Finish change_chw_status ===")
 
 
 @periodic_task(
@@ -188,7 +188,7 @@ def inform_supersors_on_inactive_chw():
     """
     This task inform the concerned supervisor if there is a community health work who is not active
     """
-    print("---Begin inform_supersors_on_inactive_chw---")
+    print ("---Begin inform_supersors_on_inactive_chw---")
     # Let's update CHW status
     change_chw_status()
 
@@ -208,28 +208,37 @@ def inform_supersors_on_inactive_chw():
         data = {"urns": [supervisor_phone_number], "text": message_to_send}
         args["data"] = data
         send_sms_through_rapidpro(args)
-    print("---Finish inform_supersors_on_inactive_chw---")
+    print ("---Finish inform_supersors_on_inactive_chw---")
 
 
-@periodic_task(run_every=(crontab(minute=30, hour='7')), name="tasks.cancel_reminders", ignore_result=True) 
+@periodic_task(
+    run_every=(crontab(minute=30, hour="7")),
+    name="tasks.cancel_reminders",
+    ignore_result=True,
+)
 def cancel_reminders():
-    '''
+    """
     This task is used to cancel no longer needed reminders
-    '''
+    """
     today = datetime.today().date()
 
     start_date = datetime.today().date() - timedelta(7)
     end_date = datetime.today().date() + timedelta(300)
 
-    concerned_mothers_dec = Mother.objects.filter(report__category = "DEC")
+    concerned_mothers_dec = Mother.objects.filter(report__category="DEC")
 
     if len(concerned_mothers_dec) > 0:
-        '''There is at least one death report.'''
+        """There is at least one death report."""
         for one_woman in concerned_mothers_dec:
-            #Let's delete notifications scheduled to be sent to this woman
-            notifications_to_woman = NotificationsMother.objects.filter(mother = one_woman, date_time_for_sending__gte = start_date, date_time_for_sending__lte = end_date, is_sent=False)
+            # Let's delete notifications scheduled to be sent to this woman
+            notifications_to_woman = NotificationsMother.objects.filter(
+                mother=one_woman,
+                date_time_for_sending__gte=start_date,
+                date_time_for_sending__lte=end_date,
+                is_sent=False,
+            )
             if len(notifications_to_woman) > 0:
-                #We have to delete all these notifications
+                # We have to delete all these notifications
                 for one_notification in notifications_to_woman:
                     print "==== Before deleting ===="
                     print one_notification.mother
@@ -238,12 +247,14 @@ def cancel_reminders():
                     one_notification.delete()
                     print "==== After deleting ===="
 
-            #Let's delete notifications scheduled to be sent to a CHW
+            # Let's delete notifications scheduled to be sent to a CHW
             mother_id = one_woman.id_mother
-            mother_id = " "+mother_id+" "
-            notifications_to_chw = NotificationsCHW.objects.filter(message_to_send__contains = mother_id)
+            mother_id = " " + mother_id + " "
+            notifications_to_chw = NotificationsCHW.objects.filter(
+                message_to_send__contains=mother_id
+            )
             if len(notifications_to_chw) > 0:
-                #We have to delete all these notifications
+                # We have to delete all these notifications
                 for one_notification in notifications_to_chw:
                     print "==== Before deleting ===="
                     print mother_id

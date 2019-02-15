@@ -48,9 +48,9 @@ class CDSAdmin(admin.ModelAdmin):
 
 
 class DistrictAdmin(admin.ModelAdmin):
-    list_display = ["name", "code", ]
-    search_fields = ("name", "code", )
-    list_filter = ( "bps",)
+    list_display = ["name", "code"]
+    search_fields = ("name", "code")
+    list_filter = ("bps",)
 
 
 admin.site.register(District, DistrictAdmin)

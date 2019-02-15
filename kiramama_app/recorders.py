@@ -1140,7 +1140,10 @@ def save_temporary_the_reporter(args):
 
             the_sub_hill_name = args["text"].split(" ")[3].title()
 
-            the_hill = Colline.objects.filter(name__iexact=the_hill_name)
+            the_hill = Colline.objects.select_related().filter(
+                name__iexact=the_hill_name, 
+                souscolline__name=the_sub_hill_name
+                )
             if len(the_hill) < 1:
                 args["valide"] = False
                 # args['info_to_contact'] = "Erreur. Le nom de la colline envoye n est pas valide. Pour corriger, reenvoyer le message bien ecrit commencant par REG"
