@@ -646,6 +646,28 @@ def check_mother_has_ris_report(args):
         args["info_to_contact"] = "Un rapport RIS de cette maman a ete bien trouve"
 
 
+def check_child_has_ccm_report(args):
+    """ This function checks if the current child has a CCM report recorded """
+    ccm_set = ReportPriseC.objects.filter(report__mother=args["concerned_mother"], child=args["concerned_child"])
+
+    if len(ccm_set) < 1:
+        args["valide"] = False
+        args["info_to_contact"] = (
+            "Ikosa. Nta mesaje irarungikwa ivuga ukutamererwa neza kw umwana '"
+            +args["child_number"].child_code_designation
+            +"'' wumupfasoni '"
+            + args["concerned_mother"].id_mother
+            + "'"
+        )
+    else:
+        args["valide"] = True
+        the_concerned_ccp = ReportPriseC.objects.filter(
+            report__mother=args["concerned_mother"], child=args["concerned_child"]
+        ).order_by("-id")[0]
+        args["the_concerned_ccm"] = the_concerned_ccp
+        args["info_to_contact"] = "Un rapport CCM de cet enfant a ete bien trouve"
+
+
 def check_cpn_name_exists(args):
     """ This function checks if the CPN name sent exists in the system """
     the_sent_cpn_name = args["sent_cpn_name"]
@@ -4792,9 +4814,65 @@ def report_result_of_ccm(args):
     if not args["valide"]:
         return
 
+    # Let's check if the mother id sent is valid
+    args["sent_mother_id"] = args["text"].split(" ")[1]
+    check_mother_id_is_valid(args)
+    if not args["valide"]:
+        return
+    args["concerned_woman"] = args["concerned_mother"]
+
+    # Let's check if this mother is affected somewhere
+    check_mother_is_affected_somewhere(args)
+    if not args["valide"]:
+        return
+
+    # Let's check if the child code is valid
+    args["child_code"] = args["text"].split(" ")[2]
+    check_child_code(args)
+    if not args["valide"]:
+        return
+
+    # Let's check if this mother has a child with the sent child number
+    args["child_id"] = args["text"].split(" ")[2]
+    check_child_exists(args)
+    if not args["valide"]:
+        return
+
+    # Let's check child health status value
+    args["health_status_value"] = args["text"].split(" ")[3]
+    # args["health_status_meaning"] = "etat de sante de l enfant"
+    args["health_status_meaning"] = "Ingene amagara y umuvyeyi yifashe"
+    check_health_status(args)
+    if not args["valide"]:
+        return
+    args["child_s_health_status"] = args["concerned_health_status"]
+
+
+    #Let's check if a CCM report has been sent for this woman and child
+    check_child_has_ccm_report(args)
+    if not args["valide"]:
+        return
+    args['the_concerned_ccm_report'] = args["the_concerned_ccm"]
+
+    # Now, everything is checked. Let's record the report
+    the_created_report = Report.objects.create(
+        chw=args["the_sender"],
+        sub_hill=args["sub_colline"],
+        cds=args["facility"],
+        mother=args["concerned_woman"],
+        reporting_date=datetime.datetime.now().date(),
+        text=args["text"],
+        category=args["mot_cle"],
+    )
+    created_ccmr_report = ReportResponsePC.objects.create(
+        report=the_created_report,
+        report_prise_charge=args['the_concerned_ccm_report'],
+        child_health_status=args["child_s_health_status"]
+    )
+
     args["valide"] = True
     args["info_to_contact"] = (
-        "Tout va bien"
+        "Mesaje uhejeje kurungika yashitse neza"
     )
 
 def report_micronutriment_distribution(args):
