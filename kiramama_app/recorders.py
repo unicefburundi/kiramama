@@ -4457,3 +4457,231 @@ def record_mother_reception_report(args):
         + args["concerned_mother"].id_mother
         + "' yimukiye aho ukorera yashitse neza"
     )
+
+
+
+
+
+
+
+
+
+def record_new_mother_and_child(args):
+
+    args["mot_cle"] = "ENR"
+
+    args["mot_cle_gro"] = "GRO"
+
+    # Let's check if the person who send this message is a reporter
+    check_if_is_reporter(args)
+    if not args["valide"]:
+        return
+
+    # Let's check if the message sent is composed by an expected number of values
+    args["expected_number_of_values"] = getattr(
+        settings, "EXPECTED_NUMBER_OF_VALUES", ""
+    )[args["message_type"]]
+    check_number_of_values(args)
+    if not args["valide"]:
+        return
+
+    # Let's check if the child code is valid
+    args["child_code"] = args["text"].split(" ")[1]
+    check_child_code(args)
+    if not args["valide"]:
+        return
+
+    '''# Let's check if the chw is respecting the order of child codes
+    args["child_code"] = args["text"].split(" ")[1]
+    check_child_code_order(args)
+    if not args["valide"]:
+        return'''
+
+    # Let check if the birth date is not a future date
+    # It must be a previous date or today's date
+    args["previous_days_or_today_date"] = args["text"].split(" ")[2]
+    # args["date_meaning"] = "Date de naissance"
+    args["date_meaning"] = "Igenekerezo umuvyeyi yibarukiyeko"
+    check_date_is_previous_or_today(args)
+    if not args["valide"]:
+        return
+    args["birth_date"] = args["date_well_written"]
+
+    # Let's check if the phone number of the concerned mother is valid
+    args["phone_number"] = args["text"].split(" ")[3]
+    check_phone_number(args)
+    if not args["valide"]:
+        return
+
+    # The first part of the mother id must have at minimum 3 caracters
+    mother_id_1 = str(args["facility"].id)
+    if len(mother_id_1) == 1:
+        mother_id_1 = "00" + mother_id_1
+    if len(mother_id_1) == 2:
+        mother_id_1 = "0" + mother_id_1
+
+    # Let's build the second part of the mother id. It's made at minimum by 3 caracters
+
+    gro_reports_from_this_cds = Report.objects.filter(
+        cds=args["facility"], category = args["mot_cle_gro"]
+    )
+
+    # the_last_mother_registered_from_this_cds = the_last_gro_report_from_this_cds.mother
+
+    mother_id_2 = "0"
+    if len(gro_reports_from_this_cds) > 0:
+        the_last_mother_from_this_cds = (
+            Report.objects.filter(cds=args["facility"], category=args["mot_cle_gro"])
+            .order_by("-id")[0]
+            .mother
+        )
+        # Let's identify the id used by the system for this patient
+        the_last_mother_id = the_last_mother_from_this_cds.id_mother
+
+        # Let's remove the first part (mother_id_1) and increment the second one
+        the_length_of_the_first_part = len(mother_id_1)
+        the_second_part = the_last_mother_id[the_length_of_the_first_part:]
+
+        # Let's increment the second part.
+        the_second_part_int = int(the_second_part)
+        the_second_part_int = the_second_part_int + 1
+
+        # mother_id_2 is the second part of the new mother
+        mother_id_2 = str(the_second_part_int)
+    else:
+        mother_id_2 = "0"
+
+    if len(mother_id_2) == 1:
+        mother_id_2 = "00" + mother_id_2
+    if len(mother_id_2) == 2:
+        mother_id_2 = "0" + mother_id_2
+
+    mother_id = mother_id_1 + "" + mother_id_2
+
+    risk_level, created = RiskLevel.objects.get_or_create(
+        risk_designation = "0",
+        risk_level_meaning = "Aucun risque"
+    )
+
+    consultation_location, created = Lieu.objects.get_or_create(
+        location_category_designation = "Not needed",
+        location_category_description = "Not needed"
+    )
+
+
+    # All cheks passes. Let's record the pregnant women
+    # the_created_mother_record, created = Mother.objects.get_or_create(phone_number = args["phone_number"])
+    # the_created_mother_record = Mother.objects.create(id_mother = mother_id, phone_number = args["phone_number"])
+    the_created_mother_record, created = Mother.objects.get_or_create(
+        id_mother=mother_id, phone_number=args["phone_number"]
+    )
+    the_created_report = Report.objects.create(
+        chw=args["the_sender"],
+        sub_hill=args["sub_colline"],
+        cds=args["facility"],
+        mother=the_created_mother_record,
+        reporting_date=datetime.datetime.now().date(),
+        text=args["text"],
+        category=args["mot_cle"],
+    )
+    created_gro_report = ReportGRO.objects.create(
+        report=the_created_report,
+        expected_delivery_date=args["birth_date"],
+        next_appointment_date=args["birth_date"],
+        risk_level=risk_level,
+        consultation_location=consultation_location,
+    )
+
+    args["valide"] = True
+    args["info_to_contact"] = (
+        "Tout va bien"
+    )
+
+
+def report_a_ccm(args):
+
+    args["mot_cle"] = "PCC"
+
+    # Let's check if the person who send this message is a reporter
+    check_if_is_reporter(args)
+    if not args["valide"]:
+        return
+
+    # Let's check if the message sent is composed by an expected number of values
+    args["expected_number_of_values"] = getattr(
+        settings, "EXPECTED_NUMBER_OF_VALUES", ""
+    )[args["message_type"]]
+    check_number_of_values(args)
+    if not args["valide"]:
+        return
+
+    args["valide"] = True
+    args["info_to_contact"] = (
+        "Tout va bien"
+    )
+
+def report_result_of_ccm(args):
+
+    args["mot_cle"] = "RGC"
+
+    # Let's check if the person who send this message is a reporter
+    check_if_is_reporter(args)
+    if not args["valide"]:
+        return
+
+    # Let's check if the message sent is composed by an expected number of values
+    args["expected_number_of_values"] = getattr(
+        settings, "EXPECTED_NUMBER_OF_VALUES", ""
+    )[args["message_type"]]
+    check_number_of_values(args)
+    if not args["valide"]:
+        return
+
+    args["valide"] = True
+    args["info_to_contact"] = (
+        "Tout va bien"
+    )
+
+def report_micronutriment_distribution(args):
+
+    args["mot_cle"] = "DPM"
+
+    # Let's check if the person who send this message is a reporter
+    check_if_is_reporter(args)
+    if not args["valide"]:
+        return
+
+    # Let's check if the message sent is composed by an expected number of values
+    args["expected_number_of_values"] = getattr(
+        settings, "EXPECTED_NUMBER_OF_VALUES", ""
+    )[args["message_type"]]
+    check_number_of_values(args)
+    if not args["valide"]:
+        return
+
+    args["valide"] = True
+    args["info_to_contact"] = (
+        "Tout va bien"
+    )
+
+def report_depistage(args):
+
+    args["mot_cle"] = "RDM"
+
+    # Let's check if the person who send this message is a reporter
+    check_if_is_reporter(args)
+    if not args["valide"]:
+        return
+
+    # Let's check if the message sent is composed by an expected number of values
+    args["expected_number_of_values"] = getattr(
+        settings, "EXPECTED_NUMBER_OF_VALUES", ""
+    )[args["message_type"]]
+    check_number_of_values(args)
+    if not args["valide"]:
+        return
+
+    args["valide"] = True
+    args["info_to_contact"] = (
+        "Tout va bien"
+    )
