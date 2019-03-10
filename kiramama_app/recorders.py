@@ -746,6 +746,31 @@ def check_is_float(args):
         )
 
 
+def check_is_int(args):
+    """ This function checks if a given value is an int """
+
+    expression = r"^([0-9]+)$"
+
+    value_to_check = args["int_value"]
+
+    if re.search(expression, value_to_check) is None:
+        args["valide"] = False
+        # args['info_to_contact'] = "Erreur. La valeur envoyee pour '"+args["date_meaning"]+"' n est pas valide. Pour corriger,  veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+        args["info_to_contact"] = (
+            "Ikosa. Ico wanditse kuvyerekeye '"
+            + args["int_value_meaning"]
+            + "' ntikibaho. Mu gukosora, subira urungike iyo mesaje itangurwa na '"
+            + args["mot_cle"]
+            + "' yanditse neza"
+        )
+    else:
+        args["checked_int_value"] = value_to_check
+        args["valide"] = True
+        args["info_to_contact"] = (
+            "La valeur envoyee pour '" + args["int_value_meaning"] + "' est valide."
+        )
+
+
 def check_child_code(args):
     """ This function is used to check if the child code is valid """
     the_sent_child_code = args["child_code"]
@@ -4992,7 +5017,72 @@ def report_depistage(args):
     if not args["valide"]:
         return
 
+    # Let s check if sent date is not a future date
+    # It must be a previous date or today's date
+    args["previous_days_or_today_date"] = args["text"].split(" ")[1]
+    args["date_meaning"] = "Igenekerezo abana basuzumiweko"
+    check_date_is_previous_or_today(args)
+    if not args["valide"]:
+        return
+    args["consultation_date"] = args["date_well_written"]
+
+    number_of_children_in_green = args["text"].split(" ")[2]
+    args["int_value"] = number_of_children_in_green
+    args["int_value_meaning"] = "igitigiri cabana hatowe ibara risa nakatsi gatoto"
+    check_is_int(args)
+    if not args["valide"]:
+        return
+
+
+    number_of_children_in_yellow = args["text"].split(" ")[3]
+    args["int_value"] = number_of_children_in_yellow
+    args["int_value_meaning"] = "igitigiri cabana hatowe ibara risa numuhondo"
+    check_is_int(args)
+    if not args["valide"]:
+        return
+
+    number_of_children_in_red = args["text"].split(" ")[4]
+    args["int_value"] = number_of_children_in_red
+    args["int_value_meaning"] = "igitigiri cabana hatowe ibara ritukura"
+    check_is_int(args)
+    if not args["valide"]:
+        return
+
+    number_of_children_with_oedem = args["text"].split(" ")[5]
+    args["int_value"] = number_of_children_with_oedem
+    args["int_value_meaning"] = "igitigiri cabana hatowe oedem"
+    check_is_int(args)
+    if not args["valide"]:
+        return
+
+    args["concerned_woman"], created = Mother.objects.get_or_create(
+        id_mother = "0",
+        phone_number = "0",
+        is_affected_somewhere = False
+    )
+
+    # Now, everything is checked. Let's record the report
+    the_created_report = Report.objects.create(
+        chw=args["the_sender"],
+        sub_hill=args["sub_colline"],
+        cds=args["facility"],
+        mother=args["concerned_woman"],
+        reporting_date=datetime.datetime.now().date(),
+        text=args["text"],
+        category=args["mot_cle"],
+    )
+
+    depistage_report = ReportDepistage.objects.create(
+        report = the_created_report,
+        depistage_date = args["consultation_date"],
+        number_of_children_in_green = number_of_children_in_green,
+        number_of_children_in_yellow = number_of_children_in_yellow,
+        number_of_children_in_red = number_of_children_in_red,
+        number_of_children_with_oedem = number_of_children_with_oedem
+    )
+
+
     args["valide"] = True
     args["info_to_contact"] = (
-        "Tout va bien"
+        "Mesaje uhejeje gutanga yashitse neza"
     )

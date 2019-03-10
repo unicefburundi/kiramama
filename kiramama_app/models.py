@@ -300,7 +300,7 @@ class ReportDepistage(models.Model):
     number_of_children_with_oedem = models.IntegerField()
 
     def __unicode__(self):
-        return "{0} - {1} - {2} - {3} - (4} - {5}".format(
+        return "{0} - {1} - {2} - {3} - {4} - {5}".format(
             self.report, self.depistage_date, self.number_of_children_in_green, self.number_of_children_in_yellow, self.number_of_children_in_red, self.number_of_children_with_oedem
         )
 
