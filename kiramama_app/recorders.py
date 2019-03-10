@@ -768,6 +768,27 @@ def check_child_code(args):
         args["info_to_contact"] = "Le numero de l enfant envoye est valide."
 
 
+def check_micronutriment_intakes(args):
+    """ This function is used to check if the micronutriment intake value is valid """
+    the_sent_micronutriment_code = args["micronutriment_code"]
+
+    micronutriments = MicronutrientIntake.objects.filter(
+        micronutrient_intake_code=the_sent_micronutriment_code
+    )
+
+    if len(micronutriments) < 1:
+        args["valide"] = False
+        args["info_to_contact"] = (
+            "Ikosa. Wanditse inomero ya micronutriment itabaho. Mu gukosora, subira urungike iyo mesaje itangurwa na '"
+            + args["mot_cle"]
+            + "' yanditse neza"
+        )
+    else:
+        args["the_concerned_micronutriment"] = micronutriments[0]
+        args["valide"] = True
+        args["info_to_contact"] = "Le numero de micronutriment envoye est valide."
+
+
 def check_child_code_order(args):
     """ This function is used to check if the order of child codes is respected """
     if args["child_code"] != "01":
@@ -4875,6 +4896,7 @@ def report_result_of_ccm(args):
         "Mesaje uhejeje kurungika yashitse neza"
     )
 
+
 def report_micronutriment_distribution(args):
 
     args["mot_cle"] = "DPM"
@@ -4892,9 +4914,65 @@ def report_micronutriment_distribution(args):
     if not args["valide"]:
         return
 
+    # Let's check if the mother id sent is valid
+    args["sent_mother_id"] = args["text"].split(" ")[1]
+    check_mother_id_is_valid(args)
+    if not args["valide"]:
+        return
+    args["concerned_woman"] = args["concerned_mother"]
+
+    # Let's check if this mother is affected somewhere
+    check_mother_is_affected_somewhere(args)
+    if not args["valide"]:
+        return
+
+    # Let's check if the child code is valid
+    args["child_code"] = args["text"].split(" ")[2]
+    check_child_code(args)
+    if not args["valide"]:
+        return
+
+    # Let's check if this mother has a child with the sent child number
+    args["child_id"] = args["text"].split(" ")[2]
+    check_child_exists(args)
+    if not args["valide"]:
+        return
+
+    # Let s check if sent date is not a future date
+    # It must be a previous date or today's date
+    args["previous_days_or_today_date"] = args["text"].split(" ")[3]
+    args["date_meaning"] = "Igenekerezo umwana yaronkeyeko micronutriment"
+    check_date_is_previous_or_today(args)
+    if not args["valide"]:
+        return
+    args["consultation_date"] = args["date_well_written"]
+
+
+    args["micronutriment_code"] = args["text"].split(" ")[4]
+    check_micronutriment_intakes(args)
+    if not args["valide"]:
+        return
+
+    # Now, everything is checked. Let's record the report
+    the_created_report = Report.objects.create(
+        chw=args["the_sender"],
+        sub_hill=args["sub_colline"],
+        cds=args["facility"],
+        mother=args["concerned_woman"],
+        reporting_date=datetime.datetime.now().date(),
+        text=args["text"],
+        category=args["mot_cle"],
+    )
+    micronutri_report = ReportMicroNTDistribution.objects.create(
+        report = the_created_report,
+        child = args["concerned_child"],
+        intake = args["the_concerned_micronutriment"],
+        intake_date = args["consultation_date"]
+    )
+
     args["valide"] = True
     args["info_to_contact"] = (
-        "Tout va bien"
+        "Mesaje uhejeje kurungika yashitse neza"
     )
 
 def report_depistage(args):
