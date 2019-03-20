@@ -184,7 +184,21 @@ def handel_rapidpro_request(request):
     if incoming_data["message_type"] == "RECEPTION_REPORT":
         # This contact is reporting a pregnant mother who change where she live.
         record_mother_reception_report(incoming_data)
-
+    if incoming_data["message_type"] == "NOT_RECORDED_MOTHER_CHILD_RECORD":
+        # This contact is recording a woman and child who were not recorded
+        record_new_mother_and_child(incoming_data)
+    if incoming_data["message_type"] == "REPORT_A_COMMUNITY_CASE_MANAGEMENT":
+        # This contact is reporting a community case management
+        report_a_ccm(incoming_data)
+    if incoming_data["message_type"] == "REPORT_RESULTS_OF_COMMUNITY_CASE_MANAGEMENT":
+        # This contact is 
+        report_result_of_ccm(incoming_data)
+    if incoming_data["message_type"] == "REPORT_MICRONUTRIMENT_DISTRIBUTION":
+        # This contact is 
+        report_micronutriment_distribution(incoming_data)
+    if incoming_data["message_type"] == "REPORT_DEPISTAGE":
+        # This contact is 
+        report_depistage(incoming_data)
     if incoming_data["message_type"] == "PREGNANT_CASE_REGISTRATION_M":
         # This contact is modifying a pregnant case report
         modify_record_pregnant_case(incoming_data)

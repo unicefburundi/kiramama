@@ -177,10 +177,25 @@ class Rescue(models.Model):
     """In ths model will be stored rescue designations"""
 
     rescue_designation = models.CharField(max_length=50)
+    rescue_description = models.CharField(max_length=100, null=True)
 
     def __unicode__(self):
-        return self.rescue_designation
+        return "{0} - {1}".format(
+            self.rescue_designation, self.rescue_description
+        )
 
+
+class MicronutrientIntake(models.Model):
+    """ In this model will be stored micronutrient intakes """
+
+    micronutrient_intake_code = models.CharField(max_length=10)
+    micronutrient_intake_description = models.CharField(max_length=100)
+
+    def __unicode__(self):
+        return "{0} - {1}".format(
+            self.micronutrient_intake_code, self.micronutrient_intake_description
+        )
+        
 
 class ReportGRO(models.Model):
     """ In this model will be stored pregnancy confirmation reports """
@@ -223,6 +238,71 @@ class ReportNSC(models.Model):
 
     def __unicode__(self):
         return self.report.text
+
+
+class Time(models.Model):
+    ''' This model is used to set up time related codes '''
+    time_code = models.CharField(max_length=50)
+    time_code_description = models.CharField(max_length=100)
+
+    def __unicode__(self):
+        return "{0} - {1}".format(
+            self.time_code, self.time_code_description
+        )
+
+
+class ReportPriseC(models.Model):
+    """ In this model will be stored 'Prise en charge reports' """
+    report = models.ForeignKey(Report)
+    pc_date = models.DateField()
+    child = models.ForeignKey(ReportNSC)
+    symptom = models.ForeignKey(Symptom)
+    rescue = models.ForeignKey(Rescue)
+    rescuered_when = models.ForeignKey(Time)
+    muac = models.FloatField()
+
+    def __unicode__(self):
+        return "{0} - {1} - {2} - {3} - {4} - {5} - {6}".format(
+            self.report, self.pc_date, self.child, self.symptom, self.rescue, self.rescuered_when, self.muac
+        )
+
+
+class ReportResponsePC(models.Model):
+    """ In this model will be stored reports about 'prise en charge' responses  """
+    report = models.ForeignKey(Report)
+    report_prise_charge = models.ForeignKey(ReportPriseC)
+    child_health_status = models.ForeignKey(HealthStatus)
+
+    def __unicode__(self):
+        return "{0} - {1} - {2}".format(
+            self.report, self.report_prise_charge, self.child_health_status
+        )
+
+class ReportMicroNTDistribution(models.Model):
+    """ In this model will be stored reports about 'Micro Nutriments' distribution  """
+    report = models.ForeignKey(Report)
+    child = models.ForeignKey(ReportNSC)
+    intake = models.ForeignKey(MicronutrientIntake)
+    intake_date = models.DateField()
+
+    def __unicode__(self):
+        return "{0} - {1} - {2} - {3}".format(
+            self.report, self.child, self.intake, self.intake_date
+        )
+
+class ReportDepistage(models.Model):
+    """ In this model will be stored reports about 'Depistage / screening'  """
+    report = models.ForeignKey(Report)
+    depistage_date = models.DateField()
+    number_of_children_in_green = models.IntegerField()
+    number_of_children_in_yellow = models.IntegerField()
+    number_of_children_in_red = models.IntegerField()
+    number_of_children_with_oedem = models.IntegerField()
+
+    def __unicode__(self):
+        return "{0} - {1} - {2} - {3} - {4} - {5}".format(
+            self.report, self.depistage_date, self.number_of_children_in_green, self.number_of_children_in_yellow, self.number_of_children_in_red, self.number_of_children_with_oedem
+        )
 
 
 class ReportCON(models.Model):

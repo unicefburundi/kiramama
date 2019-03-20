@@ -204,7 +204,7 @@ def check_number_of_values(args):
         args["valide"] = False
         # args['info_to_contact'] = "Erreur. Vous avez envoye peu de valeurs. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
         args["info_to_contact"] = (
-            "Ikosa. Warungitse mesage idakwiye. Mu gukosora, subira urungike iyo mesage itangurwa na '"
+            "Ikosa. Warungitse mesaje idakwiye. Mu gukosora, subira urungike iyo mesaje itangurwa na '"
             + args["mot_cle"]
             + "' yanditse neza"
         )
@@ -212,7 +212,7 @@ def check_number_of_values(args):
         args["valide"] = False
         # args['info_to_contact'] = "Erreur. Vous avez envoye beaucoup de valeurs. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
         args["info_to_contact"] = (
-            "Ikosa. Warungitse mesage ndende. Mu gukosora, subira urungike iyo mesage itangurwa na '"
+            "Ikosa. Warungitse mesaje ndende. Mu gukosora, subira urungike iyo mesaje itangurwa na '"
             + args["mot_cle"]
             + "' yanditse neza"
         )
@@ -238,7 +238,7 @@ def check_number_of_values_ris(args):
             + str(number_of_values_for_a_child)
             + "' (mugihe iyo mesaje yerekeye umwana) canke '"
             + str(number_of_values_for_a_woman)
-            + "' (mu gihe iyo mesaje yerekeye umuvyeyi). Mu gukosora, subira urungike iyo mesage itangurwa na '"
+            + "' (mu gihe iyo mesaje yerekeye umuvyeyi). Mu gukosora, subira urungike iyo mesaje itangurwa na '"
             + args["mot_cle"]
             + "' yanditse neza"
         )
@@ -270,7 +270,7 @@ def check_number_of_values_dec(args):
             + str(number_of_values_for_a_child)
             + "' (mugihe iyo mesaje yerekeye umwana) canke '"
             + str(number_of_values_for_a_woman)
-            + "' (mu gihe iyo mesaje yerekeye umuvyeyi). Mu gukosora, subira urungike iyo mesage itangurwa na '"
+            + "' (mu gihe iyo mesaje yerekeye umuvyeyi). Mu gukosora, subira urungike iyo mesaje itangurwa na '"
             + args["mot_cle"]
             + "' yanditse neza"
         )
@@ -646,6 +646,28 @@ def check_mother_has_ris_report(args):
         args["info_to_contact"] = "Un rapport RIS de cette maman a ete bien trouve"
 
 
+def check_child_has_ccm_report(args):
+    """ This function checks if the current child has a CCM report recorded """
+    ccm_set = ReportPriseC.objects.filter(report__mother=args["concerned_mother"], child=args["concerned_child"])
+
+    if len(ccm_set) < 1:
+        args["valide"] = False
+        args["info_to_contact"] = (
+            "Ikosa. Nta mesaje irarungikwa ivuga ukutamererwa neza kw umwana '"
+            +args["child_number"].child_code_designation
+            +"'' wumupfasoni '"
+            + args["concerned_mother"].id_mother
+            + "'"
+        )
+    else:
+        args["valide"] = True
+        the_concerned_ccp = ReportPriseC.objects.filter(
+            report__mother=args["concerned_mother"], child=args["concerned_child"]
+        ).order_by("-id")[0]
+        args["the_concerned_ccm"] = the_concerned_ccp
+        args["info_to_contact"] = "Un rapport CCM de cet enfant a ete bien trouve"
+
+
 def check_cpn_name_exists(args):
     """ This function checks if the CPN name sent exists in the system """
     the_sent_cpn_name = args["sent_cpn_name"]
@@ -724,6 +746,31 @@ def check_is_float(args):
         )
 
 
+def check_is_int(args):
+    """ This function checks if a given value is an int """
+
+    expression = r"^([0-9]+)$"
+
+    value_to_check = args["int_value"]
+
+    if re.search(expression, value_to_check) is None:
+        args["valide"] = False
+        # args['info_to_contact'] = "Erreur. La valeur envoyee pour '"+args["date_meaning"]+"' n est pas valide. Pour corriger,  veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+        args["info_to_contact"] = (
+            "Ikosa. Ico wanditse kuvyerekeye '"
+            + args["int_value_meaning"]
+            + "' ntikibaho. Mu gukosora, subira urungike iyo mesaje itangurwa na '"
+            + args["mot_cle"]
+            + "' yanditse neza"
+        )
+    else:
+        args["checked_int_value"] = value_to_check
+        args["valide"] = True
+        args["info_to_contact"] = (
+            "La valeur envoyee pour '" + args["int_value_meaning"] + "' est valide."
+        )
+
+
 def check_child_code(args):
     """ This function is used to check if the child code is valid """
     the_sent_child_code = args["child_code"]
@@ -744,6 +791,27 @@ def check_child_code(args):
         args["child_number"] = child_numbers[0]
         args["valide"] = True
         args["info_to_contact"] = "Le numero de l enfant envoye est valide."
+
+
+def check_micronutriment_intakes(args):
+    """ This function is used to check if the micronutriment intake value is valid """
+    the_sent_micronutriment_code = args["micronutriment_code"]
+
+    micronutriments = MicronutrientIntake.objects.filter(
+        micronutrient_intake_code=the_sent_micronutriment_code
+    )
+
+    if len(micronutriments) < 1:
+        args["valide"] = False
+        args["info_to_contact"] = (
+            "Ikosa. Wanditse inomero ya micronutriment itabaho. Mu gukosora, subira urungike iyo mesaje itangurwa na '"
+            + args["mot_cle"]
+            + "' yanditse neza"
+        )
+    else:
+        args["the_concerned_micronutriment"] = micronutriments[0]
+        args["valide"] = True
+        args["info_to_contact"] = "Le numero de micronutriment envoye est valide."
 
 
 def check_child_code_order(args):
@@ -900,6 +968,8 @@ def check_symptoms(args):
     red_symptoms_kirundi_names = ""
     red_first_symptom = True
 
+    args["one_valid_symptom"] = ""
+
     # Let's assume that all symbols are correct
     valid = True
 
@@ -923,6 +993,7 @@ def check_symptoms(args):
                 )
             else:
                 one_symptom = symptoms[0]
+                args["one_valid_symptom"] = one_symptom
                 kir_symptom_name = one_symptom.kirundi_name
 
                 if first_symptom:
@@ -1007,6 +1078,32 @@ def check_rescue_received(args):
         args["info_to_contact"] = (
             "La valeur envoyee pour '"
             + args["rescue_received_meaning"]
+            + "' est valide"
+        )
+
+
+def check_sent_time(args):
+    """ This function checks if the value sent for time is valid """
+
+    sent_time = args["sent_time"]
+
+    sent_time = Time.objects.filter(
+        time_code__iexact=sent_time
+    )
+
+    if len(sent_time) < 1:
+        args["valide"] = False
+        args["info_to_contact"] = (
+            "Ikosa. Ico warungitse kuvyerekeye igihe caheze umwana ugwaye atarakigwa ntikibaho. Mu gukosora, subira urungike iyo mesaje itangurwa na '"
+            + args["mot_cle"] 
+            + "' yanditse neza"
+        )
+    else:
+        args["concerned_time"] = sent_time[0]
+        args["valide"] = True
+        args["info_to_contact"] = (
+            "La valeur envoyee pour '"
+            + args["sent_time"]
             + "' est valide"
         )
 
@@ -4456,4 +4553,536 @@ def record_mother_reception_report(args):
         "Mesaje ivuga ko umupfasoni '"
         + args["concerned_mother"].id_mother
         + "' yimukiye aho ukorera yashitse neza"
+    )
+
+
+
+
+
+
+
+
+
+def record_new_mother_and_child(args):
+
+    args["mot_cle"] = "ENR"
+
+    args["mot_cle_gro"] = "GRO"
+
+    # Let's check if the person who send this message is a reporter
+    check_if_is_reporter(args)
+    if not args["valide"]:
+        return
+
+    # Let's check if the message sent is composed by an expected number of values
+    args["expected_number_of_values"] = getattr(
+        settings, "EXPECTED_NUMBER_OF_VALUES", ""
+    )[args["message_type"]]
+    check_number_of_values(args)
+    if not args["valide"]:
+        return
+
+    # Let's check if the child code is valid
+    args["child_code"] = args["text"].split(" ")[1]
+    check_child_code(args)
+    if not args["valide"]:
+        return
+
+    '''# Let's check if the chw is respecting the order of child codes
+    args["child_code"] = args["text"].split(" ")[1]
+    check_child_code_order(args)
+    if not args["valide"]:
+        return'''
+
+    # Let check if the birth date is not a future date
+    # It must be a previous date or today's date
+    args["previous_days_or_today_date"] = args["text"].split(" ")[2]
+    # args["date_meaning"] = "Date de naissance"
+    args["date_meaning"] = "Igenekerezo umuvyeyi yibarukiyeko"
+    check_date_is_previous_or_today(args)
+    if not args["valide"]:
+        return
+    args["birth_date"] = args["date_well_written"]
+
+    # Let's check if the phone number of the concerned mother is valid
+    args["phone_number"] = args["text"].split(" ")[3]
+    check_phone_number(args)
+    if not args["valide"]:
+        return
+
+    # The first part of the mother id must have at minimum 3 caracters
+    mother_id_1 = str(args["facility"].id)
+    if len(mother_id_1) == 1:
+        mother_id_1 = "00" + mother_id_1
+    if len(mother_id_1) == 2:
+        mother_id_1 = "0" + mother_id_1
+
+    # Let's build the second part of the mother id. It's made at minimum by 3 caracters
+
+    gro_reports_from_this_cds = Report.objects.filter(
+        cds=args["facility"], category = args["mot_cle_gro"]
+    )
+
+    # the_last_mother_registered_from_this_cds = the_last_gro_report_from_this_cds.mother
+
+    mother_id_2 = "0"
+    if len(gro_reports_from_this_cds) > 0:
+        the_last_mother_from_this_cds = (
+            Report.objects.filter(cds=args["facility"], category=args["mot_cle_gro"])
+            .order_by("-id")[0]
+            .mother
+        )
+        # Let's identify the id used by the system for this patient
+        the_last_mother_id = the_last_mother_from_this_cds.id_mother
+
+        # Let's remove the first part (mother_id_1) and increment the second one
+        the_length_of_the_first_part = len(mother_id_1)
+        the_second_part = the_last_mother_id[the_length_of_the_first_part:]
+
+        # Let's increment the second part.
+        the_second_part_int = int(the_second_part)
+        the_second_part_int = the_second_part_int + 1
+
+        # mother_id_2 is the second part of the new mother
+        mother_id_2 = str(the_second_part_int)
+    else:
+        mother_id_2 = "0"
+
+    if len(mother_id_2) == 1:
+        mother_id_2 = "00" + mother_id_2
+    if len(mother_id_2) == 2:
+        mother_id_2 = "0" + mother_id_2
+
+    mother_id = mother_id_1 + "" + mother_id_2
+
+    risk_level, created = RiskLevel.objects.get_or_create(
+        risk_designation = "0",
+        risk_level_meaning = "Aucun risque"
+    )
+
+    consultation_location, created = Lieu.objects.get_or_create(
+        location_category_designation = "Not needed",
+        location_category_description = "Not needed"
+    )
+
+
+    # All cheks passes. Let's record the pregnant women
+    # the_created_mother_record, created = Mother.objects.get_or_create(phone_number = args["phone_number"])
+    # the_created_mother_record = Mother.objects.create(id_mother = mother_id, phone_number = args["phone_number"])
+    the_created_mother_record, created = Mother.objects.get_or_create(
+        id_mother=mother_id, phone_number=args["phone_number"]
+    )
+    the_created_report = Report.objects.create(
+        chw=args["the_sender"],
+        sub_hill=args["sub_colline"],
+        cds=args["facility"],
+        mother=the_created_mother_record,
+        reporting_date=datetime.datetime.now().date(),
+        text=args["text"],
+        category=args["mot_cle_gro"],
+    )
+    created_gro_report = ReportGRO.objects.create(
+        report=the_created_report,
+        expected_delivery_date=args["birth_date"],
+        next_appointment_date=args["birth_date"],
+        risk_level=risk_level,
+        consultation_location=consultation_location,
+    )
+
+    '''the_created_report = Report.objects.create(
+        chw=args["the_sender"],
+        sub_hill=args["sub_colline"],
+        cds=args["facility"],
+        mother=args["concerned_woman"],
+        reporting_date=datetime.datetime.now().date(),
+        text=args["text"],
+        category=args["mot_cle"],
+    )'''
+
+    args["gender"], created = Gender.objects.get_or_create(
+        gender_code = "N",
+        gender_code_meaning = "Not needed"
+    )
+
+    args["code_allaitement"], created = BreastFeed.objects.get_or_create(
+        breast_feed_option_name = "N",
+        breast_feed_option_description = "Not needed"
+    )
+
+    created_nsc_report = ReportNSC.objects.create(
+        report=the_created_report,
+        child_number=args["child_number"],
+        birth_date=args["birth_date"],
+        birth_location=consultation_location,
+        gender=args["gender"],
+        weight=0,
+        next_appointment_date=args["birth_date"],
+        breast_feading=args["code_allaitement"],
+    )
+
+    args["valide"] = True
+    args["info_to_contact"] = (
+        "Mesaje warungitse yashitse. Inomero yuwo mupfasoni yibungenze ni " + mother_id
+    )
+
+
+def report_a_ccm(args):
+
+    args["mot_cle"] = "PCC"
+
+    # Let's check if the person who send this message is a reporter
+    check_if_is_reporter(args)
+    if not args["valide"]:
+        return
+
+    # Let's check if the message sent is composed by an expected number of values
+    args["expected_number_of_values"] = getattr(
+        settings, "EXPECTED_NUMBER_OF_VALUES", ""
+    )[args["message_type"]]
+    check_number_of_values(args)
+    if not args["valide"]:
+        return
+
+    # Let's check if the mother id sent is valid
+    args["sent_mother_id"] = args["text"].split(" ")[1]
+    check_mother_id_is_valid(args)
+    if not args["valide"]:
+        return
+    args["concerned_woman"] = args["concerned_mother"]
+
+    # Let's check if this mother is affected somewhere
+    check_mother_is_affected_somewhere(args)
+    if not args["valide"]:
+        return
+
+    # Let s check if consultation date is not a future date
+    # It must be a previous date or today's date
+    args["previous_days_or_today_date"] = args["text"].split(" ")[2]
+    args["date_meaning"] = "Igenekerezo umwana yasuzumiweko"
+    check_date_is_previous_or_today(args)
+    if not args["valide"]:
+        return
+    args["consultation_date"] = args["date_well_written"]
+
+    # Let's check if the child code is valid
+    args["child_code"] = args["text"].split(" ")[3]
+    check_child_code(args)
+    if not args["valide"]:
+        return
+
+    # Let's check if this mother has a child with the sent child number
+    args["child_id"] = args["text"].split(" ")[3]
+    check_child_exists(args)
+    if not args["valide"]:
+        return
+
+    # Let's check if the symptom(s) is/are valid
+    args["symptoms"] = args["text"].split(" ")[4]
+    check_symptoms(args)
+    if not args["valide"]:
+        return
+
+    # Let's check if the value of rescue received exists
+    args["rescue_received"] = args["text"].split(" ")[5]
+    args["rescue_received_meaning"] = "Ico umwana yafashijwe"
+    check_rescue_received(args)
+    if not args["valide"]:
+        return
+
+    # Let's check if the value sent for time exists
+    args["sent_time"] = args["text"].split(" ")[6]
+    args["time_meaning"] = "Igihe caheze umwana agwaye atarakigwa"
+    check_sent_time(args)
+    if not args["valide"]:
+        return
+
+    # Let's check if the indicated MUAC value is valid
+    args["float_value"] = args["text"].split(" ")[7]
+    # args["date_meaning"] = "Poids du nouveau ne"
+    args["date_meaning"] = "MUAC"
+    check_is_float(args)
+    if not args["valide"]:
+        return
+    try:
+        checked_value = float(args["checked_float"])
+    except:
+        args["valide"] = False
+        # args['info_to_contact'] = "Erreur. La valeur envoyee pour '"+args["date_meaning"]+"' n est pas valide. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+        args["info_to_contact"] = (
+            "Ikosa. Ico wanditse kuvyerekeye MUAC sico. Mu gukosora, subira urungike iyo mesaje itangurwa na '"
+            + args["mot_cle"]
+            + "' yanditse neza"
+        )
+        return
+
+
+    # Now, everything is checked. Let's record the report
+    the_created_report = Report.objects.create(
+        chw=args["the_sender"],
+        sub_hill=args["sub_colline"],
+        cds=args["facility"],
+        mother=args["concerned_woman"],
+        reporting_date=datetime.datetime.now().date(),
+        text=args["text"],
+        category=args["mot_cle"],
+    )
+    created_rpcc_report = ReportPriseC.objects.create(
+        report=the_created_report,
+        child=args["concerned_child"],
+        pc_date=args["consultation_date"],
+        symptom=args["one_valid_symptom"],
+        rescue=args["concerned_rescue_received"],
+        rescuered_when=args["concerned_time"],
+        muac=checked_value
+    )
+
+    args["valide"] = True
+    args["info_to_contact"] = (
+        "Mesaje uhejeje kurungika yashitse neza"
+    )
+
+
+
+def report_result_of_ccm(args):
+
+    args["mot_cle"] = "RGC"
+
+    # Let's check if the person who send this message is a reporter
+    check_if_is_reporter(args)
+    if not args["valide"]:
+        return
+
+    # Let's check if the message sent is composed by an expected number of values
+    args["expected_number_of_values"] = getattr(
+        settings, "EXPECTED_NUMBER_OF_VALUES", ""
+    )[args["message_type"]]
+    check_number_of_values(args)
+    if not args["valide"]:
+        return
+
+    # Let's check if the mother id sent is valid
+    args["sent_mother_id"] = args["text"].split(" ")[1]
+    check_mother_id_is_valid(args)
+    if not args["valide"]:
+        return
+    args["concerned_woman"] = args["concerned_mother"]
+
+    # Let's check if this mother is affected somewhere
+    check_mother_is_affected_somewhere(args)
+    if not args["valide"]:
+        return
+
+    # Let's check if the child code is valid
+    args["child_code"] = args["text"].split(" ")[2]
+    check_child_code(args)
+    if not args["valide"]:
+        return
+
+    # Let's check if this mother has a child with the sent child number
+    args["child_id"] = args["text"].split(" ")[2]
+    check_child_exists(args)
+    if not args["valide"]:
+        return
+
+    # Let's check child health status value
+    args["health_status_value"] = args["text"].split(" ")[3]
+    # args["health_status_meaning"] = "etat de sante de l enfant"
+    args["health_status_meaning"] = "Ingene amagara y umuvyeyi yifashe"
+    check_health_status(args)
+    if not args["valide"]:
+        return
+    args["child_s_health_status"] = args["concerned_health_status"]
+
+
+    #Let's check if a CCM report has been sent for this woman and child
+    check_child_has_ccm_report(args)
+    if not args["valide"]:
+        return
+    args['the_concerned_ccm_report'] = args["the_concerned_ccm"]
+
+    # Now, everything is checked. Let's record the report
+    the_created_report = Report.objects.create(
+        chw=args["the_sender"],
+        sub_hill=args["sub_colline"],
+        cds=args["facility"],
+        mother=args["concerned_woman"],
+        reporting_date=datetime.datetime.now().date(),
+        text=args["text"],
+        category=args["mot_cle"],
+    )
+    created_ccmr_report = ReportResponsePC.objects.create(
+        report=the_created_report,
+        report_prise_charge=args['the_concerned_ccm_report'],
+        child_health_status=args["child_s_health_status"]
+    )
+
+    args["valide"] = True
+    args["info_to_contact"] = (
+        "Mesaje uhejeje kurungika yashitse neza"
+    )
+
+
+def report_micronutriment_distribution(args):
+
+    args["mot_cle"] = "DPM"
+
+    # Let's check if the person who send this message is a reporter
+    check_if_is_reporter(args)
+    if not args["valide"]:
+        return
+
+    # Let's check if the message sent is composed by an expected number of values
+    args["expected_number_of_values"] = getattr(
+        settings, "EXPECTED_NUMBER_OF_VALUES", ""
+    )[args["message_type"]]
+    check_number_of_values(args)
+    if not args["valide"]:
+        return
+
+    # Let's check if the mother id sent is valid
+    args["sent_mother_id"] = args["text"].split(" ")[1]
+    check_mother_id_is_valid(args)
+    if not args["valide"]:
+        return
+    args["concerned_woman"] = args["concerned_mother"]
+
+    # Let's check if this mother is affected somewhere
+    check_mother_is_affected_somewhere(args)
+    if not args["valide"]:
+        return
+
+    # Let's check if the child code is valid
+    args["child_code"] = args["text"].split(" ")[2]
+    check_child_code(args)
+    if not args["valide"]:
+        return
+
+    # Let's check if this mother has a child with the sent child number
+    args["child_id"] = args["text"].split(" ")[2]
+    check_child_exists(args)
+    if not args["valide"]:
+        return
+
+    # Let s check if sent date is not a future date
+    # It must be a previous date or today's date
+    args["previous_days_or_today_date"] = args["text"].split(" ")[3]
+    args["date_meaning"] = "Igenekerezo umwana yaronkeyeko micronutriment"
+    check_date_is_previous_or_today(args)
+    if not args["valide"]:
+        return
+    args["consultation_date"] = args["date_well_written"]
+
+
+    args["micronutriment_code"] = args["text"].split(" ")[4]
+    check_micronutriment_intakes(args)
+    if not args["valide"]:
+        return
+
+    # Now, everything is checked. Let's record the report
+    the_created_report = Report.objects.create(
+        chw=args["the_sender"],
+        sub_hill=args["sub_colline"],
+        cds=args["facility"],
+        mother=args["concerned_woman"],
+        reporting_date=datetime.datetime.now().date(),
+        text=args["text"],
+        category=args["mot_cle"],
+    )
+    micronutri_report = ReportMicroNTDistribution.objects.create(
+        report = the_created_report,
+        child = args["concerned_child"],
+        intake = args["the_concerned_micronutriment"],
+        intake_date = args["consultation_date"]
+    )
+
+    args["valide"] = True
+    args["info_to_contact"] = (
+        "Mesaje uhejeje kurungika yashitse neza"
+    )
+
+def report_depistage(args):
+
+    args["mot_cle"] = "RDM"
+
+    # Let's check if the person who send this message is a reporter
+    check_if_is_reporter(args)
+    if not args["valide"]:
+        return
+
+    # Let's check if the message sent is composed by an expected number of values
+    args["expected_number_of_values"] = getattr(
+        settings, "EXPECTED_NUMBER_OF_VALUES", ""
+    )[args["message_type"]]
+    check_number_of_values(args)
+    if not args["valide"]:
+        return
+
+    # Let s check if sent date is not a future date
+    # It must be a previous date or today's date
+    args["previous_days_or_today_date"] = args["text"].split(" ")[1]
+    args["date_meaning"] = "Igenekerezo abana basuzumiweko"
+    check_date_is_previous_or_today(args)
+    if not args["valide"]:
+        return
+    args["consultation_date"] = args["date_well_written"]
+
+    number_of_children_in_green = args["text"].split(" ")[2]
+    args["int_value"] = number_of_children_in_green
+    args["int_value_meaning"] = "igitigiri cabana hatowe ibara risa nakatsi gatoto"
+    check_is_int(args)
+    if not args["valide"]:
+        return
+
+
+    number_of_children_in_yellow = args["text"].split(" ")[3]
+    args["int_value"] = number_of_children_in_yellow
+    args["int_value_meaning"] = "igitigiri cabana hatowe ibara risa numuhondo"
+    check_is_int(args)
+    if not args["valide"]:
+        return
+
+    number_of_children_in_red = args["text"].split(" ")[4]
+    args["int_value"] = number_of_children_in_red
+    args["int_value_meaning"] = "igitigiri cabana hatowe ibara ritukura"
+    check_is_int(args)
+    if not args["valide"]:
+        return
+
+    number_of_children_with_oedem = args["text"].split(" ")[5]
+    args["int_value"] = number_of_children_with_oedem
+    args["int_value_meaning"] = "igitigiri cabana hatowe oedem"
+    check_is_int(args)
+    if not args["valide"]:
+        return
+
+    args["concerned_woman"], created = Mother.objects.get_or_create(
+        id_mother = "0",
+        phone_number = "0",
+        is_affected_somewhere = False
+    )
+
+    # Now, everything is checked. Let's record the report
+    the_created_report = Report.objects.create(
+        chw=args["the_sender"],
+        sub_hill=args["sub_colline"],
+        cds=args["facility"],
+        mother=args["concerned_woman"],
+        reporting_date=datetime.datetime.now().date(),
+        text=args["text"],
+        category=args["mot_cle"],
+    )
+
+    depistage_report = ReportDepistage.objects.create(
+        report = the_created_report,
+        depistage_date = args["consultation_date"],
+        number_of_children_in_green = number_of_children_in_green,
+        number_of_children_in_yellow = number_of_children_in_yellow,
+        number_of_children_in_red = number_of_children_in_red,
+        number_of_children_with_oedem = number_of_children_with_oedem
+    )
+
+
+    args["valide"] = True
+    args["info_to_contact"] = (
+        "Mesaje uhejeje gutanga yashitse neza"
     )
