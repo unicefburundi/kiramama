@@ -33,7 +33,7 @@ def send_sms_through_rapidpro(args):
 
 
 @periodic_task(
-    run_every=(crontab(minute=10, hour="8")),
+    run_every=(crontab(minute=10, hour="7")),
     name="send_scheduled_messages",
     ignore_result=True,
 )
@@ -189,7 +189,7 @@ def change_chw_status():
 
 
 @periodic_task(
-    run_every=(crontab(minute=30, hour="8")),
+    run_every=(crontab(minute=50, hour="7")),
     name="tasks.change_chw_status",
     ignore_result=True,
 )
