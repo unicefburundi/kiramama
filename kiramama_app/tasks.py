@@ -33,7 +33,7 @@ def send_sms_through_rapidpro(args):
 
 
 @periodic_task(
-    run_every=(crontab(minute=20, hour="8")),
+    run_every=(crontab(minute=10, hour="8")),
     name="send_scheduled_messages",
     ignore_result=True,
 )
@@ -158,8 +158,17 @@ def change_chw_status():
         if len(reports_given_by_the_current_chw) < 1:
             # This community health work doesn't give any report
             # We change his status if there is many days (based on limit_time variable) after his/her registration
-            # We will put here the code for changing his status if it is not already changed
-            pass
+            his_registration_date = chw.reg_date.date()
+            if (
+                datetime.combine(his_registration_date, datetime.now().time())
+                < limit_time
+            ):
+                # This CHW spend many days without giving any report. We change his status from active to inactive
+                chw.is_active = False
+                chw.save()
+            else:
+                chw.is_active = True
+                chw.save()
         else:
             # Let's check if this CHW doesn't spend many days (based on limit_time variable) without sending any report
             his_last_report = reports_given_by_the_current_chw.order_by("-id")[0]
@@ -180,7 +189,7 @@ def change_chw_status():
 
 
 @periodic_task(
-    run_every=(crontab(minute=30, hour="10")),
+    run_every=(crontab(minute=30, hour="8")),
     name="tasks.change_chw_status",
     ignore_result=True,
 )
