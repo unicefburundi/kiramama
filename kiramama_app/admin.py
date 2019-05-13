@@ -236,6 +236,7 @@ class ReportRISAdmin(admin.ModelAdmin):
 
 class ReportAdmin(admin.ModelAdmin):
     actions = ["download_csv"]
+    date_hierarchy = "reporting_date"
     list_display = [
         "report_category",
         "text",
@@ -256,12 +257,6 @@ class ReportAdmin(admin.ModelAdmin):
     def get_report_date(self, obj):
         return obj.reporting_date
 
-    """def mother_arrived_at_health_facility(self, obj):
-        return obj.mother_arrived_at_health_facility"""
-
-    """def get_cds_name(self, obj):
-        return obj.report.cds.name"""
-
     def get_cds_code(self, obj):
         return obj.cds.code
 
@@ -280,8 +275,6 @@ class ReportAdmin(admin.ModelAdmin):
     report_category.short_description = "Report category"
     text.short_description = "Sent text"
     get_report_date.short_description = "Reporting date"
-    # mother_arrived_at_health_facility.short_description = "Woman arrived at HF"
-    # get_cds_name.short_description = "CDS name"
     get_cds_code.short_description = "CDS code"
     get_sub_colline.short_description = "Sub colline"
     get_colline.short_description = "Colline"
