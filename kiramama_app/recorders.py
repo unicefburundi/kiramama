@@ -4093,7 +4093,8 @@ def record_death_report(args):
     the_contact_phone_number = "tel:" + args["supervisor_phone_number"]
     data = {"urns": [the_contact_phone_number], "text": args["info_to_supervisors"]}
     args["data"] = data
-    send_sms_through_rapidpro(args)
+    print(args["dec_type"])
+    #send_sms_through_rapidpro(args)
 
     # We need to inform national supervisors
     if args["dec_type"] == "DEC_CHILD":
@@ -4137,7 +4138,7 @@ def record_death_report(args):
 
     data = {"urns": national_sup_phone_numbers, "text": args["info_to_supervisors"]}
     args["data"] = data
-    send_sms_through_rapidpro(args)
+    #send_sms_through_rapidpro(args)
 
 
 # Modify
