@@ -390,8 +390,56 @@ class NotificationsCHWAdmin(admin.ModelAdmin):
     download_csv.short_description = "Download"
 
 
+class MotherAdmin(admin.ModelAdmin):
+    actions = ["download_csv"]
+    list_display = [
+        "id_mother",
+        "phone_number",
+    ]
+
+    def get_id_mother(self, obj):
+        return obj.id_mother
+
+    def get_phone_number(self, obj):
+        return obj.phone_number
+
+    get_id_mother.short_description = "Mother ID"
+    get_phone_number.short_description = "Phone number"
+
+    #list_filter = ("id_mother", "phone_number")
+
+    def download_csv(self, request, queryset):
+        import csv
+        from django.http import HttpResponse
+        import StringIO
+
+        f = StringIO.StringIO()
+        writer = csv.writer(f)
+        writer.writerow(
+            [
+                "Mother ID",
+                "Phone number",
+            ]
+        )
+
+        for s in queryset:
+            writer.writerow(
+                [
+                    s.id_mother,
+                    s.phone_number,
+                ]
+            )
+
+        f.seek(0)
+
+        response = HttpResponse(f, content_type="text/csv")
+        response["Content-Disposition"] = "attachment; filename=Mothers.csv"
+        return response
+
+    download_csv.short_description = "Download"
+
 admin.site.register(CHW, CHWAdmin)
-admin.site.register(Mother)
+admin.site.register(Mother, MotherAdmin)
 admin.site.register(Report, ReportAdmin)
 admin.site.register(RiskLevel)
 admin.site.register(Lieu)
