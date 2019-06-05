@@ -2458,6 +2458,28 @@ def record_birth_case_report(args):
     # If the CHW was inactive, i activate him/her
     activate_inactive_chw(args)
 
+    #Let's delete all not sent scheduled reminders about this woman
+    one_woman = args['concerned_woman']
+    #Let's delete notifications scheduled to be sent to this woman and which are not yet sent out
+    notifications_to_woman = NotificationsMother.objects.filter(
+        mother = one_woman,
+        is_sent=False
+    )
+    if len(notifications_to_woman) > 0:
+        for one_notification in notifications_to_woman:
+            one_notification.delete()
+
+    #Let's delete notifications scheduled to be sent to a CHW
+    mother_id = one_woman.id_mother
+    mother_id = " "+mother_id+" "
+    notifications_to_chw = NotificationsCHW.objects.filter(
+        message_to_send__contains = mother_id,
+        is_sent=False
+    )
+    if len(notifications_to_chw) > 0:
+        for one_notification in notifications_to_chw:
+            one_notification.delete()
+
     # Let's record reminders which will be sent out for the next appointment
     con1_notification_type = NotificationType.objects.filter(code__iexact="con1")
     if len(con1_notification_type) < 1:
