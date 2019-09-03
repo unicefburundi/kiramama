@@ -9,6 +9,11 @@ import json
 from kiramama_app.models import *
 from datetime import datetime, timedelta, time
 
+from django.views.decorators.csrf import csrf_exempt
+from jsonview.decorators import json_view
+
+import urllib, urllib2
+
 logger = get_task_logger(__name__)
 
 
@@ -31,15 +36,54 @@ def send_sms_through_rapidpro(args):
     print ("response :")
     print (response)
 
+def send_sms_through_kannel(phone_number, msg):
+    """ 
+    This function sends messages through kannel.
+    """
+    msg = urllib.quote(msg)
+    username = getattr(settings, "KANNEL_USER_NAME", "")
+    password = getattr(settings, "KANNEL_PASSWORD", "")
+    host = getattr(settings, "KANNEL_HOST", "")
 
-@periodic_task(
+    url = ("http://"
+        +host
+        +":13013/cgi-bin/sendsms?username="
+        +username
+        +"&to="
+        +phone_number
+        +"&from=%2B257505&dlr-mask=31&text="
+        +msg+"&password="
+        +password
+        +""
+        )
+
+    urllib2.urlopen(url)
+    return "Ok"
+
+
+@csrf_exempt
+@json_view
+def send_scheduled_sms(request):
+    """This function receives requests sent by RapidPro.
+    This function send json data to RapidPro as a response."""
+    send_scheduled_messages()
+
+    # Let's instantiate the variable this function will return
+    response = {}
+
+    response["info_to_contact"] = "Ok"
+
+    return response
+
+'''@periodic_task(
     run_every=(crontab(minute=10, hour="7")),
     name="send_scheduled_messages",
     ignore_result=True,
-)
+)'''
 def send_scheduled_messages():
     today = datetime.today().date()
-    today_7 = datetime.today().date() - timedelta(4)
+    tolerated_days = getattr(settings, "TOLERATED_DAYS", "")
+    today_7 = datetime.today().date() - timedelta(tolerated_days)
 
     ready_to_send_mother_messages = NotificationsMother.objects.filter(
         date_time_for_sending__gte=today_7,
@@ -63,7 +107,8 @@ def send_scheduled_messages():
                 print (mother_message.message_to_send)
                 print ("To :")
                 print (mother_message.mother.phone_number)
-                send_sms_through_rapidpro(args)
+                #send_sms_through_rapidpro(args)
+                send_sms_through_kannel(mother_message.mother.phone_number, mother_message.message_to_send)
                 mother_message.is_sent = True
                 mother_message.save()
                 print ("[Part 1]After sending the message :")
@@ -90,7 +135,8 @@ def send_scheduled_messages():
                 print (chw_message.message_to_send)
                 print ("To :")
                 print (chw_message.chw.phone_number)
-                send_sms_through_rapidpro(args)
+                #send_sms_through_rapidpro(args)
+                send_sms_through_kannel(chw_message.chw.phone_number, chw_message.message_to_send)
                 chw_message.is_sent = True
                 chw_message.save()
                 print ("[Part 2] After sending the message :")
@@ -220,25 +266,19 @@ def inform_supersors_on_inactive_chw():
     print ("---Finish inform_supersors_on_inactive_chw---")
 
 
-@periodic_task(
-    run_every=(crontab(minute=30, hour="7")),
-    name="tasks.cancel_reminders",
-    ignore_result=True,
-)
-def cancel_reminders():
-    """
-    This task is used to cancel no longer needed reminders
-    """
+def delete_no_longer_needed_notifications(args):
+    ''' This function delete no longer needed notifications '''
+
+    concerned_mothers = args["concerned_mothers"]
+
     today = datetime.today().date()
 
     start_date = datetime.today().date() - timedelta(7)
     end_date = datetime.today().date() + timedelta(300)
 
-    concerned_mothers_dec = Mother.objects.filter(report__category="DEC")
-
-    if len(concerned_mothers_dec) > 0:
-        """There is at least one death report."""
-        for one_woman in concerned_mothers_dec:
+    if len(concerned_mothers) > 0:
+        ''' There is at least one concerned mother '''
+        for one_woman in concerned_mothers:
             # Let's delete notifications scheduled to be sent to this woman
             notifications_to_woman = NotificationsMother.objects.filter(
                 mother=one_woman,
@@ -249,12 +289,10 @@ def cancel_reminders():
             if len(notifications_to_woman) > 0:
                 # We have to delete all these notifications
                 for one_notification in notifications_to_woman:
-                    print "==== Before deleting ===="
-                    print one_notification.mother
-                    print one_notification.date_time_for_sending
-                    print one_notification.message_to_send
+                    print"The below notification is going to be deleted"
+                    print one_notification 
                     one_notification.delete()
-                    print "==== After deleting ===="
+
 
             # Let's delete notifications scheduled to be sent to a CHW
             mother_id = one_woman.id_mother
@@ -265,9 +303,27 @@ def cancel_reminders():
             if len(notifications_to_chw) > 0:
                 # We have to delete all these notifications
                 for one_notification in notifications_to_chw:
-                    print "==== Before deleting ===="
-                    print mother_id
-                    print one_notification.date_time_for_sending
-                    print one_notification.message_to_send
+                    print"The below notification is going to be deleted"
+                    print one_notification 
                     one_notification.delete()
-                    print "==== After deleting ===="
+
+
+
+'''
+@periodic_task(
+    run_every=(crontab(minute=30, hour="7")),
+    name="tasks.cancel_reminders",
+    ignore_result=True,
+)'''
+def cancel_reminders():
+    """
+    This task is used to cancel no longer needed reminders
+    """
+    concerned_mothers = Mother.objects.filter(report__category="DEC")
+    args["concerned_mothers"] = concerned_mothers
+    delete_no_longer_needed_notifications(args)
+
+    concerned_mothers = Mother.objects.filter(report__category="NSC")
+    args["concerned_mothers"] = concerned_mothers
+    delete_no_longer_needed_notifications(args)
+
