@@ -58,6 +58,7 @@ def send_sms_through_kannel(phone_number, msg):
         )
 
     urllib2.urlopen(url)
+
     return "Ok"
 
 
@@ -95,26 +96,24 @@ def send_scheduled_messages():
         #  There is one or more messages to be sent to one or more mothers
         for mother_message in ready_to_send_mother_messages:
             if mother_message.mother.phone_number:
-                the_contact_phone_number = "tel:" + mother_message.mother.phone_number
+                if(len(mother_message.mother.phone_number) == 8):
+                    #the_contact_phone_number = "tel:257" + mother_message.mother.phone_number
+                    the_contact_phone_number = "257" + mother_message.mother.phone_number
+                else:
+                    #the_contact_phone_number = "tel:" + mother_message.mother.phone_number
+                    the_contact_phone_number = mother_message.mother.phone_number
                 data = {
                     "urns": [the_contact_phone_number],
                     "text": mother_message.message_to_send,
                 }
                 args["data"] = data
-                #  Changing the message status before calling "send_sms_through_rapidpro" is helpful when the task is running quickly
-                #  and run the next time before all messages are sent
-                print ("[Part 1]==>Before sending the message :")
-                print (mother_message.message_to_send)
-                print ("To :")
-                print (mother_message.mother.phone_number)
                 #send_sms_through_rapidpro(args)
-                send_sms_through_kannel(mother_message.mother.phone_number, mother_message.message_to_send)
+                send_sms_through_kannel(
+                    the_contact_phone_number,
+                    mother_message.message_to_send
+                    )
                 mother_message.is_sent = True
                 mother_message.save()
-                print ("[Part 1]After sending the message :")
-                print (mother_message.message_to_send)
-                print ("To :")
-                print (mother_message.mother.phone_number)
 
     ready_to_send_chw_messages = NotificationsCHW.objects.filter(
         date_time_for_sending__gte=today_7,
@@ -131,18 +130,13 @@ def send_scheduled_messages():
                     "text": chw_message.message_to_send,
                 }
                 args["data"] = data
-                print ("[Part 2]==> Before sending the message to :")
-                print (chw_message.message_to_send)
-                print ("To :")
-                print (chw_message.chw.phone_number)
                 #send_sms_through_rapidpro(args)
-                send_sms_through_kannel(chw_message.chw.phone_number, chw_message.message_to_send)
+                send_sms_through_kannel(
+                    chw_message.chw.phone_number, 
+                    chw_message.message_to_send
+                    )
                 chw_message.is_sent = True
                 chw_message.save()
-                print ("[Part 2] After sending the message :")
-                print (chw_message.message_to_send)
-                print ("To :")
-                print (chw_message.chw.phone_number)
 
 
 def change_chw_status():
