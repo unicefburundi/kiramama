@@ -4115,7 +4115,6 @@ def record_death_report(args):
     the_contact_phone_number = "tel:" + args["supervisor_phone_number"]
     data = {"urns": [the_contact_phone_number], "text": args["info_to_supervisors"]}
     args["data"] = data
-    print(args["dec_type"])
     #send_sms_through_rapidpro(args)
 
     # We need to inform national supervisors
@@ -4155,8 +4154,6 @@ def record_death_report(args):
         )
 
     national_sup_phone_numbers = get_national_sup_phone_number()
-
-    print national_sup_phone_numbers
 
     data = {"urns": national_sup_phone_numbers, "text": args["info_to_supervisors"]}
     args["data"] = data

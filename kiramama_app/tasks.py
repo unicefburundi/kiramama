@@ -96,24 +96,29 @@ def send_scheduled_messages():
         #  There is one or more messages to be sent to one or more mothers
         for mother_message in ready_to_send_mother_messages:
             if mother_message.mother.phone_number:
-                if(len(mother_message.mother.phone_number) == 8):
-                    #the_contact_phone_number = "tel:257" + mother_message.mother.phone_number
-                    the_contact_phone_number = "257" + mother_message.mother.phone_number
-                else:
-                    #the_contact_phone_number = "tel:" + mother_message.mother.phone_number
-                    the_contact_phone_number = mother_message.mother.phone_number
-                data = {
-                    "urns": [the_contact_phone_number],
-                    "text": mother_message.message_to_send,
-                }
-                args["data"] = data
-                #send_sms_through_rapidpro(args)
-                send_sms_through_kannel(
-                    the_contact_phone_number,
-                    mother_message.message_to_send
+                dec_report = Report.objects.filter(
+                    mother = mother_message.mother, 
+                    category = "DEC"
                     )
-                mother_message.is_sent = True
-                mother_message.save()
+                if(len(dec_report) < 1):
+                    if(len(mother_message.mother.phone_number) == 8):
+                        #the_contact_phone_number = "tel:257" + mother_message.mother.phone_number
+                        the_contact_phone_number = "257" + mother_message.mother.phone_number
+                    else:
+                        #the_contact_phone_number = "tel:" + mother_message.mother.phone_number
+                        the_contact_phone_number = mother_message.mother.phone_number
+                    data = {
+                        "urns": [the_contact_phone_number],
+                        "text": mother_message.message_to_send,
+                    }
+                    args["data"] = data
+                    #send_sms_through_rapidpro(args)
+                    send_sms_through_kannel(
+                        the_contact_phone_number,
+                        mother_message.message_to_send
+                        )
+                    mother_message.is_sent = True
+                    mother_message.save()
 
     ready_to_send_chw_messages = NotificationsCHW.objects.filter(
         date_time_for_sending__gte=today_7,
