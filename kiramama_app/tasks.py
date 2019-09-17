@@ -113,9 +113,10 @@ def send_scheduled_messages():
                     }
                     args["data"] = data
                     #send_sms_through_rapidpro(args)
+                    message_to_send = "["+mother_message.mother.id_mother+"] - "+mother_message.message_to_send
                     send_sms_through_kannel(
                         the_contact_phone_number,
-                        mother_message.message_to_send
+                        message_to_send
                         )
                     mother_message.is_sent = True
                     mother_message.save()
