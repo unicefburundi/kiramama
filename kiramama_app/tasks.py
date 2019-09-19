@@ -24,7 +24,6 @@ def send_sms_through_rapidpro(args):
     """
     token = getattr(settings, "TOKEN", "")
     data = args["data"]
-    print (data)
     response = requests.post(
         settings.RAPIDPRO_BROADCAST_URL,
         headers={
@@ -33,8 +32,7 @@ def send_sms_through_rapidpro(args):
         },
         data=json.dumps(data),
     )
-    print ("response :")
-    print (response)
+
 
 def send_sms_through_kannel(phone_number, msg):
     """ 
@@ -64,10 +62,24 @@ def send_sms_through_kannel(phone_number, msg):
 
 @csrf_exempt
 @json_view
-def send_scheduled_sms(request):
+def send_mother_scheduled_sms(request):
     """This function receives requests sent by RapidPro.
     This function send json data to RapidPro as a response."""
-    send_scheduled_messages()
+    send_mother_scheduled_messages()
+
+    # Let's instantiate the variable this function will return
+    response = {}
+
+    response["info_to_contact"] = "Ok"
+
+    return response
+
+@csrf_exempt
+@json_view
+def send_chw_scheduled_sms(request):
+    """This function receives requests sent by RapidPro.
+    This function send json data to RapidPro as a response."""
+    send_chw_scheduled_messages()
 
     # Let's instantiate the variable this function will return
     response = {}
@@ -81,7 +93,7 @@ def send_scheduled_sms(request):
     name="send_scheduled_messages",
     ignore_result=True,
 )'''
-def send_scheduled_messages():
+def send_mother_scheduled_messages():
     today = datetime.today().date()
     tolerated_days = getattr(settings, "TOLERATED_DAYS", "")
     today_7 = datetime.today().date() - timedelta(tolerated_days)
@@ -91,7 +103,7 @@ def send_scheduled_messages():
         date_time_for_sending__lte=today,
         is_sent=False,
     )
-    args = {}
+    #args = {}
     if len(ready_to_send_mother_messages) > 0:
         #  There is one or more messages to be sent to one or more mothers
         for mother_message in ready_to_send_mother_messages:
@@ -107,11 +119,11 @@ def send_scheduled_messages():
                     else:
                         #the_contact_phone_number = "tel:" + mother_message.mother.phone_number
                         the_contact_phone_number = mother_message.mother.phone_number
-                    data = {
-                        "urns": [the_contact_phone_number],
-                        "text": mother_message.message_to_send,
-                    }
-                    args["data"] = data
+                    #data = {
+                        #"urns": [the_contact_phone_number],
+                        #"text": mother_message.message_to_send,
+                    #}
+                    #args["data"] = data
                     #send_sms_through_rapidpro(args)
                     message_to_send = "["+mother_message.mother.id_mother+"] - "+mother_message.message_to_send
                     send_sms_through_kannel(
@@ -121,21 +133,28 @@ def send_scheduled_messages():
                     mother_message.is_sent = True
                     mother_message.save()
 
+
+def send_chw_scheduled_messages():
+    today = datetime.today().date()
+    tolerated_days = getattr(settings, "TOLERATED_DAYS", "")
+    today_7 = datetime.today().date() - timedelta(tolerated_days)
+
     ready_to_send_chw_messages = NotificationsCHW.objects.filter(
         date_time_for_sending__gte=today_7,
         date_time_for_sending__lte=today,
         is_sent=False,
     )
+    #args = {}
     if len(ready_to_send_chw_messages) > 0:
         #  There is one or more messages to be sent to one or more mothers
         for chw_message in ready_to_send_chw_messages:
             if chw_message.chw.phone_number:
-                the_contact_phone_number = "tel:" + chw_message.chw.phone_number
-                data = {
-                    "urns": [the_contact_phone_number],
-                    "text": chw_message.message_to_send,
-                }
-                args["data"] = data
+                #the_contact_phone_number = "tel:" + chw_message.chw.phone_number
+                #data = {
+                    #"urns": [the_contact_phone_number],
+                    #"text": chw_message.message_to_send,
+                #}
+                #args["data"] = data
                 #send_sms_through_rapidpro(args)
                 send_sms_through_kannel(
                     chw_message.chw.phone_number, 
@@ -150,7 +169,6 @@ def change_chw_status():
         This function switch a CHW to the following status : active/inactive
         A CHW is switched to inactive status if he spend long time without sending any message.
     """
-    print ("=== Begin change_chw_status ===")
     key_word_for_chwai_setting = getattr(
         settings, "KEY_WORD_FOR_CHW_ACTIVE_SETTING", ""
     )
@@ -231,8 +249,6 @@ def change_chw_status():
                 chw.is_active = True
                 chw.save()
 
-    print ("=== Finish change_chw_status ===")
-
 
 @periodic_task(
     run_every=(crontab(minute=50, hour="7")),
@@ -243,7 +259,6 @@ def inform_supersors_on_inactive_chw():
     """
     This task inform the concerned supervisor if there is a community health work who is not active
     """
-    print ("---Begin inform_supersors_on_inactive_chw---")
     # Let's update CHW status
     change_chw_status()
 
@@ -263,7 +278,6 @@ def inform_supersors_on_inactive_chw():
         data = {"urns": [supervisor_phone_number], "text": message_to_send}
         args["data"] = data
         send_sms_through_rapidpro(args)
-    print ("---Finish inform_supersors_on_inactive_chw---")
 
 
 def delete_no_longer_needed_notifications(args):
@@ -289,8 +303,6 @@ def delete_no_longer_needed_notifications(args):
             if len(notifications_to_woman) > 0:
                 # We have to delete all these notifications
                 for one_notification in notifications_to_woman:
-                    print"The below notification is going to be deleted"
-                    print one_notification 
                     one_notification.delete()
 
 
@@ -303,8 +315,6 @@ def delete_no_longer_needed_notifications(args):
             if len(notifications_to_chw) > 0:
                 # We have to delete all these notifications
                 for one_notification in notifications_to_chw:
-                    print"The below notification is going to be deleted"
-                    print one_notification 
                     one_notification.delete()
 
 
@@ -319,11 +329,39 @@ def cancel_reminders():
     """
     This task is used to cancel no longer needed reminders
     """
-    concerned_mothers = Mother.objects.filter(report__category="DEC")
+    today = datetime.today().date()
+
+    start_date = datetime.today().date() - timedelta(300)
+    end_date = today
+
+    args = {}
+
+    concerned_mothers = Mother.objects.filter(
+        report__category="DEC", 
+        report__reporting_date__gte = start_date, 
+        report__reporting_date__lte = end_date
+        )
     args["concerned_mothers"] = concerned_mothers
     delete_no_longer_needed_notifications(args)
 
-    concerned_mothers = Mother.objects.filter(report__category="NSC")
+    concerned_mothers = Mother.objects.filter(
+        report__category="RIS", 
+        report__text__contains = "FC",
+        report__reporting_date__gte = start_date, 
+        report__reporting_date__lte = end_date
+        )
     args["concerned_mothers"] = concerned_mothers
     delete_no_longer_needed_notifications(args)
 
+
+@csrf_exempt
+@json_view
+def cancel_notifications(request):
+
+    cancel_reminders()
+
+    response = {}
+
+    response["info_to_contact"] = "Ok"
+
+    return response
