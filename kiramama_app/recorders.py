@@ -4040,6 +4040,11 @@ def record_death_report(args):
     if not args["valide"]:
         return
 
+    if ((args["death_code"].Death_code == "DM") and (args["dec_type"] == "DEC_CHILD")):
+        args["valide"] = False
+        args["info_to_contact"] = "Ikosa. DM isigura ko ari umupfasoni yitavye Imana. Uyikoresheje nta nomero yumwana wandika. Rungika mesaje yanditse neza."
+        return
+
     if args["dec_type"] == "DEC_CHILD":
         # The report sent is a child report
         # Let's check if this mother has a child with the sent child number
@@ -4115,7 +4120,7 @@ def record_death_report(args):
     the_contact_phone_number = "tel:" + args["supervisor_phone_number"]
     data = {"urns": [the_contact_phone_number], "text": args["info_to_supervisors"]}
     args["data"] = data
-    #send_sms_through_rapidpro(args)
+    send_sms_through_rapidpro(args)
 
     # We need to inform national supervisors
     if args["dec_type"] == "DEC_CHILD":
