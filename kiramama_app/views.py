@@ -277,7 +277,7 @@ def getcdsdata(request):
                     if districtlist:
                         cdslist = CDS.objects.filter(district__in=districtlist)
             if cdslist:
-                chw_data = (
+                '''chw_data = (
                     CHW.objects.filter(cds__in=cdslist, is_deleted=False)
                     .annotate(sub_colline_name=F("sub_colline__name"))
                     .annotate(colline_name=F("sub_colline__colline__name"))
@@ -289,9 +289,22 @@ def getcdsdata(request):
                     .annotate(district_name=F("cds__district__name"))
                     .annotate(last_seen=Max("report__reporting_date"))
                     .values()
+                )'''
+                chw_data = (
+                    CHW.objects.filter(cds__in=cdslist, is_deleted=False)
+                    .annotate(sub_colline_name=F("sub_colline__name"))
+                    .annotate(colline_name=F("sub_colline__colline__name"))
+                    .annotate(commune_name=F("sub_colline__colline__commune__name"))
+                    .annotate(
+                        province_name=F("cds__district__bps__name")
+                    )
+                    .annotate(cds_name=F("cds__name"))
+                    .annotate(district_name=F("cds__district__name"))
+                    .annotate(last_seen=Max("report__reporting_date"))
+                    .values()
                 )
         else:
-            chw_data = (
+            '''chw_data = (
                 CHW.objects.filter(is_deleted=False)
                 .annotate(sub_colline_name=F("sub_colline__name"))
                 .annotate(colline_name=F("sub_colline__colline__name"))
@@ -303,9 +316,24 @@ def getcdsdata(request):
                 .annotate(district_name=F("cds__district__name"))
                 .annotate(last_seen=Max("report__reporting_date"))
                 .values()
+            )'''
+
+            chw_data = (
+                CHW.objects.filter(is_deleted=False)
+                .annotate(sub_colline_name=F("sub_colline__name"))
+                .annotate(colline_name=F("sub_colline__colline__name"))
+                .annotate(commune_name=F("sub_colline__colline__commune__name"))
+                .annotate(
+                    province_name=F("cds__district__bps__name")
+                )
+                .annotate(cds_name=F("cds__name"))
+                .annotate(district_name=F("cds__district__name"))
+                .annotate(last_seen=Max("report__reporting_date"))
+                .values()
             )
 
         response_data = json.dumps(list(chw_data), default=date_handler)
+
 
         return HttpResponse(response_data, content_type="application/json")
     else:
