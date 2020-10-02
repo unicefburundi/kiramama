@@ -4045,6 +4045,11 @@ def record_death_report(args):
         args["info_to_contact"] = "Ikosa. DM isigura ko ari umupfasoni yitavye Imana. Uyikoresheje nta nomero yumwana wandika. Rungika mesaje yanditse neza."
         return
 
+    if ((args["death_code"].Death_code == "DN") and (args["dec_type"] == "DEC_WOMAN")):
+        args["valide"] = False
+        args["info_to_contact"] = "Ikosa. DN isigura ko ari umwana yitavye Imana. Uyikoresheje uca ugerekako nomero yuwo mwana. Rungika mesaje yanditse neza."
+        return
+
     if args["dec_type"] == "DEC_CHILD":
         # The report sent is a child report
         # Let's check if this mother has a child with the sent child number
