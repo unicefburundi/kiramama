@@ -2422,6 +2422,17 @@ def record_birth_case_report(args):
         return
     try:
         checked_value = float(args["checked_float"])
+        if checked_value < 1 or checked_value > 5:
+            args["valide"] = False
+            # args['info_to_contact'] = "Erreur. La valeur envoyee pour '"+args["date_meaning"]+"' n est pas valide. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+            args["info_to_contact"] = (
+                "Ikosa. Ico wanditse kuvyerekeye '"
+                + args["date_meaning"]
+                + "' sico. Mu gukosora, subira urungike iyo mesaje itangurwa na '"
+                + args["mot_cle"]
+                + "' yanditse neza"
+            )
+            return
     except:
         args["valide"] = False
         # args['info_to_contact'] = "Erreur. La valeur envoyee pour '"+args["date_meaning"]+"' n est pas valide. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
@@ -2433,6 +2444,8 @@ def record_birth_case_report(args):
             + "' yanditse neza"
         )
         return
+
+
 
     # Now, everything is checked. Let's record the report
     the_created_report = Report.objects.create(
