@@ -2096,6 +2096,17 @@ def record_prenatal_consultation_report(args):
         return
     try:
         checked_value = float(args["checked_float"])
+        if checked_value < 25 or checked_value > 120:
+            args["valide"] = False
+            # args['info_to_contact'] = "Erreur. La valeur envoyee pour '"+args["date_meaning"]+"' n est pas valide. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+            args["info_to_contact"] = (
+                "Ikosa. Ico wanditse kuvyerekeye '"
+                + args["date_meaning"]
+                + "' ntikibaho. Mu gukosora, subira urungike iyo mesaje itangurwa na '"
+                + args["mot_cle"]
+                + "' yanditse neza"
+            )
+            return
     except:
         args["valide"] = False
         # args['info_to_contact'] = "Erreur. La valeur envoyee pour '"+args["date_meaning"]+"' n est pas valide. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
