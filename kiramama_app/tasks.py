@@ -112,7 +112,11 @@ def send_mother_scheduled_messages():
                     mother = mother_message.mother, 
                     category = "DEC"
                     )
-                if(len(dec_report) < 1):
+                fc_report = Report.objects.filter(
+                    mother = mother_message.mother, 
+                    text__contains = "FC"
+                    )
+                if((len(dec_report) < 1) and (len(fc_report) < 1)):
                     if(len(mother_message.mother.phone_number) == 8):
                         #the_contact_phone_number = "tel:257" + mother_message.mother.phone_number
                         the_contact_phone_number = "257" + mother_message.mother.phone_number
@@ -283,6 +287,8 @@ def inform_supersors_on_inactive_chw():
 def delete_no_longer_needed_notifications(args):
     ''' This function delete no longer needed notifications '''
 
+    print("A - We are going to delete no longer needed notifications")
+
     concerned_mothers = args["concerned_mothers"]
 
     today = datetime.today().date()
@@ -290,19 +296,25 @@ def delete_no_longer_needed_notifications(args):
     start_date = datetime.today().date() - timedelta(7)
     end_date = datetime.today().date() + timedelta(300)
 
+
     if len(concerned_mothers) > 0:
         ''' There is at least one concerned mother '''
+        print("B - There is at least one concerned mother")
         for one_woman in concerned_mothers:
             # Let's delete notifications scheduled to be sent to this woman
+            print(one_woman)
             notifications_to_woman = NotificationsMother.objects.filter(
                 mother=one_woman,
                 date_time_for_sending__gte=start_date,
                 date_time_for_sending__lte=end_date,
                 is_sent=False,
             )
+            print(notifications_to_woman)
             if len(notifications_to_woman) > 0:
                 # We have to delete all these notifications
+                print("We are going to enter a loop and delete any notification")
                 for one_notification in notifications_to_woman:
+                    print(one_notification)
                     one_notification.delete()
 
 

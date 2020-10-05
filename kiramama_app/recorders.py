@@ -4069,9 +4069,9 @@ def record_death_report(args):
         args["info_to_contact"] = "Ikosa. DM isigura ko ari umupfasoni yitavye Imana. Uyikoresheje nta nomero yumwana wandika. Rungika mesaje yanditse neza."
         return
 
-    if ((args["death_code"].Death_code == "DN") and (args["dec_type"] == "DEC_WOMAN")):
+    if (((args["death_code"].Death_code == "DN") and (args["dec_type"] == "DEC_WOMAN")) or ((args["death_code"].Death_code == "DI") and (args["dec_type"] == "DEC_WOMAN"))):
         args["valide"] = False
-        args["info_to_contact"] = "Ikosa. DN isigura ko ari umwana yitavye Imana. Uyikoresheje uca ugerekako nomero yuwo mwana. Rungika mesaje yanditse neza."
+        args["info_to_contact"] = "Ikosa. DN canke DI bisigura ko ari uruhinja canke umwana yitavye Imana. Uyikoresheje uca ugerekako nomero yuwo mwana. Rungika mesaje yanditse neza."
         return
 
     if args["dec_type"] == "DEC_CHILD":
@@ -4240,6 +4240,16 @@ def modify_record_death_report(args):
     args["death_code_meaning"] = "Code de deces"
     check_death_code(args)
     if not args["valide"]:
+        return
+
+    if ((args["death_code"].Death_code == "DM") and (args["dec_type"] == "DEC_CHILD")):
+        args["valide"] = False
+        args["info_to_contact"] = "Ikosa. DM isigura ko ari umupfasoni yitavye Imana. Uyikoresheje nta nomero yumwana wandika. Rungika mesaje yanditse neza."
+        return
+
+    if (((args["death_code"].Death_code == "DN") and (args["dec_type"] == "DEC_WOMAN")) or ((args["death_code"].Death_code == "DI") and (args["dec_type"] == "DEC_WOMAN"))):
+        args["valide"] = False
+        args["info_to_contact"] = "Ikosa. DN canke DI bisigura ko ari uruhinja canke umwana yitavye Imana. Uyikoresheje uca ugerekako nomero yuwo mwana. Rungika mesaje yanditse neza."
         return
 
     if args["dec_type"] == "DEC_CHILD":
