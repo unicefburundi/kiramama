@@ -1363,6 +1363,18 @@ def get_district_level_sup_phone_number(args):
             urns.append(phone_number)
     return urns
 
+def get_cds_level_sup_phone_number(args):
+    urns = []
+    cds_supervisors = CDSSupervisor.objects.filter(cds = args["the_cds"])
+    if len(cds_supervisors) > 0:
+        for cds in cds_supervisors:
+            phone_number = cds.supervisor.phone_number
+            if len(phone_number) == 8:
+                phone_number = "+257" + phone_number
+            phone_number = "tel:" + phone_number
+            urns.append(phone_number)
+    return urns
+
 def activate_inactive_chw(args):
     """ This function activate inactive CHWs """
     chw_phone_number = args["phone"]
@@ -3556,6 +3568,7 @@ def record_risk_report(args):
         args["data"] = data
         send_sms_through_rapidpro(args)
 
+        args["the_cds"] = args["the_sender"].cds
         args["the_district"] = args["the_sender"].cds.district
         args["the_bps"] = args["the_sender"].cds.district.bps
 
@@ -3566,6 +3579,11 @@ def record_risk_report(args):
 
         district_level_sup_phone_numbers = get_district_level_sup_phone_number(args)
         data = {"urns": district_level_sup_phone_numbers, "text": args["info_to_supervisors"]}
+        args["data"] = data
+        send_sms_through_rapidpro(args)
+
+        cds_level_sup_phone_numbers = get_cds_level_sup_phone_number(args)
+        data = {"urns": cds_level_sup_phone_numbers, "text": args["info_to_supervisors"]}
         args["data"] = data
         send_sms_through_rapidpro(args)
 

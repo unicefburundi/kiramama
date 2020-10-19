@@ -586,3 +586,13 @@ class DistrictSupervisor(models.Model):
         return "{0} {1} Supervise {2}".format(
             self.supervisor.first_name, self.supervisor.last_name, self.district.name
         )
+
+
+class CDSSupervisor(models.Model):
+    cds = models.ForeignKey(CDS)
+    supervisor = models.ForeignKey(AllSupervisor)
+
+    def __unicode__(self):
+        return "{0} {1} Supervise {2}".format(
+            self.supervisor.first_name, self.supervisor.last_name, self.cds.name
+        )

@@ -479,6 +479,7 @@ admin.site.register(AllSupervisor)
 admin.site.register(DistrictSupervisor)
 #admin.site.register(ProvinceSupervisor)
 admin.site.register(BPSSupervisor)
+admin.site.register(CDSSupervisor)
 
 admin.site.register(ReportPriseC)
 admin.site.register(ReportResponsePC)
