@@ -3574,18 +3574,21 @@ def record_risk_report(args):
 
         bps_level_sup_phone_numbers = get_bps_level_sup_phone_number(args)
         data = {"urns": bps_level_sup_phone_numbers, "text": args["info_to_supervisors"]}
-        args["data"] = data
-        send_sms_through_rapidpro(args)
+        if(len(bps_level_sup_phone_numbers) > 0):
+            args["data"] = data
+            send_sms_through_rapidpro(args)
 
         district_level_sup_phone_numbers = get_district_level_sup_phone_number(args)
         data = {"urns": district_level_sup_phone_numbers, "text": args["info_to_supervisors"]}
-        args["data"] = data
-        send_sms_through_rapidpro(args)
+        if(len(district_level_sup_phone_numbers) > 0):
+            args["data"] = data
+            send_sms_through_rapidpro(args)
 
         cds_level_sup_phone_numbers = get_cds_level_sup_phone_number(args)
         data = {"urns": cds_level_sup_phone_numbers, "text": args["info_to_supervisors"]}
-        args["data"] = data
-        send_sms_through_rapidpro(args)
+        if(len(cds_level_sup_phone_numbers) > 0):
+            args["data"] = data
+            send_sms_through_rapidpro(args)
 
 
 
