@@ -1339,6 +1339,29 @@ def get_national_sup_phone_number():
             urns.append(phone_number)
     return urns
 
+def get_bps_level_sup_phone_number(args):
+    urns = []
+    bps_supervisors = BPSSupervisor.objects.filter(bps = args["the_bps"])
+    if len(bps_supervisors) > 0:
+        for p_s in bps_supervisors:
+            phone_number = p_s.supervisor.phone_number
+            if len(phone_number) == 8:
+                phone_number = "+257" + phone_number
+            phone_number = "tel:" + phone_number
+            urns.append(phone_number)
+    return urns
+
+def get_district_level_sup_phone_number(args):
+    urns = []
+    district_supervisors = DistrictSupervisor.objects.filter(district = args["the_district"])
+    if len(district_supervisors) > 0:
+        for ds in district_supervisors:
+            phone_number = ds.supervisor.phone_number
+            if len(phone_number) == 8:
+                phone_number = "+257" + phone_number
+            phone_number = "tel:" + phone_number
+            urns.append(phone_number)
+    return urns
 
 def activate_inactive_chw(args):
     """ This function activate inactive CHWs """
@@ -3529,12 +3552,23 @@ def record_risk_report(args):
             )
 
         national_sup_phone_numbers = get_national_sup_phone_number()
-
-        print national_sup_phone_numbers
-
         data = {"urns": national_sup_phone_numbers, "text": args["info_to_supervisors"]}
         args["data"] = data
         send_sms_through_rapidpro(args)
+
+        args["the_district"] = args["the_sender"].cds.district
+        args["the_bps"] = args["the_sender"].cds.district.bps
+
+        bps_level_sup_phone_numbers = get_bps_level_sup_phone_number(args)
+        data = {"urns": bps_level_sup_phone_numbers, "text": args["info_to_supervisors"]}
+        args["data"] = data
+        send_sms_through_rapidpro(args)
+
+        district_level_sup_phone_numbers = get_district_level_sup_phone_number(args)
+        data = {"urns": district_level_sup_phone_numbers, "text": args["info_to_supervisors"]}
+        args["data"] = data
+        send_sms_through_rapidpro(args)
+
 
 
 # -----------------------------------------------------------------

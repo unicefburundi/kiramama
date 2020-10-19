@@ -569,6 +569,14 @@ class ProvinceSupervisor(models.Model):
             self.supervisor.first_name, self.supervisor.last_name, self.province.name
         )
 
+class BPSSupervisor(models.Model):
+    bps = models.ForeignKey(BPS)
+    supervisor = models.ForeignKey(AllSupervisor)
+
+    def __unicode__(self):
+        return "{0} {1} Supervise {2}".format(
+            self.supervisor.first_name, self.supervisor.last_name, self.bps.name
+        )
 
 class DistrictSupervisor(models.Model):
     district = models.ForeignKey(District)
