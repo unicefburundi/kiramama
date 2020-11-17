@@ -4153,6 +4153,17 @@ def record_death_report(args):
         # We record a woman report
         pass
 
+    #Let check if a such message has not been sent for this person.
+    todays_date = datetime.datetime.now().date()
+    same_report_alread_existing = Report.objects.filter(
+        mother = args["concerned_mother"], 
+        text=args["text"]
+        )
+    if(len(same_report_alread_existing) > 0):
+        args["valide"] = False
+        args["info_to_contact"] = "Ikosa. Iyo mesaje wari wahejeje kuyitanga"
+        return
+
     # Now, everything is checked. Let's record the report
     the_created_report = Report.objects.create(
         chw=args["the_sender"],
