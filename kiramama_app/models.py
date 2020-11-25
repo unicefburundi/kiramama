@@ -593,6 +593,9 @@ class CDSSupervisor(models.Model):
     supervisor = models.ForeignKey(AllSupervisor)
 
     def __unicode__(self):
-        return "{0} {1} Supervise {2}".format(
-            self.supervisor.first_name, self.supervisor.last_name, self.cds.name
+        return "{0} {1} - CDS Name : {2} - DS Name : {3}".format(
+            self.supervisor.first_name, 
+            self.supervisor.last_name, 
+            self.cds.name, 
+            self.cds.district.name
         )
