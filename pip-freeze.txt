@@ -32,7 +32,7 @@ prompt-toolkit==1.0.9
 psycopg2==2.6.2
 ptyprocess==0.5.1
 pydot==1.2.3
-Pygments==2.2.0
+Pygments==2.7.4
 pyparsing==2.1.10
 pytz==2016.7
 PyYAML==3.13
